@@ -306,6 +306,8 @@ const EXTRA = D.extra || {};
 
 const $ = s => document.querySelector(s);
 const canon = n => ALIAS[n] || n;
+const champsOf = r => [r.champion, ...(r.co || [])];   // co-champions: either name is a correct guess
+const whoOf = r => r.as ? `${r.as} (${champsOf(r).join(" & ")})` : champsOf(r).join(" & ");   // "as": a character several people played
 const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/["'.]/g,"").replace(/\s+/g," ").trim();
 const sortKey = n => norm(n).replace(/^the /,"");
 const store = {
@@ -313,7 +315,7 @@ const store = {
   set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
 
-const NAMES = [...new Set(REIGNS.map(r => canon(r.champion)))].sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
+const NAMES = [...new Set(REIGNS.flatMap(r => champsOf(r).map(canon)))].sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
 const AKA = {};          // canonical name -> other billings
 const LOOKUP = {};       // any billing, normalized -> canonical name
 NAMES.forEach(n => { LOOKUP[norm(n)] = n; });
@@ -331,7 +333,7 @@ NAMES.forEach(n => (EXTRA[n] || []).forEach(t => { const k = norm(t); (termOwner
 Object.entries(termOwners).forEach(([k, owners]) => { if(owners.size === 1 && !LOOKUP[k]) LOOKUP[k] = [...owners][0]; });
 NAMES.forEach(n => { const k = compact(n); if(k && !LOOKUP[k]) LOOKUP[k] = n; });
 const COUNT = {};        // title key -> canonical name -> reign count
-REIGNS.forEach(r => { const c = canon(r.champion); (COUNT[r.t] = COUNT[r.t] || {})[c] = (COUNT[r.t][c] || 0) + 1; });
+REIGNS.forEach(r => champsOf(r).forEach(p => { const c = canon(p); (COUNT[r.t] = COUNT[r.t] || {})[c] = (COUNT[r.t][c] || 0) + 1; }));
 const POOL = REIGNS.filter(r => !r.ongoing);
 // Game modes stack: each includes every title from the modes before it. Each mode has its own daily.
 const MODES = [["base","Base"],["mark","Mark"],["smart","Smart Mark"],["chaos","Chaos"]];
@@ -384,7 +386,7 @@ let fresh = -1;        // index of the clue that just unlocked
 let active = -1;       // highlighted autocomplete option
 let shown = [];        // [{name, via}] currently in the list
 
-const isHit = g => canon(g) === canon(S.reign.champion);
+const isHit = g => champsOf(S.reign).some(p => canon(p) === canon(g));
 const heldTitle = g => !!(COUNT[S.reign.t] || {})[canon(g)];
 const kind = g => isHit(g) ? "hit" : heldTitle(g) ? "near" : "miss";
 const misses = () => S.guesses.filter(g => !isHit(g)).length;
@@ -515,8 +517,11 @@ function renderResult(){
   const v = $("#verdict");
   v.className = "verdict " + (won() ? "win" : "lose");
   v.textContent = won() ? (S.guesses.length === 1 ? "First try" : `Correct in ${S.guesses.length}`) : "Out of guesses. It was";
-  $("#who").textContent = r.champion;
-  const facts = [TITLE_BY[r.t].short + ` reign ${r.reignNo} of ${COUNT[r.t][c]}`, r.dateText || fmtDate(r.date), r.event, fmtDays(r.days),
+  $("#who").textContent = whoOf(r);
+  const nth = p => REIGNS.slice(0, REIGNS.indexOf(r) + 1).filter(x => x.t === r.t && champsOf(x).some(q => canon(q) === canon(p))).length;
+  const reignLine = r.co ? TITLE_BY[r.t].short + (r.as ? ` as ${r.as}: ` : " co-champions: ") + champsOf(r).map(p => `${p} reign ${nth(p)} of ${COUNT[r.t][canon(p)]}`).join(", ")
+                         : TITLE_BY[r.t].short + ` reign ${r.reignNo} of ${COUNT[r.t][c]}`;
+  const facts = [reignLine, r.dateText || fmtDate(r.date), r.event, fmtDays(r.days),
     beatLine(r)];
   $("#facts").innerHTML = facts.map(f => `<span>${esc(f)}</span>`).join("");
   $("#resultStats").hidden = S.mode !== "daily";
@@ -539,7 +544,7 @@ function shareText(spoiler){
   const lines = [S.mode === "daily" ? `Title Run #${S.n}${mode}` : `Title Run free play${mode}`,
                  `${titleOf(S.reign)} (${TITLE_BY[S.reign.t].years})`, `${sq} ${score}`];
   if(S.mode === "daily"){ const st = liveStreak(getStats(gm), S.n); if(st >= 2) lines.push(`🔥 ${st} day streak`); }
-  if(spoiler) lines.push(`Answer: ||${S.reign.champion}||`);          // Discord spoiler bars
+  if(spoiler) lines.push(`Answer: ||${whoOf(S.reign)}||`);          // Discord spoiler bars
   if(SITE_URL) lines.push(SITE_URL);
   return lines.join("\n");
 }
