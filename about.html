@@ -17,22 +17,23 @@
 <style>
 /* Layout: one reading column under a black bar strung with ring ropes, same system as the games. */
 :root{
-  --canvas:#E8EBF0; --panel:#FFFFFF; --ink:#141823; --muted:#576072; --line:#CDD3DD; --well:#DFE3EA;
-  --bar:#141823; --bar-ink:#F2F4F8; --bar-muted:#98A1B3;
-  --rope-r:#C8232F; --rope-w:#F2F4F8; --rope-b:#2147A8; --gold:#CE9C35; --gold-ink:#2A1B03; --focus:#2147A8;
+  --canvas:#D8D9DC; --panel:#FFFFFF; --ink:#0E0F12; --muted:#4A525B; --line:#B8BCC2; --well:#CACDD2;
+  --bar:#2F353C; --bar-ink:#FFFFFF; --bar-muted:#AEB4BB;
+  --rope-r:#5B18EA; --rope-w:#FFFFFF; --rope-b:#0E0F12; --gold:#5B18EA; --gold-ink:#FFFFFF; --focus:#5B18EA;
   --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
   --f-label:"Barlow Condensed","Arial Narrow",sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --canvas:#0D111A; --panel:#151B27; --ink:#E7EAF0; --muted:#8C95A7; --line:#262E3F; --well:#1E2534;
-  --bar:#05070C; --bar-ink:#E7EAF0; --bar-muted:#7C8597;
-  --rope-r:#D9414B; --rope-w:#D3D8E2; --rope-b:#4A72D6; --gold:#E2BC5C; --gold-ink:#231604; --focus:#7B9BF2; color-scheme:dark } }
+  --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
+  --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
+ }
 :root[data-theme="dark"]{
-  --canvas:#0D111A; --panel:#151B27; --ink:#E7EAF0; --muted:#8C95A7; --line:#262E3F; --well:#1E2534;
-  --bar:#05070C; --bar-ink:#E7EAF0; --bar-muted:#7C8597;
-  --rope-r:#D9414B; --rope-w:#D3D8E2; --rope-b:#4A72D6; --gold:#E2BC5C; --gold-ink:#231604; --focus:#7B9BF2; color-scheme:dark }
+  --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
+  --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
 *,*::before,*::after{box-sizing:border-box}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased}
@@ -60,7 +61,7 @@ p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid
 .game h3{margin:0;font-family:var(--f-display);font-weight:900;font-size:2rem;line-height:.95;text-transform:uppercase}
 .game .tag{justify-self:start;font-family:var(--f-label);font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
 .game.soon{background:transparent;border-style:dashed} .game.soon h3{color:var(--muted)}
-.play{justify-self:start;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--ink);color:var(--panel);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.play{justify-self:start;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
 .chips li{display:flex;align-items:center;gap:7px;font-size:.95rem}
 .sq{display:inline-block;width:14px;height:14px;border-radius:3px} .hit{background:#1B7F46} .near{background:#B88412} .miss{background:#C8232F}
@@ -104,7 +105,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 <ul>
   <li><b>Base:</b> the big world titles. WWE, WCW, World Heavyweight, Universal and AEW.</li>
   <li><b>Mark:</b> none of the Base belts. ECW, TNA, NXT, the Intercontinental and United States titles from the modern eras, and AEW's secondary belts.</li>
-  <li><b>Smart Mark:</b> everything in Mark, plus the NWA lineage back to 1948 and the early IC and US reigns.</li>
+  <li><b>Smart Mark:</b> everything in Mark, plus the NWA lineage back to 1948, the early IC and US reigns, both Cruiserweight titles, the European and WWF Light Heavyweight titles, the ECW and WCW TV titles, the ROH World title, the X Division title and the NXT UK title.</li>
   <li><b>Chaos:</b> coming soon.</li>
 </ul>
 <p>Each mode has its own daily puzzle and its own stats. A new puzzle drops at midnight your time. Free play gives you random reigns whenever you want, and doesn't count toward stats.</p>
