@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Title Run</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@800;900&display=swap">
+<style>
+/* Layout: one narrow column under a black header bar strung with ring ropes. A gold belt nameplate holds the title,
+   a tale-of-the-tape card holds the clue ladder, then the guess box and the guess log. */
+:root{
+  --canvas:#E8EBF0; --panel:#FFFFFF; --ink:#141823; --muted:#576072; --line:#CDD3DD; --well:#DFE3EA;
+  --bar:#141823; --bar-ink:#F2F4F8; --bar-muted:#98A1B3; --bar-line:#343B4C;
+  --rope-r:#C8232F; --rope-w:#F2F4F8; --rope-b:#2147A8;
+  --plate-a:#F4DA8C; --plate-b:#CE9C35; --plate-c:#8C6317; --plate-edge:#6E4B0D; --plate-ink:#2A1B03;
+  --plate-shine:rgba(255,248,225,.55); --plate-pip:rgba(255,250,235,.45);
+  --hit:#1B7F46; --miss:#C8232F; --near:#B88412; --near-pip:#5A3A00; --on-hit:#FFFFFF; --focus:#2147A8; --shadow:rgba(20,24,35,.16);
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --f-label:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --canvas:#0D111A; --panel:#151B27; --ink:#E7EAF0; --muted:#8C95A7; --line:#262E3F; --well:#1E2534;
+    --bar:#05070C; --bar-ink:#E7EAF0; --bar-muted:#7C8597; --bar-line:#252B38;
+    --rope-r:#D9414B; --rope-w:#D3D8E2; --rope-b:#4A72D6;
+    --plate-a:#E9CB76; --plate-b:#BC8A28; --plate-c:#7A5512; --plate-edge:#5A3D09; --plate-ink:#231604;
+    --plate-shine:rgba(255,244,210,.45); --plate-pip:rgba(255,246,222,.35);
+    --hit:#3BB273; --miss:#E5555E; --near:#DDAA3E; --near-pip:#4A3000; --on-hit:#06170D; --focus:#7B9BF2; --shadow:rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --canvas:#0D111A; --panel:#151B27; --ink:#E7EAF0; --muted:#8C95A7; --line:#262E3F; --well:#1E2534;
+  --bar:#05070C; --bar-ink:#E7EAF0; --bar-muted:#7C8597; --bar-line:#252B38;
+  --rope-r:#D9414B; --rope-w:#D3D8E2; --rope-b:#4A72D6;
+  --plate-a:#E9CB76; --plate-b:#BC8A28; --plate-c:#7A5512; --plate-edge:#5A3D09; --plate-ink:#231604;
+  --plate-shine:rgba(255,244,210,.45); --plate-pip:rgba(255,246,222,.35);
+  --hit:#3BB273; --miss:#E5555E; --near:#DDAA3E; --near-pip:#4A3000; --on-hit:#06170D; --focus:#7B9BF2; --shadow:rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+.wrap{max-width:34rem;margin-inline:auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+/* Header bar and ropes */
+.bar{background:var(--bar);color:var(--bar-ink)}
+.bar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:16px 14px}
+.mark{font-family:var(--f-display);font-weight:900;font-size:1.75rem;line-height:.85;text-transform:uppercase;letter-spacing:.01em;margin:0}
+.mark span{display:block;font-family:var(--f-label);font-weight:600;font-size:.7rem;letter-spacing:.22em;color:var(--bar-muted);margin-top:6px}
+.modes{display:flex;gap:2px;padding:3px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--bar-line)}
+.modes button{background:none;border:0;border-radius:999px;padding:7px 13px;cursor:pointer;font-family:var(--f-label);font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bar-muted)}
+.modes button[aria-pressed="true"]{background:var(--bar-ink);color:var(--bar)}
+.ropes{display:grid;gap:4px;padding-block:0 8px;background:var(--bar)}
+.ropes i{display:block;height:4px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding-block:14px 0}
+.tabs button{display:flex;align-items:baseline;gap:6px;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;background:var(--well);color:var(--muted);font-family:var(--f-label);font-weight:700;font-size:.92rem;letter-spacing:.1em;text-transform:uppercase}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.tabs button:disabled{cursor:default;opacity:.55}
+.tabs small{font-size:.66rem;letter-spacing:.12em}
+.ropes i:nth-child(1){background:var(--rope-r)}
+.ropes i:nth-child(2){background:var(--rope-w)}
+.ropes i:nth-child(3){background:var(--rope-b)}
+
+main{display:grid;gap:16px;padding-block:18px 44px}
+.meta{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-label);font-weight:600;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* Belt nameplate */
+.plate{position:relative;overflow:hidden;border-radius:14px;padding:22px 26px 20px;color:var(--plate-ink);
+  background:
+    radial-gradient(circle at 13px 13px, var(--plate-edge) 3px, transparent 3.6px),
+    radial-gradient(circle at calc(100% - 13px) 13px, var(--plate-edge) 3px, transparent 3.6px),
+    radial-gradient(circle at 13px calc(100% - 13px), var(--plate-edge) 3px, transparent 3.6px),
+    radial-gradient(circle at calc(100% - 13px) calc(100% - 13px), var(--plate-edge) 3px, transparent 3.6px),
+    linear-gradient(112deg, var(--plate-b) 0%, var(--plate-a) 26%, var(--plate-b) 50%, var(--plate-a) 72%, var(--plate-c) 100%);
+  box-shadow:inset 0 0 0 2px var(--plate-edge), inset 0 0 0 5px var(--plate-a), inset 0 0 0 6px var(--plate-edge), 0 8px 22px var(--shadow)}
+.plate::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg, transparent 35%, var(--plate-shine) 50%, transparent 65%);transform:translateX(-120%)}
+.plate.glint::after{animation:glint 1.1s ease-out 1}
+@keyframes glint{to{transform:translateX(120%)}}
+.eyebrow{font-family:var(--f-label);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase}
+.plate h1{font-family:var(--f-display);font-weight:900;font-size:clamp(2.2rem, 10vw, 3.3rem);line-height:.92;text-transform:uppercase;text-wrap:balance;margin:6px 0 14px;text-shadow:0 1px 0 var(--plate-shine)}
+.plate h1.waiting{opacity:.55}
+.plate-sub{font-family:var(--f-label);font-weight:700;font-size:.84rem;letter-spacing:.18em;text-transform:uppercase;margin:-6px 0 14px}
+.pips{display:flex;align-items:center;gap:6px}
+.pip{width:24px;height:9px;border-radius:2px;background:var(--plate-pip);box-shadow:inset 0 0 0 1px var(--plate-edge)}
+.pip.miss{background:var(--miss)}
+.pip.hit{background:var(--hit)}
+.pip.near{background:var(--near-pip)}
+.plate h1.long{font-size:clamp(1.9rem, 8.4vw, 2.75rem)}
+.pips span{margin-left:8px;font-family:var(--f-label);font-weight:700;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+
+/* Tale of the tape */
+.tape{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tape-h{display:flex;justify-content:space-between;gap:12px;padding:10px 16px;font-family:var(--f-label);font-weight:700;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.tape dl{margin:0}
+.row{display:grid;grid-template-columns:7.4rem minmax(0,1fr);align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);min-height:62px}
+.row dt{font-family:var(--f-label);font-weight:600;font-size:.86rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.row dt b{display:block;font-weight:500;font-size:.72rem;letter-spacing:.1em;opacity:.8}
+.row dd{margin:0;min-width:0;overflow-wrap:anywhere;font-family:var(--f-display);font-weight:800;font-size:1.5rem;line-height:1.05}
+.row dd.long{font-family:var(--f-body);font-weight:600;font-size:1.02rem;line-height:1.3}
+.row.locked dd{font-family:var(--f-label);font-weight:600;font-size:.86rem;letter-spacing:.06em;color:var(--muted);padding:7px 10px;border-radius:6px;
+  background:repeating-linear-gradient(135deg, var(--well) 0 7px, transparent 7px 14px)}
+.row.fresh dd{animation:slam .5s cubic-bezier(.2,1.5,.4,1) 1}
+@keyframes slam{from{transform:translateY(-8px) scale(1.18);opacity:.2}to{transform:none;opacity:1}}
+
+/* Play area */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 16px;display:grid;gap:12px}
+.card p{margin:0;max-width:60ch}
+.btn{border:0;border-radius:10px;padding:12px 18px;cursor:pointer;font-family:var(--f-label);font-weight:700;font-size:1.02rem;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:var(--panel)}
+.btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn:active{transform:translateY(1px)}
+.combo{display:flex;gap:8px}
+.field{position:relative;flex:1;min-width:0}
+.field label{display:block;font-family:var(--f-label);font-weight:700;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field input{width:100%;font:500 1.1rem var(--f-body);padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--canvas);color:var(--ink)}
+.field input:focus{border-color:var(--focus);outline:none}
+.combo .btn{align-self:flex-end;padding-inline:20px}
+.opts{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:5;list-style:none;margin:0;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 32px var(--shadow);max-height:17.5rem;overflow:auto}
+.opts li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 10px;border-radius:7px;cursor:pointer}
+.opts li[aria-selected="true"]{background:var(--well)}
+.opts li.used{color:var(--muted);text-decoration:line-through;cursor:default}
+.opts li small{font-family:var(--f-label);font-weight:600;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.opts li.none{cursor:default;color:var(--muted)}
+.hint{font-size:.88rem;color:var(--muted);min-height:1.3em}
+.hint.err{color:var(--miss);font-weight:600}
+
+.log{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.log li{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.log .no{font-family:var(--f-label);font-weight:700;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.sq{display:inline-block;width:14px;height:14px;border-radius:3px;flex:none}
+.sq.hit{background:var(--hit)}
+.sq.near{background:var(--near)}
+.sq.miss{background:var(--miss)}
+.legend{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.92rem;color:var(--muted)}
+.legend li{display:flex;align-items:center;gap:7px}
+.meta select{font-family:var(--f-label);font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.log .nm{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.log .why{font-family:var(--f-label);font-weight:600;font-size:.84rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+.verdict{font-family:var(--f-label);font-weight:700;font-size:.86rem;letter-spacing:.18em;text-transform:uppercase}
+.verdict.win{color:var(--hit)}
+.verdict.lose{color:var(--miss)}
+.who{font-family:var(--f-display);font-weight:900;font-size:clamp(2.1rem, 10vw, 2.9rem);line-height:.92;text-transform:uppercase;text-wrap:balance;margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.facts span{font-family:var(--f-label);font-weight:600;font-size:.9rem;letter-spacing:.03em;padding:4px 10px;border-radius:999px;background:var(--well)}
+.share{margin:0;font-family:var(--f-mono);font-size:.92rem;line-height:1.5;white-space:pre;overflow-x:auto;background:var(--canvas);border-radius:8px;padding:10px 12px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status{font-size:.9rem;color:var(--muted)}
+.next{font-size:.9rem;color:var(--muted)}
+.next b{font-variant-numeric:tabular-nums;color:var(--ink)}
+
+footer{display:grid;gap:8px;font-size:.84rem;color:var(--muted);line-height:1.5}
+footer p{margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 18px}
+.links a{color:var(--ink);font-weight:600;text-underline-offset:3px}
+.disclaimer{max-width:62ch}
+.ad-slot{display:grid;gap:4px}
+.ad-label{font-family:var(--f-label);font-weight:600;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.ad-ph{display:grid;place-items:center;min-height:100px;border:1.5px dashed var(--line);border-radius:10px;color:var(--muted);font-size:.85rem}
+.ad-slot ins{min-height:100px}
+.sponsor{margin:0;font-size:.92rem;color:var(--muted)}
+.sponsor a{color:var(--ink);font-weight:600}
+
+.bar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.statbtn{background:none;border:0;border-radius:999px;padding:7px 13px;cursor:pointer;box-shadow:inset 0 0 0 1px var(--bar-line);
+  font-family:var(--f-label);font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bar-ink)}
+.statbtn[aria-expanded="true"]{background:var(--bar-ink);color:var(--bar)}
+.btn:disabled{opacity:.45;cursor:default}
+.stats{display:grid;gap:12px}
+.stats h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.nums div{display:grid;gap:3px;justify-items:center;text-align:center}
+.nums b{font-family:var(--f-display);font-weight:900;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.nums span{font-family:var(--f-label);font-weight:600;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dist{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.dist li{display:grid;grid-template-columns:1.1rem minmax(0,1fr);align-items:center;gap:8px;font-family:var(--f-label);font-weight:700;font-size:.86rem;font-variant-numeric:tabular-nums}
+.dist .bar{display:block;box-sizing:border-box;min-width:1.9rem;padding:2px 8px;border-radius:4px;background:var(--well);color:var(--ink);text-align:right}
+.dist li.now .bar{background:var(--hit);color:var(--on-hit)}
+.dist li.now.x .bar{background:var(--miss);color:var(--on-hit)}
+.fine{margin:0;font-size:.82rem;color:var(--muted)}
+
+@media (max-width:380px){ .row{grid-template-columns:6rem minmax(0,1fr)} .combo{flex-wrap:wrap} .combo .btn{flex:1} }
+@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd{animation:none} }
+</style>
+
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-in">
+    <p class="mark">Title Run<span>Name the reign</span></p>
+    <div class="bar-right">
+      <div class="modes" role="group" aria-label="Daily or free play">
+        <button type="button" id="mDaily" aria-pressed="true">Daily</button>
+        <button type="button" id="mFree" aria-pressed="false">Free play</button>
+      </div>
+      <button type="button" class="statbtn" id="statsBtn" aria-expanded="false" aria-controls="statsPanel">Stats</button>
+    </div>
+  </div>
+  <div class="ropes" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+<nav class="wrap tabs" id="tabs" aria-label="Game mode"></nav>
+
+<main class="wrap">
+  <div class="meta"><span id="metaL">Daily #1</span><span id="metaR"></span><select id="pick" aria-label="Titles in free play" hidden></select></div>
+
+  <section class="card stats" id="statsPanel" hidden aria-live="polite"></section>
+
+  <section class="plate" id="plate" aria-live="polite">
+    <div class="eyebrow" id="tier">The belt</div>
+    <h1 id="titleName" class="waiting">Press Start</h1>
+    <div class="plate-sub" id="titleSub" hidden></div>
+    <div class="pips" id="pips"></div>
+  </section>
+
+  <section class="tape" aria-label="Clues">
+    <div class="tape-h"><span>Tale of the tape</span><span id="tapeCount">0 of 4 clues</span></div>
+    <dl id="clues"></dl>
+  </section>
+
+  <section id="startPanel" class="card">
+    <p>Name the wrestler who held this title reign. You get five guesses. Every miss unlocks the next clue: the era, how many days the reign lasted, where they won it, and who they beat.</p>
+    <p>Multi-time champs count as long as it is their name on this reign. Alternate billings count too, so The Giant is Big Show.</p>
+    <ul class="legend">
+      <li><span class="sq hit"></span>Right wrestler</li>
+      <li><span class="sq near"></span>Held this title, wrong reign</li>
+      <li><span class="sq miss"></span>Never held this title</li>
+    </ul>
+    <div><button type="button" class="btn" id="startBtn" disabled>Start</button></div>
+    <p class="hint" id="loadMsg">Loading the reign list.</p>
+  </section>
+
+  <section id="guessPanel" class="card" hidden>
+    <div class="combo">
+      <div class="field">
+        <label for="guess">Your guess</label>
+        <input id="guess" type="text" autocomplete="off" spellcheck="false" placeholder="Start typing a name"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="opts">
+        <ul class="opts" id="opts" role="listbox" hidden></ul>
+      </div>
+      <button type="button" class="btn" id="guessBtn">Guess</button>
+    </div>
+    <div class="hint" id="hint" aria-live="polite">Pick a name from the list. Every champion in the game is in there.</div>
+  </section>
+
+  <section id="resultPanel" class="card" hidden aria-live="polite">
+    <div class="verdict" id="verdict"></div>
+    <h2 class="who" id="who"></h2>
+    <div class="facts" id="facts"></div>
+    <div class="stats" id="resultStats" hidden></div>
+    <pre class="share" id="share"></pre>
+    <div class="actions">
+      <button type="button" class="btn" id="copyBtn">Copy result</button>
+      <button type="button" class="btn alt" id="discordBtn">Copy for Discord</button>
+      <button type="button" class="btn alt" id="againBtn">Play a random reign</button>
+      <span class="status" id="copyStatus" aria-live="polite"></span>
+    </div>
+    <div class="next" id="nextLine"></div>
+    <p class="sponsor" id="sponsor" hidden></p>
+    <div class="ad-slot" data-ad="result" hidden></div>
+  </section>
+
+  <ol class="log" id="log" aria-label="Your guesses"></ol>
+
+  <div class="ad-slot" data-ad="footer" hidden></div>
+  <footer>
+    <nav class="links" aria-label="More">
+      <a href="about.html">How to play</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/">More from House of Hoss</a>
+    </nav>
+    <p class="disclaimer">Title Run is a fan-made game. It is not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion. Reign data compiled from Wikipedia's title history lists.</p>
+    <p id="foot"></p>
+  </footer>
+</main>
+
+<script>
+function titleRun(D){
+const REIGNS = D.reigns;
+const TITLES = D.titles;
+const TITLE_BY = Object.fromEntries(TITLES.map(t => [t.key, t]));
+const MAX = 5;
+const SEED = 381;
+const SCHEDULE = D.schedule;   // per mode: puzzle #1 (the start date) onward -> reign ID
+const EPOCH = (([y,m,d]) => Date.UTC(y, m-1, d))(SCHEDULE.start.split("-").map(Number));
+const SITE_URL = D.site || "";
+
+// Name links (same wrestler, different billing) and extra search phrases live in data.json
+const ALIAS = D.alias || {};
+const EXTRA = D.extra || {};
+
+const $ = s => document.querySelector(s);
+const canon = n => ALIAS[n] || n;
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/["'.]/g,"").replace(/\s+/g," ").trim();
+const sortKey = n => norm(n).replace(/^the /,"");
+const store = {
+  get(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+const NAMES = [...new Set(REIGNS.map(r => canon(r.champion)))].sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
+const AKA = {};          // canonical name -> other billings
+const LOOKUP = {};       // any billing, normalized -> canonical name
+NAMES.forEach(n => { LOOKUP[norm(n)] = n; });
+Object.entries(ALIAS).forEach(([billed, c]) => {
+  if(!NAMES.includes(c)) return;
+  LOOKUP[norm(billed)] = c;
+  AKA[c] = AKA[c] || [];
+  if(!AKA[c].some(a => norm(a) === norm(billed))) AKA[c].push(billed.replace(/"/g,""));
+});
+const compact = s => norm(s).replace(/[^a-z0-9]/g,"");   // "D-Lo", "D Lo", "Dlo" all become "dlo"
+const TERMS = {};        // canonical name -> other names to search on (billings + nicknames)
+NAMES.forEach(n => { TERMS[n] = [...(AKA[n] || []), ...(EXTRA[n] || [])]; });
+const termOwners = {};
+NAMES.forEach(n => (EXTRA[n] || []).forEach(t => { const k = norm(t); (termOwners[k] = termOwners[k] || new Set()).add(n); }));
+Object.entries(termOwners).forEach(([k, owners]) => { if(owners.size === 1 && !LOOKUP[k]) LOOKUP[k] = [...owners][0]; });
+NAMES.forEach(n => { const k = compact(n); if(k && !LOOKUP[k]) LOOKUP[k] = n; });
+const COUNT = {};        // title key -> canonical name -> reign count
+REIGNS.forEach(r => { const c = canon(r.champion); (COUNT[r.t] = COUNT[r.t] || {})[c] = (COUNT[r.t][c] || 0) + 1; });
+const POOL = REIGNS.filter(r => !r.ongoing);
+// Game modes stack: each includes every title from the modes before it. Each mode has its own daily.
+const MODES = [["base","Base"],["mark","Mark"],["smart","Smart Mark"],["chaos","Chaos"]];
+const MODE_RANK = Object.fromEntries(MODES.map(([k],i) => [k,i]));
+const MODE_LABEL = Object.fromEntries(MODES);
+const modeOpen = k => REIGNS.some(r => r.m === k);
+const inGame = (r, gm) => MODE_RANK[r.m] <= MODE_RANK[gm];
+const poolFor = gm => POOL.filter(r => inGame(r, gm));
+const titlesIn = gm => TITLES.filter(t => POOL.some(r => r.t === t.key && inGame(r, gm)));
+
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const BY_ID = Object.fromEntries(REIGNS.map(r => [r.id, r]));
+function dailyReign(gm, n){
+  const id = (SCHEDULE.modes[gm] || [])[n - 1];
+  if(id && BY_ID[id]) return BY_ID[id];
+  const pool = poolFor(gm), rnd = mulberry32(SEED * 7919 + n * 31 + MODE_RANK[gm]);   // past the schedule's end
+  return pool[Math.floor(rnd() * pool.length)];
+}
+
+const pad = n => String(n).padStart(2,"0");
+const localISO = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const dayNumber = iso => { const [y,m,d] = iso.split("-").map(Number); return Math.max(1, Math.round((Date.UTC(y,m-1,d) - EPOCH)/86400000) + 1); };
+const fmtDate = iso => new Date(iso + "T00:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric",timeZone:"UTC"});
+const fmtDays = d => d === 0 ? "Under a day" : d.toLocaleString("en-US") + (d === 1 ? " day" : " days");
+const titleOf = r => TITLE_BY[r.t].name;
+const FULL_SENTENCE = /^(Won|Awarded|Inaugural|Pinned|Handed|Recognized)/;
+
+// Wrestling eras by start date (fans and sources disagree on exact cutoffs; these are mid-year splits)
+const ERAS = [
+  ["1984-01-01","Golden Era"], ["1993-07-01","New Generation Era"], ["1997-07-01","Attitude Era"],
+  ["2002-07-01","Ruthless Aggression Era"], ["2008-07-01","PG Era"], ["2014-04-01","Reality Era / New Era"],
+  ["2022-07-01","Current Era"]
+];
+const eraOf = iso => { let e = "Territory Era"; for(const [start, name] of ERAS) if(iso >= start) e = name; return e; };
+
+const CLUES = [
+  {label:"Era",       val: r => eraOf(r.date)},
+  {label:"Days held", val: r => fmtDays(r.days)},
+  {label:"Won it at", val: r => r.event},
+  {label:"Defeated",  val: r => r.beat, long: r => r.beat.length > 26}
+];
+
+let S = null;          // {mode, reign, guesses, started, iso, n}
+let gm = "base";       // game mode
+let filter = "all";    // free play: "all" titles in the mode, or one title key
+let fresh = -1;        // index of the clue that just unlocked
+let active = -1;       // highlighted autocomplete option
+let shown = [];        // [{name, via}] currently in the list
+
+const isHit = g => canon(g) === canon(S.reign.champion);
+const heldTitle = g => !!(COUNT[S.reign.t] || {})[canon(g)];
+const kind = g => isHit(g) ? "hit" : heldTitle(g) ? "near" : "miss";
+const misses = () => S.guesses.filter(g => !isHit(g)).length;
+const won = () => S.guesses.some(isHit);
+const done = () => won() || S.guesses.length >= MAX;
+
+function loadDaily(){
+  const iso = localISO(), n = dayNumber(iso);
+  const saved = store.get(`tr-daily-${gm}-${iso}`) || {};
+  S = {mode:"daily", iso, n, reign: dailyReign(gm, n), guesses: saved.guesses || [], started: !!saved.started};
+}
+function loadFree(id, guesses){
+  const pool = filter === "all" ? poolFor(gm) : poolFor(gm).filter(r => r.t === filter);
+  let reign = id != null ? POOL.find(r => r.id === id) : null;
+  if(!reign){ const cur = S && S.reign ? S.reign.id : null;
+    do { reign = pool[Math.floor(Math.random()*pool.length)]; } while(pool.length > 1 && reign.id === cur); }
+  S = {mode:"free", reign, guesses: guesses || [], started: true};
+}
+function save(){ if(S.mode === "daily") store.set(`tr-daily-${gm}-${S.iso}`, {guesses:S.guesses, started:S.started}); }
+
+/* Stats: daily games only, one set per mode, kept in this browser */
+const STAT0 = () => ({played:0, wins:0, losses:0, streak:0, best:0, dist:[0,0,0,0,0], lastWin:0, lastDone:0});
+const getStats = k => Object.assign(STAT0(), store.get(`tr-stats-${k}`) || {});
+const liveStreak = (st, n) => st.lastWin >= n - 1 ? st.streak : 0;    // a skipped day breaks the streak
+function recordDaily(){
+  if(S.mode !== "daily" || !done()) return;
+  const st = getStats(gm);
+  if(st.lastDone >= S.n) return;                                       // this puzzle already counted
+  st.played++; st.lastDone = S.n;
+  if(won()){
+    st.wins++; st.dist[S.guesses.length - 1]++;
+    st.streak = st.lastWin === S.n - 1 ? st.streak + 1 : 1;
+    st.best = Math.max(st.best, st.streak); st.lastWin = S.n;
+  } else { st.losses++; st.streak = 0; }
+  store.set(`tr-stats-${gm}`, st);
+}
+function statsHTML(k, n, today){
+  const st = getStats(k), pct = st.played ? Math.round(st.wins / st.played * 100) : 0;
+  const rows = [...st.dist.map((v,i) => [String(i+1), v, today === i+1]), ["X", st.losses, today === "x"]];
+  const top = Math.max(1, ...rows.map(r => r[1]));
+  return `<div class="nums"><div><b>${st.played}</b><span>Played</span></div><div><b>${pct}</b><span>Win %</span></div>`
+    + `<div><b>${liveStreak(st, n)}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best</span></div></div>`
+    + `<ol class="dist" aria-label="Guess distribution">` + rows.map(([lab, v, now]) =>
+      `<li class="${now ? "now" : ""}${lab === "X" ? " x" : ""}"><span>${lab}</span><span class="bar" style="width:${Math.max(9, v / top * 100)}%">${v}</span></li>`).join("") + `</ol>`;
+}
+function renderStatsPanel(){
+  const p = $("#statsPanel"); if(p.hidden) return;
+  p.innerHTML = `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, dayNumber(localISO()), null)
+    + `<p class="fine">Daily games only. Stats live in this browser, so a new device starts fresh.</p>`;
+}
+
+/* Ads: off until an AdSense client ID is set in data.json. "preview" shows labeled placeholders instead. */
+const ADS = D.ads || {};
+let adScript = false;
+function fillSlot(el){
+  if(!el || el.dataset.filled) return;
+  const id = (ADS.slots || {})[el.dataset.ad];
+  if(ADS.client && id){
+    if(!adScript){
+      const sc = document.createElement("script"); sc.async = true; sc.crossOrigin = "anonymous";
+      sc.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(ADS.client);
+      document.head.appendChild(sc); adScript = true;
+    }
+    el.innerHTML = `<span class="ad-label">Advertisement</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(ADS.client)}" data-ad-slot="${esc(id)}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+    el.hidden = false; el.dataset.filled = "1";
+    try{ (window.adsbygoogle = window.adsbygoogle || []).push({}); }catch(e){}
+  } else if(ADS.preview){
+    el.innerHTML = `<span class="ad-label">Advertisement</span><div class="ad-ph">Ad space (${esc(el.dataset.ad)})</div>`;
+    el.hidden = false; el.dataset.filled = "1";
+  }
+}
+const SPONSOR = D.sponsor || null;
+
+function render(){
+  const r = S.reign, m = misses(), over = done();
+  $("#mDaily").setAttribute("aria-pressed", S.mode === "daily");
+  $("#mFree").setAttribute("aria-pressed", S.mode === "free");
+  document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.gm === gm));
+  $("#metaL").textContent = S.mode === "daily" ? `${MODE_LABEL[gm]} daily #${S.n}` : `${MODE_LABEL[gm]} free play`;
+  $("#metaR").hidden = S.mode !== "daily";
+  $("#metaR").textContent = new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+  $("#pick").hidden = S.mode !== "free";
+  $("#pick").value = filter;
+
+  const t = $("#titleName"), name = titleOf(r);
+  t.textContent = S.started ? name : "Press Start";
+  $("#tier").textContent = S.started ? ({world:"World title", developmental:"Developmental title", midcard:"Midcard title"}[TITLE_BY[r.t].tier] || "Title") : "The belt";
+  t.classList.toggle("waiting", !S.started);
+  t.classList.toggle("long", S.started && name.length > 20);
+  $("#titleSub").textContent = TITLE_BY[r.t].years;
+  $("#titleSub").hidden = !S.started;
+  $("#plate").classList.toggle("glint", over && won());
+
+  $("#pips").innerHTML = Array.from({length:MAX}, (_,i) => {
+    const g = S.guesses[i]; return `<i class="pip ${g ? kind(g) : ""}"></i>`;
+  }).join("") + `<span>${over ? (won() ? "Got it" : "Out of guesses") : S.started ? `Guess ${S.guesses.length+1} of ${MAX}` : `${MAX} guesses`}</span>`;
+
+  const shownClues = over ? CLUES.length : Math.min(m, CLUES.length);
+  $("#tapeCount").textContent = `${shownClues} of ${CLUES.length} clues`;
+  $("#clues").innerHTML = CLUES.map((c,i) => {
+    const open = over || i < m;
+    if(!open) return `<div class="row locked"><dt>${c.label}</dt><dd>Unlocks after miss ${i+1}</dd></div>`;
+    const long = c.long && c.long(r);
+    return `<div class="row${i === fresh ? " fresh" : ""}"><dt>${c.label}</dt><dd class="${long ? "long" : ""}">${esc(c.val(r))}</dd></div>`;
+  }).join("");
+  fresh = -1;
+
+  $("#startPanel").hidden = S.started;
+  $("#guessPanel").hidden = !S.started || over;
+  $("#resultPanel").hidden = !over;
+
+  $("#log").innerHTML = S.guesses.map((g,i) => {
+    const k = kind(g);
+    const why = k === "hit" ? "Correct" : k === "near" ? "Held this title, wrong reign" : "Never held this title";
+    return `<li class="${k}"><span class="no">${i+1}</span><span class="sq ${k}" aria-hidden="true"></span><span class="nm">${esc(g)}</span><span class="why">${why}</span></li>`;
+  }).join("");
+
+  if(over) renderResult();
+  renderStatsPanel();
+  const inMode = titlesIn(gm);
+  const counts = inMode.map(t => `${t.short} (${poolFor(gm).filter(x => x.t === t.key).length})`).join(", ");
+  $("#foot").textContent = `Prototype. ${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia, updated ${D.version}. Current reigns are left out.`;
+}
+
+function renderResult(){
+  const r = S.reign, c = canon(r.champion);
+  const v = $("#verdict");
+  v.className = "verdict " + (won() ? "win" : "lose");
+  v.textContent = won() ? (S.guesses.length === 1 ? "First try" : `Correct in ${S.guesses.length}`) : "Out of guesses. It was";
+  $("#who").textContent = r.champion;
+  const facts = [TITLE_BY[r.t].short + ` reign ${r.reignNo} of ${COUNT[r.t][c]}`, r.dateText || fmtDate(r.date), r.event, fmtDays(r.days),
+    FULL_SENTENCE.test(r.beat) ? r.beat : `Defeated ${r.beat}`];
+  $("#facts").innerHTML = facts.map(f => `<span>${esc(f)}</span>`).join("");
+  $("#resultStats").hidden = S.mode !== "daily";
+  if(S.mode === "daily") $("#resultStats").innerHTML = `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, S.n, won() ? S.guesses.length : "x");
+  $("#share").textContent = shareText(false);
+  const sp = $("#sponsor");
+  sp.hidden = !(SPONSOR && SPONSOR.name);
+  if(!sp.hidden) sp.innerHTML = `Today's Title Run is brought to you by ` + (SPONSOR.url ? `<a href="${esc(SPONSOR.url)}" rel="sponsored noopener" target="_blank">${esc(SPONSOR.name)}</a>` : esc(SPONSOR.name));
+  fillSlot(document.querySelector('.ad-slot[data-ad="result"]'));
+  $("#copyStatus").textContent = "";
+  $("#againBtn").textContent = S.mode === "daily" ? "Play a random reign" : "Next random reign";
+  updateNext();
+}
+
+function shareText(spoiler){
+  const SQ = {hit:"🟩", near:"🟨", miss:"🟥"};
+  const sq = S.guesses.map(g => SQ[kind(g)]).join("") + "⬜".repeat(MAX - S.guesses.length);
+  const score = won() ? `${S.guesses.length}/${MAX}` : `X/${MAX}`;
+  const mode = gm === "base" ? "" : ` · ${MODE_LABEL[gm]}`;
+  const lines = [S.mode === "daily" ? `Title Run #${S.n}${mode}` : `Title Run free play${mode}`,
+                 `${titleOf(S.reign)} (${TITLE_BY[S.reign.t].years})`, `${sq} ${score}`];
+  if(S.mode === "daily"){ const st = liveStreak(getStats(gm), S.n); if(st >= 2) lines.push(`🔥 ${st} day streak`); }
+  if(spoiler) lines.push(`Answer: ||${S.reign.champion}||`);          // Discord spoiler bars
+  if(SITE_URL) lines.push(SITE_URL);
+  return lines.join("\n");
+}
+
+function updateNext(){
+  const el = $("#nextLine");
+  if(!el || !S || S.mode !== "daily" || !done()){ if(el) el.textContent = ""; return; }
+  const now = new Date(), t = new Date(now); t.setHours(24,0,0,0);
+  const mins = Math.max(1, Math.ceil((t - now)/60000));
+  el.innerHTML = `Next ${MODE_LABEL[gm]} daily in <b>${Math.floor(mins/60)}h ${pad(mins%60)}m</b>`;
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch])); }
+
+/* Autocomplete */
+// 0 = starts with what you typed, 1 = a word starts with it, 2 = contains it, -1 = no match
+function score(text, n, nc){
+  const t = norm(text), c = compact(text), bare = t.replace(/^the /,"");
+  if(t.startsWith(n) || bare.startsWith(n) || (nc && (c.startsWith(nc) || compact(bare).startsWith(nc)))) return 0;
+  const words = t.split(" ");
+  if(words.some(w => w.startsWith(n)) || (nc && words.some(w => compact(w).startsWith(nc)))) return 1;
+  if(n.length >= 3 && (t.includes(n) || (nc && c.includes(nc)))) return 2;
+  return -1;
+}
+function search(q){
+  const n = norm(q), nc = compact(q); if(!n) return [];
+  const hits = [];
+  for(const name of NAMES){
+    let best = {s: score(name, n, nc), via: ""};
+    if(best.s !== 0) for(const term of TERMS[name]){
+      let s = score(term, n, nc); if(s < 0) continue;
+      s = Math.max(s, 1);                       // a nickname match ranks just below a real-name match
+      if(best.s < 0 || s < best.s) best = {s, via: term.replace(/"/g,"")};
+    }
+    if(best.s >= 0) hits.push({s: best.s, name, via: best.via});
+  }
+  hits.sort((a,b) => a.s - b.s || sortKey(a.name).localeCompare(sortKey(b.name)));
+  return hits.slice(0, 8);
+}
+const used = name => S.guesses.some(g => canon(g) === canon(name));
+
+function showOpts(){
+  const list = $("#opts");
+  if(!input.value.trim()){ closeOpts(); return; }
+  shown = search(input.value);
+  active = shown.findIndex(o => !used(o.name));
+  list.innerHTML = shown.length
+    ? shown.map((o,i) => {
+        const u = used(o.name), tag = u ? "Guessed" : o.via ? "aka " + o.via : "";
+        return `<li role="option" id="opt${i}" data-i="${i}" class="${u ? "used" : ""}" aria-disabled="${u}" aria-selected="${i === active}">${esc(o.name)}${tag ? `<small>${esc(tag)}</small>` : ""}</li>`;
+      }).join("")
+    : `<li class="none">No champion by that name</li>`;
+  list.hidden = false;
+  input.setAttribute("aria-expanded","true");
+  if(active >= 0) input.setAttribute("aria-activedescendant", "opt" + active); else input.removeAttribute("aria-activedescendant");
+}
+function closeOpts(){
+  $("#opts").hidden = true; active = -1;
+  input.setAttribute("aria-expanded","false");
+  input.removeAttribute("aria-activedescendant");
+}
+function moveActive(d){
+  if(!shown.length) return;
+  let i = active;
+  for(let k=0;k<shown.length;k++){ i = (i + d + shown.length) % shown.length; if(!used(shown[i].name)) break; }
+  active = i;
+  [...$("#opts").children].forEach((li,j) => li.setAttribute("aria-selected", j === active));
+  input.setAttribute("aria-activedescendant","opt" + active);
+  const el = $("#opt" + active); if(el) el.scrollIntoView({block:"nearest"});
+}
+const DEFAULT_HINT = "Pick a name from the list. Every champion in the game is in there.";
+function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.toggle("err", !!err); }
+
+function submit(raw){
+  if(done()) return;
+  let name = LOOKUP[norm(raw || "")] || LOOKUP[compact(raw || "")];
+  if(!name){ const s = search(raw || "").filter(o => !used(o.name)); if(s.length === 1) name = s[0].name; }
+  if(!name){ hint(raw && raw.trim() ? "That name isn't on the list. Pick one from the dropdown." : "Type a name first.", true); return; }
+  if(used(name)){ hint(`You already guessed ${name}.`, true); return; }
+  S.guesses.push(name);
+  if(!isHit(name) && !done()) fresh = misses() - 1;
+  save();
+  recordDaily();
+  input.value = ""; closeOpts();
+  const k = kind(name);
+  hint(done() ? "" : k === "near" ? `${name} held this title, but not this reign. New clue unlocked.` : `${name} never held this title. New clue unlocked.`);
+  render();
+  if(!done()) input.focus();
+}
+
+/* Wiring */
+const input = $("#guess");
+input.addEventListener("input", () => { hint(DEFAULT_HINT); showOpts(); });
+input.addEventListener("keydown", e => {
+  if(e.key === "ArrowDown"){ e.preventDefault(); if($("#opts").hidden) showOpts(); else moveActive(1); }
+  else if(e.key === "ArrowUp"){ e.preventDefault(); moveActive(-1); }
+  else if(e.key === "Escape"){ closeOpts(); }
+  else if(e.key === "Enter"){ e.preventDefault();
+    const o = !$("#opts").hidden && active >= 0 ? shown[active] : null;
+    submit(o && !used(o.name) ? o.name : input.value); }
+});
+input.addEventListener("blur", () => setTimeout(closeOpts, 150));
+$("#opts").addEventListener("mousedown", e => e.preventDefault());
+$("#opts").addEventListener("click", e => {
+  const li = e.target.closest("li[data-i]"); if(!li) return;
+  const o = shown[+li.dataset.i]; if(!o || used(o.name)) return;
+  input.value = o.name; closeOpts(); input.focus();
+  hint(`Tap Guess to lock in ${o.name}.`);
+});
+$("#guessBtn").addEventListener("click", () => submit(input.value));
+$("#startBtn").addEventListener("click", () => { S.started = true; save(); render(); input.focus(); });
+$("#mDaily").addEventListener("click", () => { if(S.mode !== "daily"){ loadDaily(); hint(DEFAULT_HINT); render(); } });
+$("#mFree").addEventListener("click", () => { if(S.mode !== "free"){ loadFree(); hint(DEFAULT_HINT); render(); input.focus(); } });
+$("#againBtn").addEventListener("click", () => { loadFree(); hint(DEFAULT_HINT); render(); input.focus(); });
+function buildPick(){
+  const inMode = titlesIn(gm);
+  $("#pick").innerHTML = `<option value="all">All ${MODE_LABEL[gm]} titles</option>` + inMode.map(t => `<option value="${t.key}">${esc(t.short)}</option>`).join("");
+  if(filter !== "all" && !inMode.some(t => t.key === filter)) filter = "all";
+}
+$("#tabs").innerHTML = MODES.map(([k,label]) => `<button type="button" data-gm="${k}" aria-pressed="false"${modeOpen(k) ? "" : " disabled"}>${label}${modeOpen(k) ? "" : "<small>Soon</small>"}</button>`).join("");
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-gm]"); if(!b || b.disabled || b.dataset.gm === gm) return;
+  gm = b.dataset.gm; filter = "all"; buildPick();
+  if(S.mode === "free") loadFree(); else loadDaily();
+  hint(DEFAULT_HINT); render();
+});
+buildPick();
+$("#pick").addEventListener("change", e => { filter = e.target.value; loadFree(); hint(DEFAULT_HINT); render(); });
+function copy(text, ok){
+  const st = $("#copyStatus");
+  const fallback = () => { $("#share").textContent = text; const sel = window.getSelection(), rng = document.createRange();
+    rng.selectNodeContents($("#share")); sel.removeAllRanges(); sel.addRange(rng); st.textContent = "Selected. Copy it from here."; };
+  try{ navigator.clipboard.writeText(text).then(() => { st.textContent = ok; }, fallback); }catch(e){ fallback(); }
+}
+$("#copyBtn").addEventListener("click", () => copy(shareText(false), "Copied"));
+$("#discordBtn").addEventListener("click", () => copy(shareText(true), "Copied with the answer hidden"));
+$("#statsBtn").addEventListener("click", () => {
+  const p = $("#statsPanel"); p.hidden = !p.hidden;
+  $("#statsBtn").setAttribute("aria-expanded", String(!p.hidden)); renderStatsPanel();
+});
+setInterval(updateNext, 30000);
+
+function boot(data){
+  if(data && data.gm && modeOpen(data.gm)) gm = data.gm;
+  buildPick();
+  if(data && data.filter && (data.filter === "all" || TITLES.some(t => t.key === data.filter))) filter = data.filter;
+  if(data && data.mode === "free" && data.freeId != null && POOL.some(r => r.id === data.freeId)) loadFree(data.freeId, data.guesses);
+  else loadDaily();
+  render();
+}
+const hot = window.claude && window.claude.hot;
+if(hot && hot.snapshot) hot.snapshot(() => ({mode:S.mode, freeId: S.mode === "free" ? S.reign.id : null, guesses:S.guesses, filter, gm}));
+if(hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
+fillSlot(document.querySelector('.ad-slot[data-ad="footer"]'));
+$("#startBtn").disabled = false;
+$("#loadMsg").hidden = true;
+}
+
+fetch("data.json", {cache: "no-cache"})
+  .then(r => { if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(titleRun)
+  .catch(err => {
+    const m = document.getElementById("loadMsg");
+    if(m){ m.hidden = false; m.classList.add("err"); m.textContent = "Couldn't load the reign list. Refresh the page to try again."; }
+    console.error(err);
+  });
+
+</script>
+</body>
+</html>
