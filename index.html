@@ -106,6 +106,8 @@ main{display:grid;gap:16px;padding-block:18px 44px}
 .row dt b{display:block;font-weight:500;font-size:.72rem;letter-spacing:.1em;opacity:.8}
 .row dd{margin:0;min-width:0;overflow-wrap:anywhere;font-family:var(--f-display);font-weight:800;font-size:1.5rem;line-height:1.05}
 .row dd.long{font-family:var(--f-body);font-weight:600;font-size:1.02rem;line-height:1.3}
+.row dd.combo-clue .ev{display:block;font-size:1.3rem}
+.row dd.combo-clue .bt{display:block;margin-top:5px;font-family:var(--f-body);font-weight:600;font-size:1rem;line-height:1.3}
 .row.locked dd{font-family:var(--f-label);font-weight:600;font-size:.86rem;letter-spacing:.06em;color:var(--muted);padding:7px 10px;border-radius:6px;
   background:repeating-linear-gradient(135deg, var(--well) 0 7px, transparent 7px 14px)}
 .row.fresh dd{animation:slam .5s cubic-bezier(.2,1.5,.4,1) 1}
@@ -226,7 +228,7 @@ footer p{margin:0}
   </section>
 
   <section id="startPanel" class="card">
-    <p>Name the wrestler who held this title reign. You get five guesses. Every miss unlocks the next clue: the era, how many days the reign lasted, where they won it, and who they beat.</p>
+    <p>Name the wrestler who held this title reign. You get five guesses. Every miss unlocks the next clue: the era, the year, how many days the reign lasted, then where they won it and who they beat.</p>
     <p>Multi-time champs count as long as it is their name on this reign. Alternate billings count too, so The Giant is Big Show.</p>
     <ul class="legend">
       <li><span class="sq hit"></span>Right wrestler</li>
@@ -330,7 +332,8 @@ const MODES = [["base","Base"],["mark","Mark"],["smart","Smart Mark"],["chaos","
 const MODE_RANK = Object.fromEntries(MODES.map(([k],i) => [k,i]));
 const MODE_LABEL = Object.fromEntries(MODES);
 const modeOpen = k => REIGNS.some(r => r.m === k);
-const inGame = (r, gm) => MODE_RANK[r.m] <= MODE_RANK[gm];
+// Base titles only appear in Base. Higher modes stack on each other but leave the base belts out.
+const inGame = (r, gm) => gm === "base" ? r.m === "base" : r.m !== "base" && MODE_RANK[r.m] <= MODE_RANK[gm];
 const poolFor = gm => POOL.filter(r => inGame(r, gm));
 const titlesIn = gm => TITLES.filter(t => POOL.some(r => r.t === t.key && inGame(r, gm)));
 
@@ -359,11 +362,13 @@ const ERAS = [
 ];
 const eraOf = iso => { let e = "Territory Era"; for(const [start, name] of ERAS) if(iso >= start) e = name; return e; };
 
+const beatLine = r => FULL_SENTENCE.test(r.beat) ? r.beat : `Defeated ${r.beat}`;
 const CLUES = [
   {label:"Era",       val: r => eraOf(r.date)},
+  {label:"Year",      val: r => r.date.slice(0,4)},
   {label:"Days held", val: r => fmtDays(r.days)},
-  {label:"Won it at", val: r => r.event},
-  {label:"Defeated",  val: r => r.beat, long: r => r.beat.length > 26}
+  {label:"Won it",    val: r => `${r.event}: ${beatLine(r)}`,
+                      html: r => `<span class="ev">${esc(r.event)}</span><span class="bt">${esc(beatLine(r))}</span>`}
 ];
 
 let S = null;          // {mode, reign, guesses, started, iso, n}
@@ -477,7 +482,8 @@ function render(){
     const open = over || i < m;
     if(!open) return `<div class="row locked"><dt>${c.label}</dt><dd>Unlocks after miss ${i+1}</dd></div>`;
     const long = c.long && c.long(r);
-    return `<div class="row${i === fresh ? " fresh" : ""}"><dt>${c.label}</dt><dd class="${long ? "long" : ""}">${esc(c.val(r))}</dd></div>`;
+    const body = c.html ? c.html(r) : esc(c.val(r));
+    return `<div class="row${i === fresh ? " fresh" : ""}"><dt>${c.label}</dt><dd class="${c.html ? "combo-clue" : long ? "long" : ""}">${body}</dd></div>`;
   }).join("");
   fresh = -1;
 
@@ -505,7 +511,7 @@ function renderResult(){
   v.textContent = won() ? (S.guesses.length === 1 ? "First try" : `Correct in ${S.guesses.length}`) : "Out of guesses. It was";
   $("#who").textContent = r.champion;
   const facts = [TITLE_BY[r.t].short + ` reign ${r.reignNo} of ${COUNT[r.t][c]}`, r.dateText || fmtDate(r.date), r.event, fmtDays(r.days),
-    FULL_SENTENCE.test(r.beat) ? r.beat : `Defeated ${r.beat}`];
+    beatLine(r)];
   $("#facts").innerHTML = facts.map(f => `<span>${esc(f)}</span>`).join("");
   $("#resultStats").hidden = S.mode !== "daily";
   if(S.mode === "daily") $("#resultStats").innerHTML = `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, S.n, won() ? S.guesses.length : "x");
