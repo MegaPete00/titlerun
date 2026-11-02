@@ -196,7 +196,24 @@ footer p{margin:0}
 .fine{margin:0;font-size:.82rem;color:var(--muted)}
 
 @media (max-width:380px){ .row{grid-template-columns:6rem minmax(0,1fr)} .combo{flex-wrap:wrap} .combo .btn{flex:1} }
-@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd{animation:none} }
+/* Easter eggs: banner + theme swaps, switched on from the guess box */
+.egg-banner{font-family:var(--f-display);font-weight:900;font-size:clamp(2.4rem, 12vw, 3.6rem);line-height:.9;text-transform:uppercase;text-align:center;
+  padding:16px 10px 14px;border-radius:12px;background:var(--ink);color:var(--canvas);cursor:pointer;animation:eggIn .45s ease-out 1}
+.egg-banner small{display:block;margin-top:8px;font-family:var(--f-label);font-weight:600;font-size:.72rem;letter-spacing:.16em;opacity:.7}
+@keyframes eggIn{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+:root[data-egg="deadlock"]{
+  --canvas:#F26A1B; --panel:#FFFFFF; --ink:#0B0B0B; --muted:#3B2416; --line:#0B0B0B; --well:#FFE1CC;
+  --bar:#0B0B0B; --bar-ink:#FFFFFF; --bar-muted:#F26A1B; --bar-line:#F26A1B;
+  --rope-r:#F26A1B; --rope-w:#FFFFFF; --rope-b:#F26A1B;
+  --plate-a:#2E2E2E; --plate-b:#0B0B0B; --plate-c:#000000; --plate-edge:#F26A1B; --plate-ink:#F26A1B;
+  --plate-shine:rgba(255,255,255,.16); --plate-pip:rgba(255,255,255,.22); --near-pip:#FFFFFF;
+  --accent:#0B0B0B; --on-accent:#FFFFFF; --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); color-scheme:light;
+}
+:root[data-egg="deadlock"] .field input{background:#FFFFFF}
+/* The long way: the whole page stretches tall. Transforms still count toward scroll height, so you can scroll all of it. */
+body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+:root[data-egg="deadlock"] body{transform:scaleY(1.75);transform-origin:50% 0}
+@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd,.egg-banner{animation:none} body{transition:none} }
 </style>
 
 </head>
@@ -217,6 +234,7 @@ footer p{margin:0}
 <nav class="wrap tabs" id="tabs" aria-label="Game mode"></nav>
 
 <main class="wrap">
+  <div class="egg-banner" id="eggBanner" role="status" hidden></div>
   <div class="meta"><span id="metaL">Daily #1</span><span id="metaR"></span><select id="pick" aria-label="Titles in free play" hidden></select></div>
 
   <section class="card stats" id="statsPanel" hidden aria-live="polite"></section>
@@ -572,7 +590,7 @@ function score(text, n, nc){
 function search(q){
   const n = norm(q), nc = compact(q); if(!n) return [];
   const hits = [];
-  for(const name of NAMES){
+  for(const name of NAMES.concat(EGG_NAMES)){
     let best = {s: score(name, n, nc), via: ""};
     if(best.s !== 0) for(const term of TERMS[name]){
       let s = score(term, n, nc); if(s < 0) continue;
@@ -618,8 +636,34 @@ function moveActive(d){
 const DEFAULT_HINT = "Pick a name from the list. Every champion in the game is in there.";
 function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.toggle("err", !!err); }
 
+/* Easter eggs: type one of these names in the guess box. Doesn't use a guess. Tap the banner to switch it off. */
+// Each person shows up in the autocomplete like a real champion (typing "John" or "Tony" finds them). Picking one never uses a guess.
+const EGGS = [
+  {key:"deadlock", banner:"The long way", people:[
+    {name:"Anthony Douglas", aka:["TonyPizzaGuy","Tony Pizza Guy"]},
+    {name:"James Darnell",   aka:["Pulse","CMPuls3","CMPulse","CMPuls","CM Puls3","CM Pulse"]},   // spacing and case don't matter
+    {name:"John Blud",       aka:["Jawnny"]}]},
+];
+const EGG_BY = {}, EGG_NAMES = [];
+EGGS.forEach(e => e.people.forEach(p => {
+  EGG_NAMES.push(p.name); TERMS[p.name] = p.aka;
+  [p.name, ...p.aka].forEach(n => { EGG_BY[compact(n)] = e; });
+}));
+function egg(raw){
+  const e = EGG_BY[compact(raw || "")];
+  if(!e) return false;
+  document.documentElement.dataset.egg = e.key;
+  const b = $("#eggBanner");
+  b.hidden = true; void b.offsetWidth;                  // restart the pop-in if it's already showing
+  b.innerHTML = `${esc(e.banner)}<small>Tap to go back</small>`; b.hidden = false;
+  input.value = ""; closeOpts(); hint(DEFAULT_HINT);
+  return true;
+}
+function eggOff(){ delete document.documentElement.dataset.egg; $("#eggBanner").hidden = true; }
+
 function submit(raw){
   if(done()) return;
+  if(egg(raw)) return;
   let name = LOOKUP[norm(raw || "")] || LOOKUP[compact(raw || "")];
   if(!name){ const s = search(raw || "").filter(o => !used(o.name)); if(s.length === 1) name = s[0].name; }
   if(!name){ hint(raw && raw.trim() ? "That name isn't on the list. Pick one from the dropdown." : "Type a name first.", true); return; }
@@ -643,6 +687,7 @@ input.addEventListener("keydown", e => {
   else if(e.key === "ArrowUp"){ e.preventDefault(); moveActive(-1); }
   else if(e.key === "Escape"){ closeOpts(); }
   else if(e.key === "Enter"){ e.preventDefault();
+    if(egg(input.value)) return;
     const o = !$("#opts").hidden && active >= 0 ? shown[active] : null;
     submit(o && !used(o.name) ? o.name : input.value); }
 });
@@ -655,6 +700,7 @@ $("#opts").addEventListener("click", e => {
   hint(`Tap Guess to lock in ${o.name}.`);
 });
 $("#guessBtn").addEventListener("click", () => submit(input.value));
+$("#eggBanner").addEventListener("click", eggOff);
 $("#startBtn").addEventListener("click", () => { S.started = true; save(); render(); input.focus(); });
 $("#mDaily").addEventListener("click", () => { if(S.mode !== "daily"){ loadDaily(); hint(DEFAULT_HINT); render(); } });
 $("#mFree").addEventListener("click", () => { if(S.mode !== "free"){ loadFree(); hint(DEFAULT_HINT); render(); input.focus(); } });
