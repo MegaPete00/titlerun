@@ -750,8 +750,8 @@ const ACHIEVEMENTS = [      // Easter eggs. The title doubles as the hint.
   {id:"taz",      title:"Color Scheme Jones"},
   {id:"brodie",   title:"You Know What That Means"},
   {id:"austin",   title:"What?"},
-  {id:"steiner",  title:"Steiner Math"},
-  {id:"nacho",    title:"Nacho Libre"},
+  {id:"steiner",  title:"Holla If You Hear Me!"},
+  {id:"nacho",    title:"I Wanna Win!"},
   {id:"angle",    title:"Broken Freaking Neck"},
   {id:"hendry",   title:"Say His Name"},
   {id:"knight",   title:"Yeah!"},
@@ -1001,7 +1001,7 @@ function buildPick(){
   $("#pick").innerHTML = `<option value="all">All ${MODE_LABEL[gm]} titles</option>` + inMode.map(t => `<option value="${t.key}">${esc(t.short)}</option>`).join("");
   if(filter !== "all" && !inMode.some(t => t.key === filter)) filter = "all";
 }
-$("#tabs").innerHTML = MODES.map(([k,label]) => `<button type="button" data-gm="${k}" aria-pressed="false"${modeOpen(k) ? "" : " disabled"}>${label}${modeOpen(k) ? "" : "<small>Soon</small>"}</button>`).join("");
+$("#tabs").innerHTML = MODES.filter(([k]) => modeOpen(k)).map(([k,label]) => `<button type="button" data-gm="${k}" aria-pressed="false"${modeOpen(k) ? "" : " disabled"}>${label}${modeOpen(k) ? "" : "<small>Soon</small>"}</button>`).join("");
 $("#tabs").addEventListener("click", e => {
   const b = e.target.closest("button[data-gm]"); if(!b || b.disabled || b.dataset.gm === gm) return;
   gm = b.dataset.gm; filter = "all"; buildPick();
