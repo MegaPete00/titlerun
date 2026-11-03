@@ -16,7 +16,7 @@
 /* Layout: one narrow column under a black header bar strung with ring ropes. A gold belt nameplate holds the title,
    a tale-of-the-tape card holds the clue ladder, then the guess box and the guess log. */
 :root{
-  --canvas:#D8D9DC; --panel:#FFFFFF; --ink:#0E0F12; --muted:#4A525B; --line:#B8BCC2; --well:#CACDD2;
+  --canvas:#BDC1C6; --panel:#FFFFFF; --ink:#0E0F12; --muted:#40474F; --line:#A3A8AF; --well:#D0D3D7;
   --bar:#2F353C; --bar-ink:#FFFFFF; --bar-muted:#AEB4BB; --bar-line:#454C55;
   --rope-r:#5B18EA; --rope-w:#FFFFFF; --rope-b:#0E0F12;
   --plate-a:#F4F5F7; --plate-b:#C3C7CD; --plate-c:#7D848D; --plate-edge:#3D444C; --plate-ink:#0E0F12;
@@ -183,6 +183,14 @@ footer p{margin:0}
 .statbtn[aria-expanded="true"]{background:var(--bar-ink);color:var(--bar)}
 .btn:disabled{opacity:.45;cursor:default}
 .stats{display:grid;gap:12px}
+/* Stats / Awards pages: the game steps aside while one is open. Footer stays. */
+:root[data-page] main > :not(#statsPanel):not(#awardsPanel):not(footer):not([data-ad="footer"]){display:none!important}
+:root[data-page="awards"] #tabs{display:none}
+.page-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px}
+.page-h h2{margin:0;font-family:var(--f-display);font-weight:900;font-size:2.1rem;line-height:1;text-transform:uppercase;color:var(--ink)}
+.page-x{flex:none;display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;cursor:pointer;
+  background:var(--well);color:var(--ink);font-size:1.6rem;line-height:1;font-family:var(--f-body)}
+.page-x:hover{background:var(--ink);color:var(--panel)}
 .stats h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:.82rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .nums div{display:grid;gap:3px;justify-items:center;text-align:center}
@@ -523,9 +531,10 @@ function statsHTML(k, n, today){
     + `<ol class="dist" aria-label="Guess distribution">` + rows.map(([lab, v, now]) =>
       `<li class="${now ? "now" : ""}${lab === "X" ? " x" : ""}"><span>${lab}</span><span class="bar" style="width:${Math.max(9, v / top * 100)}%">${v}</span></li>`).join("") + `</ol>`;
 }
+const pageHead = title => `<div class="page-h"><h2>${title}</h2><button type="button" class="page-x" data-close aria-label="Back to the game">&times;</button></div>`;
 function renderStatsPanel(){
   const p = $("#statsPanel"); if(p.hidden) return;
-  p.innerHTML = `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, dayNumber(localISO()), null)
+  p.innerHTML = pageHead("Stats") + `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, dayNumber(localISO()), null)
     + `<p class="fine">Daily games only. Stats live in this browser, so a new device starts fresh.</p>`;
 }
 
@@ -756,7 +765,7 @@ const eggsFound = () => store.get(EGG_KEY) || {};
 /* Unlocks: color schemes. "by" is the achievement that opens it ("hoss" = Certified Hoss, anything else = that Easter egg).
    The scheme itself is the data-egg CSS theme of the same id; the default has no theme. */
 const SKINS = [
-  {id:"",         name:"Default",     by:"hoss",     note:"The original look.",               sw:["#D8D9DC","#2F353C","#5B18EA"]},
+  {id:"",         name:"Default",     by:"hoss",     note:"The original look.",               sw:["#BDC1C6","#2F353C","#5B18EA"]},
   {id:"taz",      name:"Taz",         by:"taz",      note:"Orange and black.",                sw:["#F07A1A","#0B0B0B","#FF9B4A"]},
   {id:"deadlock", name:"Deadlock",    by:"deadlock", note:"Orange, black and white. No stretching.", sw:["#F26A1B","#0B0B0B","#FFFFFF"]},
   {id:"nacho",    name:"Nacho Libre", by:"nacho",    note:"Blue and red.",                    sw:["#5B8DEF","#C8102E","#FFFFFF"]},
@@ -849,19 +858,39 @@ function renderAwardsPanel(){
   const p = $("#awardsPanel"); if(p.hidden) return;
   const seg = (v, label) => `<button type="button" data-view="${v}" aria-pressed="${awardsView === v}">${label}</button>`;
   if(!["ach", "eggs", "unlocks"].includes(awardsView)) awardsView = "ach";
-  p.innerHTML = `<div class="seg" role="group" aria-label="Awards view">${seg("ach", "Achievements")}${seg("eggs", "Easter Eggs")}${seg("unlocks", "Unlocks")}</div>`
+  p.innerHTML = pageHead("Awards") + `<div class="seg" role="group" aria-label="Awards view">${seg("ach", "Achievements")}${seg("eggs", "Easter Eggs")}${seg("unlocks", "Unlocks")}</div>`
     + (awardsView === "unlocks" ? unlocksHTML() : awardsView === "eggs" ? eggsHTML() : achHTML());
 }
-function openPanel(which){                                // "stats", "awards" or nothing
+/* Stats and Awards are their own "page": the game hides while one is open (no URL change).
+   The phone/browser back button closes it, and closing puts you back where you were on the game. */
+let gameScroll = 0;
+try{ history.scrollRestoration = "manual"; }catch(e){}
+function openPanel(which, fromHistory){                   // "stats", "awards" or "" (back to the game)
+  const r = document.documentElement, was = r.dataset.page || "";
+  if(which === was) return;
+  try{ if(!which && !fromHistory && history.state && history.state.trPage){ history.back(); return; } }catch(e){}   // popstate does the close
+  if(!was) gameScroll = scrollY;
   $("#statsPanel").hidden = which !== "stats"; $("#awardsPanel").hidden = which !== "awards";
   $("#statsBtn").setAttribute("aria-expanded", String(which === "stats"));
   $("#awardsBtn").setAttribute("aria-expanded", String(which === "awards"));
+  if(which) r.dataset.page = which; else delete r.dataset.page;
   renderStatsPanel(); renderAwardsPanel();
+  if(!fromHistory){
+    try{
+      if(which && !was) history.pushState({trPage: which}, "");
+      else if(which) history.replaceState({trPage: which}, "");
+    }catch(e){}
+  }
+  const y = which ? 0 : gameScroll;
+  window.scrollTo(0, y); requestAnimationFrame(() => window.scrollTo(0, y));
 }
+function closePage(){ if(document.documentElement.dataset.page) openPanel(""); }
+addEventListener("popstate", e => openPanel((e.state && e.state.trPage) || "", true));
+addEventListener("keydown", e => { if(e.key === "Escape") closePage(); });
+document.addEventListener("click", e => { if(e.target.closest("[data-close]")) closePage(); });
 function openAwards(view){
   if(view) awardsView = view;
-  openPanel("awards");
-  $("#awardsPanel").scrollIntoView({behavior: "smooth", block: "start"});
+  if(document.documentElement.dataset.page === "awards") renderAwardsPanel(); else openPanel("awards");
 }
 
 // Egg card: the banner at the top of the page. Text size follows length (a few words big, a sentence medium, a promo small).
@@ -964,8 +993,8 @@ $("#opts").addEventListener("click", e => {
 $("#guessBtn").addEventListener("click", () => submit(input.value));
 $("#eggBanner").addEventListener("click", eggOff);
 $("#startBtn").addEventListener("click", () => { S.started = true; save(); render(); input.focus(); });
-$("#mDaily").addEventListener("click", () => { if(S.mode !== "daily"){ loadDaily(); hint(DEFAULT_HINT); render(); } });
-$("#mFree").addEventListener("click", () => { if(S.mode !== "free"){ loadFree(); hint(DEFAULT_HINT); render(); input.focus(); } });
+$("#mDaily").addEventListener("click", () => { closePage(); if(S.mode !== "daily"){ loadDaily(); hint(DEFAULT_HINT); render(); } });
+$("#mFree").addEventListener("click", () => { closePage(); if(S.mode !== "free"){ loadFree(); hint(DEFAULT_HINT); render(); input.focus(); } });
 $("#againBtn").addEventListener("click", () => { loadFree(); hint(DEFAULT_HINT); render(); input.focus(); });
 function buildPick(){
   const inMode = titlesIn(gm);
@@ -989,8 +1018,8 @@ function copy(text, ok){
 }
 $("#copyBtn").addEventListener("click", () => copy(shareText(false), "Copied"));
 $("#discordBtn").addEventListener("click", () => copy(shareText(true), "Copied with the answer hidden"));
-$("#statsBtn").addEventListener("click", () => openPanel($("#statsPanel").hidden ? "stats" : ""));
-$("#awardsBtn").addEventListener("click", () => openPanel($("#awardsPanel").hidden ? "awards" : ""));
+$("#statsBtn").addEventListener("click", () => $("#statsPanel").hidden ? openPanel("stats") : closePage());
+$("#awardsBtn").addEventListener("click", () => $("#awardsPanel").hidden ? openPanel("awards") : closePage());
 $("#awardsPanel").addEventListener("click", e => {
   const v = e.target.closest("button[data-view]"), k = e.target.closest("button[data-skin]");
   if(v){ awardsView = v.dataset.view; renderAwardsPanel(); }
