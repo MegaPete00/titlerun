@@ -218,8 +218,9 @@ footer p{margin:0}
 .toast b{font-family:var(--f-display);font-weight:900;font-size:1.7rem;line-height:1;text-transform:uppercase}
 .toast small{font-size:.8rem;opacity:.8}
 /* Awards: segmented switch, roster cards, color scheme cards */
-.seg{display:flex;gap:6px}
-.seg button{border:0;border-radius:8px;padding:8px 14px;cursor:pointer;background:var(--well);color:var(--muted);font-family:var(--f-label);font-weight:700;font-size:.88rem;letter-spacing:.1em;text-transform:uppercase}
+.seg{display:flex;gap:6px;min-width:0}
+.seg button{flex:1 1 auto;min-width:0;line-height:1.1}
+.seg button{border:0;border-radius:8px;padding:8px 6px;cursor:pointer;background:var(--well);color:var(--muted);font-family:var(--f-label);font-weight:700;font-size:clamp(.74rem, 3.3vw, .88rem);letter-spacing:.07em;text-transform:uppercase}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .roster{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ach,.skin{display:grid;gap:5px;align-content:start;justify-items:start;padding:12px;border-radius:12px;background:var(--canvas);box-shadow:inset 0 0 0 1px var(--line);min-width:0}
@@ -762,7 +763,7 @@ const SKINS = [
   {id:"angle",    name:"Kurt Angle",  by:"angle",    note:"Red, white and blue.",             sw:["#F3F5FA","#0B1F4D","#C8102E"]},
 ];
 const skinOpen = s => s.by === "hoss" ? !!achFound().hoss : !!eggsFound()[s.by];
-let tempEgg = "", skin = "", awardsView = "roster";
+let tempEgg = "", skin = "", awardsView = "ach";
 function applyLook(){                       // the Egg Card's theme wins over your saved color scheme until it clears
   const t = tempEgg || skin, r = document.documentElement;
   if(t) r.dataset.egg = t; else delete r.dataset.egg;
@@ -776,14 +777,14 @@ function setSkin(id){
 const toastEl = document.createElement("div");
 toastEl.className = "toast"; toastEl.setAttribute("role", "status");
 document.documentElement.appendChild(toastEl);           // outside <body>, so the long-way stretch can't move it
-let toastTimer = 0, toastQ = [], toastBusy = false, toastView = "roster";
+let toastTimer = 0, toastQ = [], toastBusy = false, toastView = "ach";
 function toast(kicker, title, line, view){               // several can fire from one guess, so they queue
   toastQ.push({kicker, title, line, view}); if(!toastBusy) nextToast();
 }
 function nextToast(){
   const t = toastQ.shift();
   if(!t){ toastBusy = false; toastEl.classList.remove("show"); return; }
-  toastBusy = true; toastView = t.view || "roster";
+  toastBusy = true; toastView = t.view || "ach";
   toastEl.innerHTML = `<span>${esc(t.kicker)}</span><b>${esc(t.title)}</b><small>${esc(t.line)}</small>`;
   toastEl.classList.remove("show"); void toastEl.offsetWidth; toastEl.classList.add("show");
   clearTimeout(toastTimer); toastTimer = setTimeout(nextToast, 4500);
@@ -797,7 +798,7 @@ function earn(id){
   f[id] = Date.now(); store.set(ACH_KEY, f);
   const a = ACH.find(x => x.id === id), n = ACH.filter(x => f[x.id]).length;
   const unlock = id === "hoss" && skin;                   // Certified Hoss is the way back to the default colors
-  toast("Achievement unlocked", a.title, unlock ? "Default colors unlocked. Tap to see them." : `${n} of ${ACH.length} earned. Tap to see them.`, unlock ? "unlocks" : "roster");
+  toast("Achievement unlocked", a.title, unlock ? "Default colors unlocked. Tap to see them." : `${n} of ${ACH.length} earned. Tap to see them.`, unlock ? "unlocks" : "ach");
   renderAwardsPanel();
 }
 function afterWin(){                                      // runs once per winning guess, daily or free play
@@ -815,19 +816,22 @@ function foundEgg(id){
   if(!id || f[id]) return;
   f[id] = Date.now(); store.set(EGG_KEY, f);
   const n = ACHIEVEMENTS.filter(a => f[a.id]).length, a = ACHIEVEMENTS.find(x => x.id === id), opens = SKINS.some(s => s.by === id);
-  toast("Easter egg found", a ? a.title : id, opens ? "New color scheme unlocked. Tap to see it." : `${n} of ${ACHIEVEMENTS.length} found. Tap to see the rest.`, opens ? "unlocks" : "roster");
+  toast("Easter egg found", a ? a.title : id, opens ? "New color scheme unlocked. Tap to see it." : `${n} of ${ACHIEVEMENTS.length} found. Tap to see the rest.`, opens ? "unlocks" : "eggs");
   renderAwardsPanel();
 }
 
 /* Awards panel: a roster of cards, plus the Unlocks screen */
 const shortDate = ts => new Date(ts).toLocaleDateString("en-US", {month:"short", day:"numeric"});
-function rosterHTML(){
-  const af = achFound(), ef = eggsFound();
-  const n = ACH.filter(a => af[a.id]).length, ne = ACHIEVEMENTS.filter(a => ef[a.id]).length;
-  const card = (a, i, ts, egg) => `<li class="ach ${ts ? "got" : "locked"}"><span class="no">No. ${pad(i + 1)}</span><i class="emb" aria-hidden="true">${ts ? (egg ? "!" : a.g) : "?"}</i>`
-    + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
-  return `<h3>Achievements · ${n} of ${ACH.length}</h3><ul class="roster">${ACH.map((a, i) => card(a, i, af[a.id], false)).join("")}</ul>`
-    + (ne ? `<h3>Easter eggs · ${ne} of ${ACHIEVEMENTS.length} found</h3><ul class="roster">${ACHIEVEMENTS.map((a, i) => card(a, i, ef[a.id], true)).join("")}</ul>` : "");
+const awardCard = (a, i, ts, egg) => `<li class="ach ${ts ? "got" : "locked"}"><span class="no">No. ${pad(i + 1)}</span><i class="emb" aria-hidden="true">${ts ? (egg ? "!" : a.g) : "?"}</i>`
+  + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
+function achHTML(){
+  const af = achFound(), n = ACH.filter(a => af[a.id]).length;
+  return `<h3>${n} of ${ACH.length} earned</h3><ul class="roster">${ACH.map((a, i) => awardCard(a, i, af[a.id], false)).join("")}</ul>`;
+}
+function eggsHTML(){
+  const ef = eggsFound(), n = ACHIEVEMENTS.filter(a => ef[a.id]).length;
+  return `<h3>${n} of ${ACHIEVEMENTS.length} found</h3><ul class="roster">${ACHIEVEMENTS.map((a, i) => awardCard(a, i, ef[a.id], true)).join("")}</ul>`
+    + `<p class="fine">Each title is your only hint.</p>`;
 }
 function unlocksHTML(){
   const lockedEggSkins = SKINS.some(s => s.by !== "hoss" && !skinOpen(s));
@@ -844,8 +848,9 @@ function unlocksHTML(){
 function renderAwardsPanel(){
   const p = $("#awardsPanel"); if(p.hidden) return;
   const seg = (v, label) => `<button type="button" data-view="${v}" aria-pressed="${awardsView === v}">${label}</button>`;
-  p.innerHTML = `<div class="seg" role="group" aria-label="Awards view">${seg("roster", "Roster")}${seg("unlocks", "Unlocks")}</div>`
-    + (awardsView === "unlocks" ? unlocksHTML() : rosterHTML());
+  if(!["ach", "eggs", "unlocks"].includes(awardsView)) awardsView = "ach";
+  p.innerHTML = `<div class="seg" role="group" aria-label="Awards view">${seg("ach", "Achievements")}${seg("eggs", "Easter Eggs")}${seg("unlocks", "Unlocks")}</div>`
+    + (awardsView === "unlocks" ? unlocksHTML() : awardsView === "eggs" ? eggsHTML() : achHTML());
 }
 function openPanel(which){                                // "stats", "awards" or nothing
   $("#statsPanel").hidden = which !== "stats"; $("#awardsPanel").hidden = which !== "awards";
@@ -898,7 +903,7 @@ const GUESS_EGGS = {
   "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
   // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
   "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
-  "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over heard, made the friggin' color scheme change"},
+  "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over here, made the friggin' color scheme change"},
   "Luke Harper": {id:"brodie", card:"It's House of Hoss and you know what that means"},          // also Mr. Brodie Lee
   '"Stone Cold" Steve Austin': {id:"austin", size:"big", card:"WHAT?", placeholder:"What?"},
   "Scott Steiner": {id:"steiner", lead:"You know they say that", title:"all men are created equal,", card:`but you look at me and you look at Samoa Joe and you can see that statement is not true. See, normally if you go one on one with another wrestler, you got a 50/50 chance of winning. But I'm a genetic freak and I'm not normal! So you got a 25%, AT BEST, at beat me. Then you add Kurt Angle to the mix, your chances of winning drastic go down. See the 3 way at Sacrifice, you got a 33 1/3 chance of winning, but I, I got a 66 and 2/3 chance of winning, because Kurt Angle KNOWS he can't beat me and he's not even gonna try!
