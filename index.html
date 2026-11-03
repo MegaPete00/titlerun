@@ -21,7 +21,7 @@
   --rope-r:#5B18EA; --rope-w:#FFFFFF; --rope-b:#0E0F12;
   --plate-a:#F4F5F7; --plate-b:#C3C7CD; --plate-c:#7D848D; --plate-edge:#3D444C; --plate-ink:#0E0F12;
   --plate-shine:rgba(255,255,255,.6); --plate-pip:rgba(255,255,255,.5);
-  --accent:#5B18EA; --on-accent:#FFFFFF;
+  --accent:#5B18EA; --on-accent:#FFFFFF; --toast-hi:#A57DFF;
   --hit:#1B7F46; --miss:#C8232F; --near:#B88412; --near-pip:#5A3A00; --on-hit:#FFFFFF; --focus:#5B18EA; --shadow:rgba(14,15,18,.18);
   --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
@@ -35,7 +35,7 @@
     --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A;
     --plate-a:#DDE0E4; --plate-b:#A6ABB2; --plate-c:#646B74; --plate-edge:#30363D; --plate-ink:#0E0F12;
     --plate-shine:rgba(255,255,255,.45); --plate-pip:rgba(255,255,255,.35);
-    --accent:#8F5CFF; --on-accent:#0E0F12;
+    --accent:#8F5CFF; --on-accent:#0E0F12; --toast-hi:#5B18EA;
     --hit:#3BB273; --miss:#E5555E; --near:#DDAA3E; --near-pip:#4A3000; --on-hit:#06170D; --focus:#A57DFF; --shadow:rgba(0,0,0,.5);
     color-scheme:dark;
   }
@@ -46,7 +46,7 @@
   --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A;
   --plate-a:#DDE0E4; --plate-b:#A6ABB2; --plate-c:#646B74; --plate-edge:#30363D; --plate-ink:#0E0F12;
   --plate-shine:rgba(255,255,255,.45); --plate-pip:rgba(255,255,255,.35);
-  --accent:#8F5CFF; --on-accent:#0E0F12;
+  --accent:#8F5CFF; --on-accent:#0E0F12; --toast-hi:#5B18EA;
   --hit:#3BB273; --miss:#E5555E; --near:#DDAA3E; --near-pip:#4A3000; --on-hit:#06170D; --focus:#A57DFF; --shadow:rgba(0,0,0,.5);
   color-scheme:dark;
 }
@@ -200,6 +200,51 @@ footer p{margin:0}
 .egg-banner{font-family:var(--f-display);font-weight:900;font-size:clamp(2.4rem, 12vw, 3.6rem);line-height:.9;text-transform:uppercase;text-align:center;
   padding:16px 10px 14px;border-radius:12px;background:var(--ink);color:var(--canvas);cursor:pointer;animation:eggIn .45s ease-out 1}
 .egg-banner small{display:block;margin-top:8px;font-family:var(--f-label);font-weight:600;font-size:.72rem;letter-spacing:.16em;opacity:.7}
+.egg-banner p{margin:0}
+.egg-banner .sp{display:block;height:.5em}
+.egg-banner .quiet{font-family:var(--f-body);font-weight:500;font-size:.8rem;line-height:1.2;text-transform:none;letter-spacing:.02em;opacity:.7}
+.egg-banner.mid{font-size:clamp(1.6rem, 7vw, 2.2rem);line-height:1}
+.egg-banner.long{font-family:var(--f-body);font-weight:600;font-size:1rem;line-height:1.5;text-transform:none;text-align:left;padding:18px 18px 14px;display:grid;gap:10px}
+.egg-banner.long small{text-align:center}
+.egg-head{display:grid;justify-items:center;text-align:center;gap:2px;margin-bottom:2px}
+.egg-lead{font-family:var(--f-label);font-weight:700;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.egg-title{font-family:var(--f-display);font-weight:900;font-size:clamp(2.1rem, 10vw, 3rem);line-height:.9;text-transform:uppercase;text-wrap:balance}
+.toast{position:fixed;left:50%;bottom:max(16px, env(safe-area-inset-bottom, 0px));z-index:50;display:grid;gap:3px;justify-items:center;text-align:center;
+  width:max-content;max-width:calc(100vw - 32px);min-width:min(20rem, calc(100vw - 32px));padding:12px 20px 11px;border-radius:12px;cursor:pointer;
+  background:var(--ink);color:var(--canvas);box-shadow:0 12px 32px var(--shadow);font-family:var(--f-body);
+  transform:translate(-50%, 160%);opacity:0;visibility:hidden;transition:transform .4s cubic-bezier(.2,.9,.3,1.15),opacity .3s,visibility .4s}
+.toast.show{transform:translate(-50%, 0);opacity:1;visibility:visible}
+.toast span{font-family:var(--f-label);font-weight:700;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--toast-hi)}
+.toast b{font-family:var(--f-display);font-weight:900;font-size:1.7rem;line-height:1;text-transform:uppercase}
+.toast small{font-size:.8rem;opacity:.8}
+/* Awards: segmented switch, roster cards, color scheme cards */
+.seg{display:flex;gap:6px}
+.seg button{border:0;border-radius:8px;padding:8px 14px;cursor:pointer;background:var(--well);color:var(--muted);font-family:var(--f-label);font-weight:700;font-size:.88rem;letter-spacing:.1em;text-transform:uppercase}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.roster{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ach,.skin{display:grid;gap:5px;align-content:start;justify-items:start;padding:12px;border-radius:12px;background:var(--canvas);box-shadow:inset 0 0 0 1px var(--line);min-width:0}
+.ach .no{font-family:var(--f-label);font-weight:700;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.emb{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;margin:2px 0 3px;font-style:normal;font-family:var(--f-display);font-weight:900;font-size:1.35rem;line-height:1;
+  color:var(--plate-ink);background:linear-gradient(135deg, var(--plate-a), var(--plate-b) 55%, var(--plate-c));box-shadow:inset 0 0 0 2px var(--plate-edge), inset 0 0 0 4px var(--plate-a)}
+.ach b,.skin b{font-family:var(--f-display);font-weight:900;font-size:1.3rem;line-height:.95;text-transform:uppercase;overflow-wrap:anywhere}
+.ach .d,.skin .d{font-size:.84rem;line-height:1.3;color:var(--muted)}
+.ach .st{margin-top:auto;padding-top:4px;font-family:var(--f-label);font-weight:700;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--hit)}
+.ach.locked,.skin.locked{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)}
+.ach.locked .emb{background:var(--well);color:var(--muted);box-shadow:none}
+.ach.locked b{color:var(--muted)}
+.ach.locked .st{color:var(--muted)}
+.sw{display:flex;margin:2px 0 3px}
+.sw i{display:block;width:26px;height:26px;border-radius:50%;box-shadow:0 0 0 1.5px var(--ink)}
+.sw i+i{margin-left:-8px}
+.skin.locked .sw i{background:var(--well)}
+.skin.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.skin .btn{margin-top:auto;width:100%}
+.btn.sm{padding:8px 12px;font-size:.86rem;letter-spacing:.12em}
+.egg-img{display:block;width:min(100%, 260px);aspect-ratio:4/5;object-fit:cover;margin:0 auto 10px;border-radius:10px;
+  box-shadow:0 0 0 3px var(--canvas);animation:appear 1.1s ease-out 1}
+.egg-credit{display:block;margin:-4px 0 8px;font-family:var(--f-body);font-weight:500;font-size:.68rem;letter-spacing:0;text-transform:none;opacity:.7}
+.egg-credit a{color:inherit;text-decoration:underline}
+@keyframes appear{0%{opacity:0;filter:blur(14px) brightness(2.2);transform:scale(.85)}60%{opacity:1;filter:blur(0) brightness(1.4)}100%{filter:none;transform:none}}
 @keyframes eggIn{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 :root[data-egg="deadlock"]{
   --canvas:#F26A1B; --panel:#FFFFFF; --ink:#0B0B0B; --muted:#3B2416; --line:#0B0B0B; --well:#FFE1CC;
@@ -207,13 +252,38 @@ footer p{margin:0}
   --rope-r:#F26A1B; --rope-w:#FFFFFF; --rope-b:#F26A1B;
   --plate-a:#2E2E2E; --plate-b:#0B0B0B; --plate-c:#000000; --plate-edge:#F26A1B; --plate-ink:#F26A1B;
   --plate-shine:rgba(255,255,255,.16); --plate-pip:rgba(255,255,255,.22); --near-pip:#FFFFFF;
-  --accent:#0B0B0B; --on-accent:#FFFFFF; --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); color-scheme:light;
+  --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); --accent:#0B0B0B; --on-accent:#FFFFFF; --toast-hi:#F26A1B; color-scheme:light;
 }
 :root[data-egg="deadlock"] .field input{background:#FFFFFF}
+:root[data-egg="taz"]{
+  --canvas:#F07A1A; --panel:#FF9B4A; --ink:#0B0B0B; --muted:#2E1A0A; --line:#0B0B0B; --well:#FFB676;
+  --bar:#0B0B0B; --bar-ink:#F07A1A; --bar-muted:#F07A1A; --bar-line:#F07A1A;
+  --rope-r:#F07A1A; --rope-w:#0B0B0B; --rope-b:#F07A1A;
+  --plate-a:#2E2E2E; --plate-b:#0B0B0B; --plate-c:#000000; --plate-edge:#F07A1A; --plate-ink:#F07A1A;
+  --plate-shine:rgba(255,140,40,.18); --plate-pip:rgba(255,140,40,.25); --near-pip:#F07A1A;
+  --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); --accent:#0B0B0B; --on-accent:#F07A1A; --toast-hi:#F07A1A; color-scheme:light;
+}
+:root[data-egg="taz"] .field input{background:#FFB676}
+:root[data-egg="nacho"]{
+  --canvas:#5B8DEF; --panel:#FFFFFF; --ink:#0A1A3F; --muted:#14295C; --line:#0A1A3F; --well:#D6E4FF;
+  --bar:#C8102E; --bar-ink:#FFFFFF; --bar-muted:#FFD3DA; --bar-line:#FFFFFF;
+  --rope-r:#FFFFFF; --rope-w:#1D4FC4; --rope-b:#FFFFFF;
+  --plate-a:#EF3B47; --plate-b:#C8102E; --plate-c:#7E0A18; --plate-edge:#0A1A3F; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.3); --plate-pip:rgba(255,255,255,.35); --near-pip:#0A1A3F;
+  --focus:#0A1A3F; --shadow:rgba(10,26,63,.35); --accent:#C8102E; --on-accent:#FFFFFF; --toast-hi:#5B8DEF; color-scheme:light;
+}
+:root[data-egg="angle"]{
+  --canvas:#F3F5FA; --panel:#FFFFFF; --ink:#0B1F4D; --muted:#3D4A6B; --line:#C8102E; --well:#E2E7F3;
+  --bar:#0B1F4D; --bar-ink:#FFFFFF; --bar-muted:#AFC0E8; --bar-line:#C8102E;
+  --rope-r:#C8102E; --rope-w:#FFFFFF; --rope-b:#C8102E;
+  --plate-a:#2B4C9C; --plate-b:#0B1F4D; --plate-c:#06112B; --plate-edge:#C8102E; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.25); --plate-pip:rgba(255,255,255,.3); --near-pip:#FFFFFF;
+  --focus:#C8102E; --shadow:rgba(11,31,77,.25); --accent:#C8102E; --on-accent:#FFFFFF; --toast-hi:#FF6B7D; color-scheme:light;
+}
 /* The long way: the whole page stretches tall. Transforms still count toward scroll height, so you can scroll all of it. */
 body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
-:root[data-egg="deadlock"] body{transform:scaleY(1.75);transform-origin:50% 0}
-@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd,.egg-banner{animation:none} body{transition:none} }
+:root[data-long] body{transform:scaleY(1.75);transform-origin:50% 0}
+@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd,.egg-banner{animation:none} body,.toast{transition:none} }
 </style>
 
 </head>
@@ -227,6 +297,7 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
         <button type="button" id="mFree" aria-pressed="false">Free play</button>
       </div>
       <button type="button" class="statbtn" id="statsBtn" aria-expanded="false" aria-controls="statsPanel">Stats</button>
+      <button type="button" class="statbtn" id="awardsBtn" aria-expanded="false" aria-controls="awardsPanel">Awards</button>
     </div>
   </div>
   <div class="ropes" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -238,6 +309,7 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
   <div class="meta"><span id="metaL">Daily #1</span><span id="metaR"></span><select id="pick" aria-label="Titles in free play" hidden></select></div>
 
   <section class="card stats" id="statsPanel" hidden aria-live="polite"></section>
+  <section class="card stats" id="awardsPanel" hidden></section>
 
   <section class="plate" id="plate" aria-live="polite">
     <div class="eyebrow" id="tier">The belt</div>
@@ -524,7 +596,7 @@ function render(){
   }).join("");
 
   if(over) renderResult();
-  renderStatsPanel();
+  renderStatsPanel(); renderAwardsPanel();
   const inMode = titlesIn(gm);
   const counts = inMode.map(t => `${t.short} (${poolFor(gm).filter(x => x.t === t.key).length})`).join(", ");
   $("#foot").textContent = `Prototype. ${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia, updated ${D.version}. Current reigns are left out.`;
@@ -639,7 +711,9 @@ function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.
 /* Easter eggs: type one of these names in the guess box. Doesn't use a guess. Tap the banner to switch it off. */
 // Each person shows up in the autocomplete like a real champion (typing "John" or "Tony" finds them). Picking one never uses a guess.
 const EGGS = [
-  {key:"deadlock", banner:"The long way", people:[
+  {id:"nacho", theme:"nacho", banner:"Get that corn out of my face!", people:[{name:"Nacho Libre", aka:["Ignacio"]}]},
+  {id:"jr", banner:"BAH GAWD ALMIGHTY", people:[{name:"Jim Ross", aka:["Good Ol' JR","Good Ole JR"]}]},
+  {id:"deadlock", theme:"deadlock", banner:"The long way", people:[
     {name:"Anthony Douglas", aka:["TonyPizzaGuy","Tony Pizza Guy"]},
     {name:"James Darnell",   aka:["Pulse","CMPuls3","CMPulse","CMPuls","CM Puls3","CM Pulse"]},   // spacing and case don't matter
     {name:"John Blud",       aka:["Jawnny"]}]},
@@ -649,17 +723,197 @@ EGGS.forEach(e => e.people.forEach(p => {
   EGG_NAMES.push(p.name); TERMS[p.name] = p.aka;
   [p.name, ...p.aka].forEach(n => { EGG_BY[compact(n)] = e; });
 }));
+/* Achievements. Two kinds, both saved in this browser: regular ones (tr-ach) and Easter eggs (tr-eggs).
+   Regular ones show their goal. For eggs the title is the only hint, and the egg list stays hidden until you find your first one. */
+const ACH = [
+  {id:"hoss",   g:"★",  title:"Certified Hoss",  desc:"Get your first Title Run right."},
+  {id:"squash", g:"1",  title:"Squash Match",    desc:"Win a Title Run with your first guess."},
+  {id:"count",  g:"5",  title:"Beat the Count",  desc:"Win a Title Run with your last guess."},
+  {id:"three",  g:"3",  title:"Three Count",     desc:"Win 3 dailies in a row."},
+  {id:"iron",   g:"7",  title:"Iron Man",        desc:"Win 7 dailies in a row."},
+  {id:"mark",   g:"M",  title:"Mark Out",        desc:"Win a Title Run in Mark mode."},
+  {id:"smart",  g:"S",  title:"Smart Mark",      desc:"Win a Title Run in Smart Mark mode."},
+  {id:"vet",    g:"25", title:"Hall of Famer",   desc:"Win 25 Title Runs."},
+];
+const ACHIEVEMENTS = [      // Easter eggs. The title doubles as the hint.
+  {id:"deadlock", title:"The Long Way"},
+  {id:"taz",      title:"Color Scheme Jones"},
+  {id:"brodie",   title:"You Know What That Means"},
+  {id:"austin",   title:"What?"},
+  {id:"steiner",  title:"Steiner Math"},
+  {id:"nacho",    title:"Nacho Libre"},
+  {id:"angle",    title:"Broken Freaking Neck"},
+  {id:"hendry",   title:"Say His Name"},
+  {id:"knight",   title:"Yeah!"},
+  {id:"kennedy",  title:"Kennedy... Kennedy"},
+  {id:"jr",       title:"Bah Gawd"},
+];
+const ACH_KEY = "tr-ach", EGG_KEY = "tr-eggs", WINS_KEY = "tr-wins", SKIN_KEY = "tr-skin";
+const achFound = () => store.get(ACH_KEY) || {};
+const eggsFound = () => store.get(EGG_KEY) || {};
+
+/* Unlocks: color schemes. "by" is the achievement that opens it ("hoss" = Certified Hoss, anything else = that Easter egg).
+   The scheme itself is the data-egg CSS theme of the same id; the default has no theme. */
+const SKINS = [
+  {id:"",         name:"Default",     by:"hoss",     note:"The original look.",               sw:["#D8D9DC","#2F353C","#5B18EA"]},
+  {id:"taz",      name:"Taz",         by:"taz",      note:"Orange and black.",                sw:["#F07A1A","#0B0B0B","#FF9B4A"]},
+  {id:"deadlock", name:"Deadlock",    by:"deadlock", note:"Orange, black and white. No stretching.", sw:["#F26A1B","#0B0B0B","#FFFFFF"]},
+  {id:"nacho",    name:"Nacho Libre", by:"nacho",    note:"Blue and red.",                    sw:["#5B8DEF","#C8102E","#FFFFFF"]},
+  {id:"angle",    name:"Kurt Angle",  by:"angle",    note:"Red, white and blue.",             sw:["#F3F5FA","#0B1F4D","#C8102E"]},
+];
+const skinOpen = s => s.by === "hoss" ? !!achFound().hoss : !!eggsFound()[s.by];
+let tempEgg = "", skin = "", awardsView = "roster";
+function applyLook(){                       // the Egg Card's theme wins over your saved color scheme until it clears
+  const t = tempEgg || skin, r = document.documentElement;
+  if(t) r.dataset.egg = t; else delete r.dataset.egg;
+  if(tempEgg === "deadlock") r.dataset.long = "1"; else delete r.dataset.long;    // the stretch belongs to the Egg Card, not the saved scheme
+}
+function setSkin(id){
+  const s = SKINS.find(x => x.id === id); if(!s || !skinOpen(s)) return;
+  skin = id; store.set(SKIN_KEY, id); tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); renderAwardsPanel();
+}
+
+const toastEl = document.createElement("div");
+toastEl.className = "toast"; toastEl.setAttribute("role", "status");
+document.documentElement.appendChild(toastEl);           // outside <body>, so the long-way stretch can't move it
+let toastTimer = 0, toastQ = [], toastBusy = false, toastView = "roster";
+function toast(kicker, title, line, view){               // several can fire from one guess, so they queue
+  toastQ.push({kicker, title, line, view}); if(!toastBusy) nextToast();
+}
+function nextToast(){
+  const t = toastQ.shift();
+  if(!t){ toastBusy = false; toastEl.classList.remove("show"); return; }
+  toastBusy = true; toastView = t.view || "roster";
+  toastEl.innerHTML = `<span>${esc(t.kicker)}</span><b>${esc(t.title)}</b><small>${esc(t.line)}</small>`;
+  toastEl.classList.remove("show"); void toastEl.offsetWidth; toastEl.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(nextToast, 4500);
+}
+toastEl.addEventListener("click", () => {
+  clearTimeout(toastTimer); toastQ = []; toastBusy = false; toastEl.classList.remove("show");
+  openAwards(toastView);
+});
+function earn(id){
+  const f = achFound(); if(f[id]) return;
+  f[id] = Date.now(); store.set(ACH_KEY, f);
+  const a = ACH.find(x => x.id === id), n = ACH.filter(x => f[x.id]).length;
+  const unlock = id === "hoss" && skin;                   // Certified Hoss is the way back to the default colors
+  toast("Achievement unlocked", a.title, unlock ? "Default colors unlocked. Tap to see them." : `${n} of ${ACH.length} earned. Tap to see them.`, unlock ? "unlocks" : "roster");
+  renderAwardsPanel();
+}
+function afterWin(){                                      // runs once per winning guess, daily or free play
+  const w = (store.get(WINS_KEY) || 0) + 1; store.set(WINS_KEY, w);
+  earn("hoss");
+  if(S.guesses.length === 1) earn("squash");
+  if(S.guesses.length === MAX) earn("count");
+  if(gm === "mark") earn("mark");
+  if(gm === "smart") earn("smart");
+  if(S.mode === "daily"){ const st = getStats(gm); if(st.streak >= 3) earn("three"); if(st.streak >= 7) earn("iron"); }
+  if(w >= 25) earn("vet");
+}
+function foundEgg(id){
+  const f = eggsFound();
+  if(!id || f[id]) return;
+  f[id] = Date.now(); store.set(EGG_KEY, f);
+  const n = ACHIEVEMENTS.filter(a => f[a.id]).length, a = ACHIEVEMENTS.find(x => x.id === id), opens = SKINS.some(s => s.by === id);
+  toast("Easter egg found", a ? a.title : id, opens ? "New color scheme unlocked. Tap to see it." : `${n} of ${ACHIEVEMENTS.length} found. Tap to see the rest.`, opens ? "unlocks" : "roster");
+  renderAwardsPanel();
+}
+
+/* Awards panel: a roster of cards, plus the Unlocks screen */
+const shortDate = ts => new Date(ts).toLocaleDateString("en-US", {month:"short", day:"numeric"});
+function rosterHTML(){
+  const af = achFound(), ef = eggsFound();
+  const n = ACH.filter(a => af[a.id]).length, ne = ACHIEVEMENTS.filter(a => ef[a.id]).length;
+  const card = (a, i, ts, egg) => `<li class="ach ${ts ? "got" : "locked"}"><span class="no">No. ${pad(i + 1)}</span><i class="emb" aria-hidden="true">${ts ? (egg ? "!" : a.g) : "?"}</i>`
+    + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
+  return `<h3>Achievements · ${n} of ${ACH.length}</h3><ul class="roster">${ACH.map((a, i) => card(a, i, af[a.id], false)).join("")}</ul>`
+    + (ne ? `<h3>Easter eggs · ${ne} of ${ACHIEVEMENTS.length} found</h3><ul class="roster">${ACHIEVEMENTS.map((a, i) => card(a, i, ef[a.id], true)).join("")}</ul>` : "");
+}
+function unlocksHTML(){
+  const lockedEggSkins = SKINS.some(s => s.by !== "hoss" && !skinOpen(s));
+  const card = s => {
+    const open = skinOpen(s), on = skin === s.id;
+    return `<li class="skin${on ? " on" : ""}${open || on ? "" : " locked"}"><span class="sw" aria-hidden="true">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</span>`
+      + `<b>${esc(s.name)}</b><span class="d">${open || on ? esc(s.note) : "Win a Title Run to unlock."}</span>`
+      + `<button type="button" class="btn alt sm" data-skin="${esc(s.id)}"${open && !on ? "" : " disabled"}>${on ? "In use" : open ? "Use" : "Locked"}</button></li>`;
+  };
+  const mystery = lockedEggSkins ? `<li class="skin locked"><span class="sw" aria-hidden="true"><i></i><i></i><i></i></span><b>???</b><span class="d">More color schemes are out there.</span></li>` : "";
+  return `<h3>Color schemes</h3><ul class="roster">${SKINS.filter(s => s.by === "hoss" || skinOpen(s)).map(card).join("")}${mystery}</ul>`
+    + `<p class="fine">Pick one and it sticks, on this device. Once you pick something else, getting back to Default takes a Certified Hoss.</p>`;
+}
+function renderAwardsPanel(){
+  const p = $("#awardsPanel"); if(p.hidden) return;
+  const seg = (v, label) => `<button type="button" data-view="${v}" aria-pressed="${awardsView === v}">${label}</button>`;
+  p.innerHTML = `<div class="seg" role="group" aria-label="Awards view">${seg("roster", "Roster")}${seg("unlocks", "Unlocks")}</div>`
+    + (awardsView === "unlocks" ? unlocksHTML() : rosterHTML());
+}
+function openPanel(which){                                // "stats", "awards" or nothing
+  $("#statsPanel").hidden = which !== "stats"; $("#awardsPanel").hidden = which !== "awards";
+  $("#statsBtn").setAttribute("aria-expanded", String(which === "stats"));
+  $("#awardsBtn").setAttribute("aria-expanded", String(which === "awards"));
+  renderStatsPanel(); renderAwardsPanel();
+}
+function openAwards(view){
+  if(view) awardsView = view;
+  openPanel("awards");
+  $("#awardsPanel").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+// Egg card: the banner at the top of the page. Text size follows length (a few words big, a sentence medium, a promo small).
+// Optional lead + title put a small kicker and a big headline above the body text.
+function showEgg({id, theme, card, lead, title, img, size}){
+  if(theme){ tempEgg = theme; applyLook(); }
+  if(card || title || img){
+    const b = $("#eggBanner");
+    b.hidden = true; void b.offsetWidth;                // restart the pop-in if it's already showing
+    const len = (card || "").length;
+    b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "");
+    b.innerHTML = (img ? `<img class="egg-img" src="${esc(img.src)}" alt="${esc(img.alt)}">` + (img.credit ? `<span class="egg-credit">${img.credit}</span>` : "") : "")
+      + (title ? `<div class="egg-head">${lead ? `<span class="egg-lead">${esc(lead)}</span>` : ""}<span class="egg-title">${esc(title)}</span></div>` : "")
+      + (card || "").trim().split("\n").map(l => { l = l.trim(); return !l ? `<i class="sp"></i>` : l[0] === "~" ? `<p class="quiet">${esc(l.slice(1).trim())}</p>` : `<p>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
+      + "<small>Tap to go back</small>";
+    const im = b.querySelector(".egg-img");               // no photo uploaded yet: drop the slot, keep the text
+    if(im) im.addEventListener("error", () => { im.remove(); const c = b.querySelector(".egg-credit"); if(c) c.remove(); });
+    b.querySelectorAll(".egg-credit a").forEach(a => a.addEventListener("click", ev => ev.stopPropagation()));   // credit links open without dismissing the card
+    b.hidden = false;
+    window.scrollTo({top: 0, behavior: "smooth"});          // phones: bring the card into view so it can't be missed
+  }
+  foundEgg(id);
+}
 function egg(raw){
   const e = EGG_BY[compact(raw || "")];
   if(!e) return false;
-  document.documentElement.dataset.egg = e.key;
-  const b = $("#eggBanner");
-  b.hidden = true; void b.offsetWidth;                  // restart the pop-in if it's already showing
-  b.innerHTML = `${esc(e.banner)}<small>Tap to go back</small>`; b.hidden = false;
+  eggOff();                                               // any new guess clears the previous egg
+  showEgg({id: e.id, theme: e.theme, card: e.banner || ""});
   input.value = ""; closeOpts(); hint(DEFAULT_HINT);
+  if(e.banner) input.blur();                              // drop the phone keyboard so the card is visible
   return true;
 }
-function eggOff(){ delete document.documentElement.dataset.egg; $("#eggBanner").hidden = true; }
+function eggOff(){ tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
+
+/* Guess eggs: real guesses that count, keyed by the wrestler's canonical name (any billing triggers it). */
+const GUESS_EGGS = {
+  "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!"},                  // also Eli Drake
+  "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n\n\n\n\n\n\n\n~Kennedy"},     // also Mr. Anderson
+  "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
+  // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
+  "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
+  "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over heard, made the friggin' color scheme change"},
+  "Luke Harper": {id:"brodie", card:"It's House of Hoss and you know what that means"},          // also Mr. Brodie Lee
+  '"Stone Cold" Steve Austin': {id:"austin", size:"big", card:"WHAT?", placeholder:"What?"},
+  "Scott Steiner": {id:"steiner", lead:"You know they say that", title:"all men are created equal,", card:`but you look at me and you look at Samoa Joe and you can see that statement is not true. See, normally if you go one on one with another wrestler, you got a 50/50 chance of winning. But I'm a genetic freak and I'm not normal! So you got a 25%, AT BEST, at beat me. Then you add Kurt Angle to the mix, your chances of winning drastic go down. See the 3 way at Sacrifice, you got a 33 1/3 chance of winning, but I, I got a 66 and 2/3 chance of winning, because Kurt Angle KNOWS he can't beat me and he's not even gonna try!
+
+So Samoa Joe, you take your 33 1/3 chance, minus my 25% chance and you got an 8 1/3 chance of winning at Sacrifice. But then you take my 75% chance of winning, if we was to go one on one, and then add 66 2/3 per cents, I got 141 2/3 chance of winning at Sacrifice. See Joe, the numbers don't lie, and they spell disaster for you at Sacrifice.
+
+See, but I'm gonna break it down for all you ladies. Would you rather be with me? Or would you rather be with Joe?`},
+};
+function guessEgg(name){
+  const e = GUESS_EGGS[canon(name)];
+  if(!e) return false;
+  if(e.placeholder) input.placeholder = e.placeholder;   // sticks until the page reloads
+  showEgg(e);
+  return !!(e.card || e.title || e.img);
+}
 
 function submit(raw){
   if(done()) return;
@@ -668,15 +922,18 @@ function submit(raw){
   if(!name){ const s = search(raw || "").filter(o => !used(o.name)); if(s.length === 1) name = s[0].name; }
   if(!name){ hint(raw && raw.trim() ? "That name isn't on the list. Pick one from the dropdown." : "Type a name first.", true); return; }
   if(used(name)){ hint(`You already guessed ${name}.`, true); return; }
+  eggOff();                                               // the next real guess clears any egg card and theme
   S.guesses.push(name);
   if(!isHit(name) && !done()) fresh = misses() - 1;
   save();
   recordDaily();
+  if(won()) afterWin();
   input.value = ""; closeOpts();
   const k = kind(name);
   hint(done() ? "" : k === "near" ? `${name} held this title, but not this reign. New clue unlocked.` : `${name} never held this title. New clue unlocked.`);
   render();
-  if(!done()) input.focus();
+  if(guessEgg(name)) input.blur();                        // egg card showing: keep the keyboard down and the page at the top
+  else if(!done()) input.focus();
 }
 
 /* Wiring */
@@ -727,13 +984,19 @@ function copy(text, ok){
 }
 $("#copyBtn").addEventListener("click", () => copy(shareText(false), "Copied"));
 $("#discordBtn").addEventListener("click", () => copy(shareText(true), "Copied with the answer hidden"));
-$("#statsBtn").addEventListener("click", () => {
-  const p = $("#statsPanel"); p.hidden = !p.hidden;
-  $("#statsBtn").setAttribute("aria-expanded", String(!p.hidden)); renderStatsPanel();
+$("#statsBtn").addEventListener("click", () => openPanel($("#statsPanel").hidden ? "stats" : ""));
+$("#awardsBtn").addEventListener("click", () => openPanel($("#awardsPanel").hidden ? "awards" : ""));
+$("#awardsPanel").addEventListener("click", e => {
+  const v = e.target.closest("button[data-view]"), k = e.target.closest("button[data-skin]");
+  if(v){ awardsView = v.dataset.view; renderAwardsPanel(); }
+  else if(k && !k.disabled) setSkin(k.dataset.skin);
 });
 setInterval(updateNext, 30000);
 
 function boot(data){
+  const sv = SKINS.find(x => x.id === store.get(SKIN_KEY));            // a saved color scheme only counts if it is still unlocked
+  if(!achFound().hoss && MODES.some(([k]) => getStats(k).wins > 0)){ const f = achFound(); f.hoss = Date.now(); store.set(ACH_KEY, f); }   // wins from before achievements existed
+  skin = sv && sv.id && skinOpen(sv) ? sv.id : ""; applyLook();
   if(data && data.gm && modeOpen(data.gm)) gm = data.gm;
   buildPick();
   if(data && data.filter && (data.filter === "all" || TITLES.some(t => t.key === data.filter))) filter = data.filter;
