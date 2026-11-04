@@ -354,7 +354,7 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
       </div>
       <button type="button" class="btn" id="guessBtn">Guess</button>
     </div>
-    <div class="hint" id="hint" aria-live="polite">Pick a name from the list. Every champion in the game is in there.</div>
+    <div class="hint" id="hint" aria-live="polite">Pick a name from the list. Every champion in the game is in there, plus plenty who never won one.</div>
   </section>
 
   <section id="resultPanel" class="card" hidden aria-live="polite">
@@ -414,7 +414,8 @@ const store = {
   set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
 
-const NAMES = [...new Set(REIGNS.flatMap(r => champsOf(r).map(canon)))].sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
+// Everyone in the shared roster: every champion plus wrestlers who never held a title here (D.others, always a red miss)
+const NAMES = [...new Set([...REIGNS.flatMap(r => champsOf(r).map(canon)), ...(D.others || [])])].sort((a,b) => sortKey(a).localeCompare(sortKey(b)));
 const AKA = {};          // canonical name -> other billings
 const LOOKUP = {};       // any billing, normalized -> canonical name
 NAMES.forEach(n => { LOOKUP[norm(n)] = n; });
@@ -696,7 +697,7 @@ function showOpts(){
         const u = used(o.name), tag = u ? "Guessed" : o.via ? "aka " + o.via : "";
         return `<li role="option" id="opt${i}" data-i="${i}" class="${u ? "used" : ""}" aria-disabled="${u}" aria-selected="${i === active}">${esc(o.name)}${tag ? `<small>${esc(tag)}</small>` : ""}</li>`;
       }).join("")
-    : `<li class="none">No champion by that name</li>`;
+    : `<li class="none">No wrestler by that name</li>`;
   list.hidden = false;
   input.setAttribute("aria-expanded","true");
   if(active >= 0) input.setAttribute("aria-activedescendant", "opt" + active); else input.removeAttribute("aria-activedescendant");
@@ -715,7 +716,7 @@ function moveActive(d){
   input.setAttribute("aria-activedescendant","opt" + active);
   const el = $("#opt" + active); if(el) el.scrollIntoView({block:"nearest"});
 }
-const DEFAULT_HINT = "Pick a name from the list. Every champion in the game is in there.";
+const DEFAULT_HINT = "Pick a name from the list. Every champion in the game is in there, plus plenty who never won one.";
 function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.toggle("err", !!err); }
 
 /* Easter eggs: type one of these names in the guess box. Doesn't use a guess. Tap the banner to switch it off. */
