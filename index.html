@@ -60,6 +60,10 @@ button{font:inherit;color:inherit}
 /* Header bar and ropes */
 .bar{background:var(--bar);color:var(--bar-ink)}
 .bar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:16px 14px}
+.brand{display:grid;gap:8px;justify-items:start}
+.home{display:inline-flex;align-items:center;gap:6px;color:var(--bar-muted);text-decoration:none;font-family:var(--f-label);font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+.home img{width:18px;height:18px;display:block}
+.home:hover,.home:focus-visible{color:var(--bar-ink)}
 .mark{font-family:var(--f-display);font-weight:900;font-size:1.75rem;line-height:.85;text-transform:uppercase;letter-spacing:.01em;margin:0}
 .mark span{display:block;font-family:var(--f-label);font-weight:600;font-size:.7rem;letter-spacing:.22em;color:var(--bar-muted);margin-top:6px}
 .modes{display:flex;gap:2px;padding:3px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--bar-line)}
@@ -299,7 +303,10 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
 <body>
 <header class="bar">
   <div class="wrap bar-in">
-    <p class="mark">Title Run<span>Name the reign</span></p>
+    <div class="brand">
+      <a class="home" href="/"><img src="/icon-192.png" alt="">House of Hoss</a>
+      <p class="mark">Title Run<span>Name the reign</span></p>
+    </div>
     <div class="bar-right">
       <div class="modes" role="group" aria-label="Daily or free play">
         <button type="button" id="mDaily" aria-pressed="true">Daily</button>
@@ -610,7 +617,7 @@ function render(){
   renderStatsPanel(); renderAwardsPanel();
   const inMode = titlesIn(gm);
   const counts = inMode.map(t => `${t.short} (${poolFor(gm).filter(x => x.t === t.key).length})`).join(", ");
-  $("#foot").textContent = `Prototype. ${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia, updated ${D.version}. Current reigns are left out.`;
+  $("#foot").textContent = `${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia, updated ${D.version}. Current reigns are left out.`;
 }
 
 function renderResult(){
