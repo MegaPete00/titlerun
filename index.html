@@ -467,7 +467,7 @@ const dayNumber = iso => { const [y,m,d] = iso.split("-").map(Number); return Ma
 const fmtDate = iso => new Date(iso + "T00:00:00Z").toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric",timeZone:"UTC"});
 const fmtDays = d => d === 0 ? "Under a day" : d.toLocaleString("en-US") + (d === 1 ? " day" : " days");
 const titleOf = r => TITLE_BY[r.t].name;
-const FULL_SENTENCE = /^(Won|Awarded|Inaugural|Pinned|Handed|Recognized)/;
+const FULL_SENTENCE = /^(Won|Awarded|Inaugural|Pinned|Handed|Recognized|Bought|Received)/;
 
 // Wrestling eras by start date (fans and sources disagree on exact cutoffs; these are mid-year splits)
 const ERAS = [
@@ -581,7 +581,7 @@ function render(){
 
   const t = $("#titleName"), name = titleOf(r);
   t.textContent = S.started ? name : "Press Start";
-  $("#tier").textContent = S.started ? ({world:"World title", developmental:"Developmental title", midcard:"Midcard title"}[TITLE_BY[r.t].tier] || "Title") : "The belt";
+  $("#tier").textContent = S.started ? ({world:"World title", developmental:"Developmental title", midcard:"Midcard title", chaos:"Chaos title"}[TITLE_BY[r.t].tier] || "Title") : "The belt";
   t.classList.toggle("waiting", !S.started);
   t.classList.toggle("long", S.started && name.length > 20);
   $("#titleSub").textContent = TITLE_BY[r.t].years;

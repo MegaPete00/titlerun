@@ -55,12 +55,14 @@ p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid
 .lede{font-size:1.12rem;color:var(--muted)}
 .eyebrow{font-family:var(--f-label);font-weight:700;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
 .fine{font-size:.88rem;color:var(--muted)}
-.games{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr))}
-.game{display:grid;gap:10px;align-content:start;padding:18px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.home .wrap{max-width:64rem}
+.games{display:grid;gap:16px;grid-template-columns:1fr;grid-auto-rows:1fr}
+@media (min-width:52rem){ .games{grid-template-columns:repeat(3,minmax(0,1fr))} }
+.game{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
 .game h3{margin:0;font-family:var(--f-display);font-weight:900;font-size:2rem;line-height:.95;text-transform:uppercase}
-.game .tag{justify-self:start;font-family:var(--f-label);font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
+.game .tag{align-self:flex-start;font-family:var(--f-label);font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
 .game.soon{background:transparent;border-style:dashed} .game.soon h3{color:var(--muted)}
-.play{justify-self:start;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.play{justify-self:start;align-self:flex-start;margin-top:auto;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
 .chips li{display:flex;align-items:center;gap:7px;font-size:.95rem}
 .sq{display:inline-block;width:14px;height:14px;border-radius:3px} .hit{background:#1B7F46} .near{background:#B88412} .miss{background:#C8232F}
@@ -68,7 +70,7 @@ footer{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:6px;fo
 footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 </style>
 </head>
-<body>
+<body class="">
 <header class="bar">
   <div class="wrap"><p class="mark"><a href="/">House of Hoss</a></p><span class="crumb"><a href="/titlerun/">Title Run</a> · How to play</span></div>
   <div class="ropes" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -105,6 +107,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
   <li><b>Base:</b> the big world titles. WWE, WCW, World Heavyweight, Universal and AEW.</li>
   <li><b>Mark:</b> none of the Base belts. ECW, TNA, NXT, the Intercontinental and United States titles from the modern eras, and AEW's secondary belts.</li>
   <li><b>Smart Mark:</b> everything in Mark, plus the NWA lineage back to 1948, the early IC and US reigns, both Cruiserweight titles, the European and WWF Light Heavyweight titles, the ECW and WCW TV titles, the ROH World title, the X Division title and the NXT UK title.</li>
+  <li><b>Chaos:</b> everything in Smart Mark, plus the WWE Hardcore title, the 24/7 title, the Million Dollar title and the FTW title. Hundreds of short, ridiculous reigns. Good luck.</li>
 </ul>
 <p>Each mode has its own daily puzzle and its own stats. A new puzzle drops at midnight your time. Free play gives you random reigns whenever you want, and doesn't count toward stats.</p>
 <h2>Streaks and stats</h2>
@@ -115,7 +118,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 <p>Reign histories are compiled from Wikipedia's championship lists and the promotions' official title histories. Vacancies and reigns a promotion doesn't recognize are left out. Spot a mistake? Email it in and it'll get fixed.</p>
 
 <footer>
-  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
+  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
   <p>House of Hoss games are fan-made and not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion.</p>
   <p>Contact: contact@houseofhoss.com</p>
 </footer>
