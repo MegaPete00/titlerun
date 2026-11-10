@@ -293,6 +293,69 @@ footer p{margin:0}
   --plate-shine:rgba(255,255,255,.25); --plate-pip:rgba(255,255,255,.3); --near-pip:#FFFFFF;
   --focus:#C8102E; --shadow:rgba(11,31,77,.25); --accent:#C8102E; --on-accent:#FFFFFF; --toast-hi:#FF6B7D; color-scheme:light;
 }
+:root[data-egg="newday"]{
+  --canvas:#8EC8F2; --panel:#FFFFFF; --ink:#1A1446; --muted:#2E2A63; --line:#1A1446; --well:#FFE0EE;
+  --bar:#E8418B; --bar-ink:#FFFFFF; --bar-muted:#FFD1E6; --bar-line:#FFFFFF;
+  --rope-r:#FFFFFF; --rope-w:#1D6FE0; --rope-b:#FFFFFF;
+  --plate-a:#FF9CCB; --plate-b:#E8418B; --plate-c:#A3175A; --plate-edge:#1A1446; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.35); --plate-pip:rgba(255,255,255,.4); --near-pip:#1A1446;
+  --focus:#1A1446; --shadow:rgba(26,20,70,.25); --accent:#E8418B; --on-accent:#FFFFFF; --toast-hi:#FF9CCB; color-scheme:light;
+}
+:root[data-egg="dibiase"]{
+  --canvas:#CFE3C4; --panel:#FFFDF2; --ink:#10231A; --muted:#2F4A37; --line:#9C7F1E; --well:#E9E3C4;
+  --bar:#14432A; --bar-ink:#F2D16B; --bar-muted:#C9A227; --bar-line:#C9A227;
+  --rope-r:#D4AF37; --rope-w:#14432A; --rope-b:#D4AF37;
+  --plate-a:#F7E08A; --plate-b:#D4AF37; --plate-c:#8A6B12; --plate-edge:#14432A; --plate-ink:#10231A;
+  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#10231A;
+  --focus:#14432A; --shadow:rgba(16,35,26,.25); --accent:#14432A; --on-accent:#F2D16B; --toast-hi:#F2D16B; color-scheme:light;
+}
+:root[data-egg="lod"]{
+  --canvas:#141414; --panel:#222222; --ink:#F2F2F2; --muted:#B5B5B5; --line:#E31B23; --well:#333333;
+  --bar:#000000; --bar-ink:#E31B23; --bar-muted:#E31B23; --bar-line:#E31B23;
+  --rope-r:#E31B23; --rope-w:#000000; --rope-b:#E31B23;
+  --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#E31B23; --plate-ink:#E31B23;
+  --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(227,27,35,.5); --near-pip:#FFFFFF;
+  --focus:#E31B23; --shadow:rgba(0,0,0,.6); --accent:#E31B23; --on-accent:#FFFFFF; --toast-hi:#E31B23; color-scheme:dark;
+}
+/* Effect eggs (script.js FX). Overlays sit above everything but never take taps. */
+.fx{position:fixed;inset:0;z-index:60;pointer-events:none}
+.fx-lights i{position:absolute;inset:0}
+.fx-lights .black{background:#000;animation:fxBlack 3.8s both}
+.fx-lights .glow{background:radial-gradient(circle at 50% 30%, rgba(140,70,230,.45), rgba(25,0,50,.85) 70%);animation:fxGlow 3.8s both}
+@keyframes fxBlack{0%{opacity:0}4%{opacity:1}52%{opacity:1}70%{opacity:0}100%{opacity:0}}
+@keyframes fxGlow{0%,48%{opacity:0}62%{opacity:1}100%{opacity:0}}
+.fx-glass svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fx-glass polygon{fill:rgba(255,255,255,.07);stroke:rgba(255,255,255,.9);stroke-width:1.2;transform-box:fill-box;transform-origin:center;opacity:0;animation:fxIn .05s .45s forwards}
+.fx-glass .cracks line{stroke:rgba(255,255,255,.95);stroke-width:2;stroke-dasharray:2000;stroke-dashoffset:2000;animation:fxCrack .45s ease-out forwards;filter:drop-shadow(0 0 2px rgba(0,0,0,.6))}
+@keyframes fxCrack{to{stroke-dashoffset:0}}
+@keyframes fxIn{to{opacity:1}}
+body.fx-suplex{animation:fxSuplex 1.6s cubic-bezier(.4,0,.3,1) 1}
+@keyframes fxSuplex{0%{transform:none}38%{transform:translateY(-14vh) rotate(-175deg)}56%{transform:translateY(0) rotate(-360deg)}62%{transform:translateY(1.4vh) rotate(-360deg) scaleY(.97)}70%{transform:translateY(-.6vh) rotate(-360deg)}100%{transform:none}}
+body.fx-619{animation:fx619 1.5s ease-in-out 1}
+@keyframes fx619{0%{transform:none}28%{transform:perspective(1400px) translateX(38vw) rotateY(-60deg)}55%{transform:perspective(1400px) translateX(-14vw) rotateY(28deg)}76%{transform:perspective(1400px) translateX(4vw) rotateY(-8deg)}100%{transform:none}}
+body.fx-cantsee{animation:fxCantSee 2.6s ease-in-out 1}
+@keyframes fxCantSee{0%{opacity:1}35%,62%{opacity:0}100%{opacity:1}}
+body.fx-giant{animation:fxGiant 2.8s cubic-bezier(.3,1.4,.5,1) 1}
+@keyframes fxGiant{0%{transform:none}30%,68%{transform:scale(1.7)}100%{transform:none}}
+body.fx-tiny{animation:fxTiny 2.8s cubic-bezier(.3,1.4,.5,1) 1}
+@keyframes fxTiny{0%{transform:none}30%,68%{transform:scale(.3)}100%{transform:none}}
+body.fx-fade{animation:fxCantSee 1.2s ease-in-out 1}
+html.fx-mono body{filter:grayscale(1) contrast(1.15);transition:filter .3s}
+.fx-pose{display:grid;place-content:center;justify-items:center;gap:4px;text-align:center;background:radial-gradient(circle at 50% 50%, rgba(0,0,0,.45), rgba(0,0,0,.15) 60%)}
+.fx-pose b{font-family:var(--f-display);font-weight:900;font-size:min(40vw,14rem);line-height:.85;color:rgba(255,255,255,.92);text-shadow:0 6px 30px rgba(0,0,0,.55);animation:fxPop .25s ease-out}
+.fx-pose span{font-family:var(--f-label);font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+@keyframes fxPop{from{transform:scale(1.4);opacity:0}to{transform:none;opacity:1}}
+body.fx-glitch{animation:fxGlitch 2.3s steps(1) 1}
+@keyframes fxGlitch{0%{filter:none;transform:none}8%{filter:invert(1) hue-rotate(180deg);transform:translateX(-8px)}12%{filter:none;transform:none}26%{filter:invert(1) saturate(4);transform:translateX(10px) skewX(5deg)}30%{filter:none;transform:none}44%{filter:invert(1) hue-rotate(90deg) contrast(2);transform:translateY(-6px)}52%{filter:none;transform:none}63%{filter:invert(1);transform:translateX(-4px) skewX(-6deg)}66%{filter:none;transform:none}80%{filter:invert(1) hue-rotate(300deg)}84%,100%{filter:none;transform:none}}
+.fx-red{background:rgba(200,0,0,.35);mix-blend-mode:multiply;animation:fxFlicker 2.3s steps(1) both}
+@keyframes fxFlicker{0%,10%,28%,46%,64%,82%{opacity:1}5%,20%,36%,56%,72%,100%{opacity:0}}
+.fx-pyro{background:radial-gradient(ellipse at 50% 115%, rgba(255,90,0,.5), rgba(160,0,0,.15) 55%, transparent 75%);animation:fxPyroGlow 2.6s both}
+@keyframes fxPyroGlow{0%{opacity:0}12%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.fx-pyro i{position:absolute;bottom:-12vh;width:calc(14vw * var(--w));height:55vh;margin-left:-7vw;border-radius:50% 50% 30% 30%/60% 60% 40% 40%;
+  background:radial-gradient(ellipse at 50% 85%, #fff7b0 0%, #ffc400 22%, #ff5a00 48%, rgba(200,0,0,.6) 64%, rgba(200,0,0,0) 76%);filter:blur(3px);
+  transform-origin:50% 100%;opacity:0;animation:fxFlame var(--d) ease-out 2 alternate}
+@keyframes fxFlame{0%{transform:scaleY(.15) scaleX(.8);opacity:0}25%{opacity:1}100%{transform:scaleY(1.1) scaleX(1.05) translateY(-6vh);opacity:.15}}
+@media (prefers-reduced-motion: reduce){ .fx-glass polygon{transition:none !important} .fx-pyro i{animation:none} }
 /* The long way: the whole page stretches tall. Transforms still count toward scroll height, so you can scroll all of it. */
 body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
 :root[data-long] body{transform:scaleY(1.75);transform-origin:50% 0}
@@ -765,6 +828,18 @@ const ACHIEVEMENTS = [      // Easter eggs. The title doubles as the hint.
   {id:"knight",   title:"Yeah!"},
   {id:"kennedy",  title:"Kennedy... Kennedy"},
   {id:"jr",       title:"Bah Gawd"},
+  {id:"newday",   title:"Don't You Dare Be Sour"},
+  {id:"dibiase",  title:"Money Money Money"},
+  {id:"lod",      title:"What a Rush"},
+  {id:"lightsout",title:"Lights Out"},
+  {id:"suplex",   title:"Welcome to Suplex City"},
+  {id:"619",      title:"Booyaka Booyaka"},
+  {id:"cantsee",  title:"You Can't See Me"},
+  {id:"giant",    title:"Eighth Wonder of the World"},
+  {id:"tiny",     title:"Luck of the Irish"},
+  {id:"pose",     title:"Five-Second Pose"},
+  {id:"fiend",    title:"Let Me In"},
+  {id:"pyro",     title:"Big Red Machine"},
 ];
 const ACH_KEY = "tr-ach", EGG_KEY = "tr-eggs", WINS_KEY = "tr-wins", SKIN_KEY = "tr-skin";
 const achFound = () => store.get(ACH_KEY) || {};
@@ -778,6 +853,9 @@ const SKINS = [
   {id:"deadlock", name:"Deadlock",    by:"deadlock", note:"Orange, black and white. No stretching.", sw:["#F26A1B","#0B0B0B","#FFFFFF"]},
   {id:"nacho",    name:"Nacho Libre", by:"nacho",    note:"Blue and red.",                    sw:["#5B8DEF","#C8102E","#FFFFFF"]},
   {id:"angle",    name:"Kurt Angle",  by:"angle",    note:"Red, white and blue.",             sw:["#F3F5FA","#0B1F4D","#C8102E"]},
+  {id:"newday",   name:"The New Day", by:"newday",   note:"Blue, pink and white.",            sw:["#8EC8F2","#E8418B","#FFFFFF"]},
+  {id:"dibiase",  name:"Million Dollar Man", by:"dibiase", note:"Green and gold.",            sw:["#CFE3C4","#14432A","#D4AF37"]},
+  {id:"lod",      name:"Road Warriors", by:"lod",    note:"Black and red.",                   sw:["#141414","#000000","#E31B23"]},
 ];
 const skinOpen = s => s.by === "hoss" ? !!achFound().hoss : !!eggsFound()[s.by];
 let tempEgg = "", skin = "", awardsView = "ach";
@@ -903,8 +981,99 @@ function openAwards(view){
 
 // Egg card: the banner at the top of the page. Text size follows length (a few words big, a sentence medium, a promo small).
 // Optional lead + title put a small kicker and a big headline above the body text.
-function showEgg({id, theme, card, lead, title, img, size}){
+/* Effect eggs: one-shot animations and sounds. They never touch the game, never block a tap, and clean up after themselves.
+   Overlays live on <html> (like the toast) so body transforms can't move them. Reduced-motion users get a simple fade. */
+const CALM = (() => { try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } })();
+const FX_BODY = ["fx-suplex", "fx-619", "fx-cantsee", "fx-giant", "fx-tiny", "fx-glitch", "fx-fade"];
+let fxLayer = null, fxTimers = [];
+const later = (ms, f) => fxTimers.push(setTimeout(f, ms));
+function fxClear(){
+  fxTimers.forEach(clearTimeout); fxTimers = [];
+  if(fxLayer){ fxLayer.remove(); fxLayer = null; }
+  document.body.classList.remove(...FX_BODY); document.body.style.transformOrigin = "";
+  document.documentElement.classList.remove("fx-mono");
+}
+function fxLayerOn(cls, html){
+  fxLayer = document.createElement("div"); fxLayer.className = "fx " + cls; fxLayer.setAttribute("aria-hidden", "true");
+  if(html) fxLayer.innerHTML = html;
+  document.documentElement.appendChild(fxLayer); return fxLayer;
+}
+function bodyFx(cls, ms, origin){                         // origin: "center" = middle of what's on screen, "top" = top of the screen
+  const b = document.body, y = origin === "top" ? scrollY : scrollY + innerHeight / 2;
+  b.style.transformOrigin = `50% ${Math.round(y)}px`;
+  b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls);
+  later(ms, () => { b.classList.remove(cls); b.style.transformOrigin = ""; });
+}
+// Sounds are synthesized here (no recordings). Browsers only allow them after a tap, and every egg starts from one.
+let AC = null;
+function ac(){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); return AC; }catch(e){ return null; } }
+function tone(partials, {at = 0, vol = .2, decay = 3, type = "sine"} = {}){
+  const c = ac(); if(!c) return;
+  const t = c.currentTime + at, out = c.createGain();
+  out.gain.setValueAtTime(.0001, t); out.gain.exponentialRampToValueAtTime(vol, t + .01); out.gain.exponentialRampToValueAtTime(.0001, t + decay);
+  out.connect(c.destination);
+  partials.forEach(([f, a]) => { const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f; g.gain.value = a; o.connect(g); g.connect(out); o.start(t); o.stop(t + decay + .1); });
+}
+const gong = at => tone([[98, 1], [196, .55], [233, .3], [294, .25], [392, .15], [523, .08]], {at, vol: .32, decay: 4.5});
+function noise(dur, {at = 0, vol = .3, type = "highpass", freq = 2500} = {}){
+  const c = ac(); if(!c) return;
+  const t = c.currentTime + at, n = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+  const src = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
+  src.buffer = buf; fl.type = type; fl.frequency.value = freq; g.gain.value = vol;
+  src.connect(fl); fl.connect(g); g.connect(c.destination); src.start(t);
+}
+const FX = {
+  lightsout(){                                            // Undertaker: lights cut, the gong, then a purple glow that fades back to normal
+    gong(0);
+    fxLayerOn("fx-lights", `<i class="black"></i><i class="glow"></i>`);
+    later(3800, fxClear);
+  },
+  shatter(){                                              // Stone Cold: cracks spread from the middle, then the glass falls away
+    const W = innerWidth, H = innerHeight, cx = W * (.42 + Math.random() * .16), cy = H * (.32 + Math.random() * .16), N = 14;
+    const edge = a => { const dx = Math.cos(a), dy = Math.sin(a), ts = [];
+      if(dx > 0) ts.push((W - cx) / dx); if(dx < 0) ts.push(-cx / dx); if(dy > 0) ts.push((H - cy) / dy); if(dy < 0) ts.push(-cy / dy);
+      const t = Math.min(...ts) * 1.15; return [cx + dx * t, cy + dy * t]; };
+    const rays = Array.from({length: N}, (_, i) => { const a = (i + Math.random() * .6) / N * Math.PI * 2, e = edge(a), r = .25 + Math.random() * .3;
+      return {e, m: [cx + (e[0] - cx) * r, cy + (e[1] - cy) * r]}; });
+    const pt = p => p.map(Math.round).join(","), polys = [], cracks = [];
+    rays.forEach((r, i) => { const n = rays[(i + 1) % N];
+      polys.push([[cx, cy], r.m, n.m]); polys.push([r.m, r.e, n.e, n.m]);
+      cracks.push(`<line x1="${Math.round(cx)}" y1="${Math.round(cy)}" x2="${Math.round(r.e[0])}" y2="${Math.round(r.e[1])}"/>`);
+      cracks.push(`<line x1="${Math.round(r.m[0])}" y1="${Math.round(r.m[1])}" x2="${Math.round(n.m[0])}" y2="${Math.round(n.m[1])}"/>`); });
+    const L = fxLayerOn("fx-glass", `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><g class="cracks">${cracks.join("")}</g>`
+      + polys.map(p => `<polygon points="${p.map(pt).join(" ")}"/>`).join("") + `</svg>`);
+    noise(.7, {vol: .35, freq: 3000}); [0, .05, .12, .2, .3, .38].forEach(a => tone([[2000 + Math.random() * 2500, 1]], {at: a, vol: .05, decay: .45, type: "triangle"}));
+    later(550, () => L.querySelectorAll("polygon").forEach(g => {
+      const dur = 0.9 + Math.random() * .6, rot = (Math.random() * 2 - 1) * 70, dx = (Math.random() * 2 - 1) * 60;
+      g.style.transition = `transform ${dur}s cubic-bezier(.5,0,.9,.6), opacity ${dur}s ease-in`;
+      g.style.transform = `translate(${dx}px, ${H * 1.1}px) rotate(${rot}deg)`; g.style.opacity = "0"; }));
+    later(2300, fxClear);
+  },
+  suplex(){ bodyFx(CALM ? "fx-fade" : "fx-suplex", 1600, "center"); noise(.25, {at: .85, vol: .5, type: "lowpass", freq: 300}); },
+  swing(){ bodyFx(CALM ? "fx-fade" : "fx-619", 1500, "center"); },
+  cantsee(){ bodyFx("fx-cantsee", 2600); },
+  giant(){ bodyFx(CALM ? "fx-fade" : "fx-giant", 2800, "top"); },
+  tiny(){ bodyFx(CALM ? "fx-fade" : "fx-tiny", 2800, "top"); },
+  pose(){                                                 // Edge & Christian: everything holds still for a 5-count. Still fully playable.
+    document.documentElement.classList.add("fx-mono");
+    const L = fxLayerOn("fx-pose");
+    const tick = n => { L.innerHTML = `<b>${n}</b><span>Five-second pose</span>`; tone([[880, 1]], {vol: .06, decay: .25, type: "square"});
+      if(n > 1) later(1000, () => tick(n - 1)); else later(1000, fxClear); };
+    tick(5);
+  },
+  fiend(){ bodyFx(CALM ? "fx-fade" : "fx-glitch", 2300); fxLayerOn("fx-red"); noise(.15, {vol: .2, freq: 800, type: "bandpass"}); noise(.12, {at: .7, vol: .2, freq: 1200, type: "bandpass"}); later(2300, fxClear); },
+  pyro(){                                                 // Kane: flames burst up from the bottom of the screen
+    const flames = Array.from({length: 16}, (_, i) => `<i style="left:${(i / 16 * 108 - 6).toFixed(1)}%;--d:${(1 + Math.random() * .5).toFixed(2)}s;--w:${(.8 + Math.random() * .7).toFixed(2)};animation-delay:${(Math.random() * .35).toFixed(2)}s"></i>`).join("");
+    fxLayerOn("fx-pyro", flames);
+    noise(1.4, {vol: .45, type: "lowpass", freq: 500}); noise(1.2, {at: .5, vol: .35, type: "lowpass", freq: 700});
+    later(2600, fxClear);
+  },
+};
+function runFx(name){ fxClear(); if(FX[name]) FX[name](); }
+function showEgg({id, theme, card, lead, title, img, size, fx}){
   if(theme){ tempEgg = theme; applyLook(); }
+  if(fx) runFx(fx);
   if(card || title || img){
     const b = $("#eggBanner");
     b.hidden = true; void b.offsetWidth;                // restart the pop-in if it's already showing
@@ -926,7 +1095,7 @@ function egg(raw){
   const e = EGG_BY[compact(raw || "")];
   if(!e) return false;
   eggOff();                                               // any new guess clears the previous egg
-  showEgg({id: e.id, theme: e.theme, card: e.banner || ""});
+  showEgg({id: e.id, theme: e.theme, card: e.banner || "", fx: e.fx});
   input.value = ""; closeOpts(); hint(DEFAULT_HINT);
   if(e.banner) input.blur();                              // drop the phone keyboard so the card is visible
   return true;
@@ -940,9 +1109,25 @@ const GUESS_EGGS = {
   "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
   // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
   "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
+  "Kofi Kingston": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "Big E": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "Xavier Woods": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "The Undertaker": {id:"lightsout", fx:"lightsout"},
+  "Brock Lesnar": {id:"suplex", fx:"suplex"},
+  "Rey Mysterio": {id:"619", fx:"swing"},
+  "John Cena": {id:"cantsee", fx:"cantsee"},
+  "André the Giant": {id:"giant", fx:"giant"},
+  "Hornswoggle": {id:"tiny", fx:"tiny"},
+  "Edge": {id:"pose", fx:"pose"},
+  "Christian Cage": {id:"pose", fx:"pose"},
+  "Bray Wyatt": {id:"fiend", fx:"fiend", placeholder:"Let me in."},
+  "Kane": {id:"pyro", fx:"pyro"},
+  "Ted DiBiase": {id:"dibiase", theme:"dibiase", card:"Everybody has a price."},     // Sr. only: Ted DiBiase Jr. is his own roster entry
+  "Road Warrior Hawk": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
+  "Road Warrior Animal": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
   "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over here, made the friggin' color scheme change"},
   "Luke Harper": {id:"brodie", card:"It's House of Hoss and you know what that means"},          // also Mr. Brodie Lee
-  '"Stone Cold" Steve Austin': {id:"austin", size:"big", card:"WHAT?", placeholder:"What?"},
+  '"Stone Cold" Steve Austin': {id:"austin", fx:"shatter", size:"big", card:"WHAT?", placeholder:"What?"},
   "Scott Steiner": {id:"steiner", lead:"You know they say that", title:"all men are created equal,", card:`but you look at me and you look at Samoa Joe and you can see that statement is not true. See, normally if you go one on one with another wrestler, you got a 50/50 chance of winning. But I'm a genetic freak and I'm not normal! So you got a 25%, AT BEST, at beat me. Then you add Kurt Angle to the mix, your chances of winning drastic go down. See the 3 way at Sacrifice, you got a 33 1/3 chance of winning, but I, I got a 66 and 2/3 chance of winning, because Kurt Angle KNOWS he can't beat me and he's not even gonna try!
 
 So Samoa Joe, you take your 33 1/3 chance, minus my 25% chance and you got an 8 1/3 chance of winning at Sacrifice. But then you take my 75% chance of winning, if we was to go one on one, and then add 66 2/3 per cents, I got 141 2/3 chance of winning at Sacrifice. See Joe, the numbers don't lie, and they spell disaster for you at Sacrifice.
