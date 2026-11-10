@@ -69,6 +69,395 @@ p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid
 footer{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:6px;font-size:.88rem;color:var(--muted)}
 footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 </style>
+<style>
+/* House of Hoss shared styles (built into every page by site/hoss.py, after the page's own CSS so themes win).
+   Color schemes: :root[data-egg="<id>"] token overrides, used for saved schemes and Egg Card themes on every page. */
+:root[data-egg="deadlock"]{
+  --canvas:#F26A1B; --panel:#FFFFFF; --ink:#0B0B0B; --muted:#3B2416; --line:#0B0B0B; --well:#FFE1CC;
+  --bar:#0B0B0B; --bar-ink:#FFFFFF; --bar-muted:#F26A1B; --bar-line:#F26A1B;
+  --rope-r:#F26A1B; --rope-w:#FFFFFF; --rope-b:#F26A1B;
+  --plate-a:#2E2E2E; --plate-b:#0B0B0B; --plate-c:#000000; --plate-edge:#F26A1B; --plate-ink:#F26A1B;
+  --plate-shine:rgba(255,255,255,.16); --plate-pip:rgba(255,255,255,.22); --near-pip:#FFFFFF;
+  --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); --accent:#0B0B0B; --on-accent:#FFFFFF; --toast-hi:#F26A1B; color-scheme:light;
+}
+:root[data-egg="taz"]{
+  --canvas:#F07A1A; --panel:#FF9B4A; --ink:#0B0B0B; --muted:#2E1A0A; --line:#0B0B0B; --well:#FFB676;
+  --bar:#0B0B0B; --bar-ink:#F07A1A; --bar-muted:#F07A1A; --bar-line:#F07A1A;
+  --rope-r:#F07A1A; --rope-w:#0B0B0B; --rope-b:#F07A1A;
+  --plate-a:#2E2E2E; --plate-b:#0B0B0B; --plate-c:#000000; --plate-edge:#F07A1A; --plate-ink:#F07A1A;
+  --plate-shine:rgba(255,140,40,.18); --plate-pip:rgba(255,140,40,.25); --near-pip:#F07A1A;
+  --focus:#0B0B0B; --shadow:rgba(0,0,0,.35); --accent:#0B0B0B; --on-accent:#F07A1A; --toast-hi:#F07A1A; color-scheme:light;
+}
+:root[data-egg="nacho"]{
+  --canvas:#5B8DEF; --panel:#FFFFFF; --ink:#0A1A3F; --muted:#14295C; --line:#0A1A3F; --well:#D6E4FF;
+  --bar:#C8102E; --bar-ink:#FFFFFF; --bar-muted:#FFD3DA; --bar-line:#FFFFFF;
+  --rope-r:#FFFFFF; --rope-w:#1D4FC4; --rope-b:#FFFFFF;
+  --plate-a:#EF3B47; --plate-b:#C8102E; --plate-c:#7E0A18; --plate-edge:#0A1A3F; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.3); --plate-pip:rgba(255,255,255,.35); --near-pip:#0A1A3F;
+  --focus:#0A1A3F; --shadow:rgba(10,26,63,.35); --accent:#C8102E; --on-accent:#FFFFFF; --toast-hi:#5B8DEF; color-scheme:light;
+}
+:root[data-egg="angle"]{
+  --canvas:#F3F5FA; --panel:#FFFFFF; --ink:#0B1F4D; --muted:#3D4A6B; --line:#C8102E; --well:#E2E7F3;
+  --bar:#0B1F4D; --bar-ink:#FFFFFF; --bar-muted:#AFC0E8; --bar-line:#C8102E;
+  --rope-r:#C8102E; --rope-w:#FFFFFF; --rope-b:#C8102E;
+  --plate-a:#2B4C9C; --plate-b:#0B1F4D; --plate-c:#06112B; --plate-edge:#C8102E; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.25); --plate-pip:rgba(255,255,255,.3); --near-pip:#FFFFFF;
+  --focus:#C8102E; --shadow:rgba(11,31,77,.25); --accent:#C8102E; --on-accent:#FFFFFF; --toast-hi:#FF6B7D; color-scheme:light;
+}
+:root[data-egg="newday"]{
+  --canvas:#8EC8F2; --panel:#FFFFFF; --ink:#1A1446; --muted:#2E2A63; --line:#1A1446; --well:#FFE0EE;
+  --bar:#E8418B; --bar-ink:#FFFFFF; --bar-muted:#FFD1E6; --bar-line:#FFFFFF;
+  --rope-r:#FFFFFF; --rope-w:#1D6FE0; --rope-b:#FFFFFF;
+  --plate-a:#FF9CCB; --plate-b:#E8418B; --plate-c:#A3175A; --plate-edge:#1A1446; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.35); --plate-pip:rgba(255,255,255,.4); --near-pip:#1A1446;
+  --focus:#1A1446; --shadow:rgba(26,20,70,.25); --accent:#E8418B; --on-accent:#FFFFFF; --toast-hi:#FF9CCB; color-scheme:light;
+}
+:root[data-egg="dibiase"]{
+  --canvas:#CFE3C4; --panel:#FFFDF2; --ink:#10231A; --muted:#2F4A37; --line:#9C7F1E; --well:#E9E3C4;
+  --bar:#14432A; --bar-ink:#F2D16B; --bar-muted:#C9A227; --bar-line:#C9A227;
+  --rope-r:#D4AF37; --rope-w:#14432A; --rope-b:#D4AF37;
+  --plate-a:#F7E08A; --plate-b:#D4AF37; --plate-c:#8A6B12; --plate-edge:#14432A; --plate-ink:#10231A;
+  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#10231A;
+  --focus:#14432A; --shadow:rgba(16,35,26,.25); --accent:#14432A; --on-accent:#F2D16B; --toast-hi:#F2D16B; color-scheme:light;
+}
+:root[data-egg="lod"]{
+  --canvas:#141414; --panel:#222222; --ink:#F2F2F2; --muted:#B5B5B5; --line:#E31B23; --well:#333333;
+  --bar:#000000; --bar-ink:#E31B23; --bar-muted:#E31B23; --bar-line:#E31B23;
+  --rope-r:#E31B23; --rope-w:#000000; --rope-b:#E31B23;
+  --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#E31B23; --plate-ink:#E31B23;
+  --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(227,27,35,.5); --near-pip:#FFFFFF;
+  --focus:#E31B23; --shadow:rgba(0,0,0,.6); --accent:#E31B23; --on-accent:#FFFFFF; --toast-hi:#E31B23; color-scheme:dark;
+}
+:root[data-egg="deadlock"] .field input{background:#FFFFFF}
+:root[data-egg="taz"] .field input{background:#FFB676}
+/* Pages that name their accent differently pick the theme's accent up too */
+:root[data-egg]{--gold:var(--accent);--gold-ink:var(--on-accent);--accent-soft:color-mix(in srgb, var(--accent) 22%, var(--panel))}
+
+/* Header buttons that open the sheet (pages that don't already style a .statbtn) */
+.hs-hbtn{background:none;border:0;border-radius:999px;padding:7px 13px;cursor:pointer;box-shadow:inset 0 0 0 1px var(--bar-line, var(--bar-muted));
+  color:var(--bar-ink);font-family:var(--f-label);font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.hs-hbtn:hover,.hs-hbtn:focus-visible{background:var(--bar-ink);color:var(--bar)}
+.hs-hbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* Toast */
+.hs-toast{position:fixed;left:50%;bottom:max(16px, env(safe-area-inset-bottom, 0px));z-index:80;display:grid;gap:3px;justify-items:center;text-align:center;
+  width:max-content;max-width:calc(100vw - 32px);min-width:min(20rem, calc(100vw - 32px));padding:12px 20px 11px;border-radius:12px;cursor:pointer;
+  background:var(--ink);color:var(--canvas);box-shadow:0 12px 32px var(--shadow, rgba(0,0,0,.3));font-family:var(--f-body);
+  transform:translate(-50%, 160%);opacity:0;visibility:hidden;transition:transform .4s cubic-bezier(.2,.9,.3,1.15),opacity .3s,visibility .4s}
+.hs-toast.show{transform:translate(-50%, 0);opacity:1;visibility:visible}
+.hs-toast span{font-family:var(--f-label);font-weight:700;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--toast-hi, var(--accent, var(--gold)))}
+.hs-toast b{font-family:var(--f-display);font-weight:900;font-size:1.7rem;line-height:1;text-transform:uppercase}
+.hs-toast small{font-size:.8rem;opacity:.8}
+
+/* The sheet: a full-screen page over the site */
+html.hs-open{overflow:hidden}
+.hs-sheet{position:fixed;inset:0;z-index:70;overflow-y:auto;overscroll-behavior:contain;background:var(--canvas);color:var(--ink);font-family:var(--f-body);
+  -webkit-overflow-scrolling:touch;animation:hsIn .18s ease-out}
+@keyframes hsIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hs-in{max-width:44rem;margin-inline:auto;padding:max(18px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px));display:grid;gap:16px}
+.hs-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hs-h h2{margin:0;font-family:var(--f-display);font-weight:900;font-size:2.4rem;line-height:1;text-transform:uppercase}
+.hs-x{flex:none;display:grid;place-items:center;width:42px;height:42px;border:0;border-radius:50%;cursor:pointer;background:var(--well);color:var(--ink);font-size:1.7rem;line-height:1}
+.hs-x:hover{background:var(--ink);color:var(--panel)}
+.hs-seg{display:flex;gap:6px;min-width:0}
+.hs-seg button{flex:1 1 auto;min-width:0;line-height:1.1;border:0;border-radius:8px;padding:9px 6px;cursor:pointer;background:var(--well);color:var(--muted);
+  font-family:var(--f-label);font-weight:700;font-size:clamp(.74rem, 3.3vw, .88rem);letter-spacing:.07em;text-transform:uppercase}
+.hs-seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.hs-body{display:grid;gap:22px}
+.hs-sec{display:grid;gap:12px;padding:16px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.hs-sec h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hs-fine{margin:0;font-size:.84rem;line-height:1.4;color:var(--muted)}
+.hs-roster{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,9.5rem),1fr));gap:10px}
+.hs-ach,.hs-skin{display:grid;gap:5px;align-content:start;justify-items:start;padding:12px;border-radius:12px;background:var(--canvas);box-shadow:inset 0 0 0 1px var(--line);min-width:0}
+.hs-ach .no{font-family:var(--f-label);font-weight:700;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hs-ach .emb{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;margin:2px 0 3px;font-style:normal;font-family:var(--f-display);font-weight:900;font-size:1.3rem;line-height:1;
+  color:var(--plate-ink, #0E0F12);background:linear-gradient(135deg, var(--plate-a, #F4F5F7), var(--plate-b, #C3C7CD) 55%, var(--plate-c, #7D848D));
+  box-shadow:inset 0 0 0 2px var(--plate-edge, #3D444C), inset 0 0 0 4px var(--plate-a, #F4F5F7)}
+.hs-ach b,.hs-skin b{font-family:var(--f-display);font-weight:900;font-size:1.25rem;line-height:.95;text-transform:uppercase;overflow-wrap:anywhere}
+.hs-ach .d,.hs-skin .d{font-size:.84rem;line-height:1.3;color:var(--muted)}
+.hs-ach .st{margin-top:auto;padding-top:4px;font-family:var(--f-label);font-weight:700;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--hit, #1B7F46)}
+.hs-ach.locked,.hs-skin.locked{background:transparent;box-shadow:inset 0 0 0 1.5px var(--line)}
+.hs-ach.locked .emb{background:var(--well);color:var(--muted);box-shadow:none}
+.hs-ach.locked b,.hs-ach.locked .st{color:var(--muted)}
+.hs-skin .sw{display:flex;margin:2px 0 3px}
+.hs-skin .sw i{display:block;width:26px;height:26px;border-radius:50%;box-shadow:0 0 0 1.5px var(--ink)}
+.hs-skin .sw i+i{margin-left:-8px}
+.hs-skin.locked .sw i{background:var(--well)}
+.hs-skin.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.hs-btn{margin-top:auto;width:100%;border:0;border-radius:10px;padding:8px 12px;cursor:pointer;background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);
+  font-family:var(--f-label);font-weight:700;font-size:.86rem;letter-spacing:.12em;text-transform:uppercase}
+.hs-btn:disabled{opacity:.45;cursor:default}
+.hs-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hs-tbl th,.hs-tbl td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--line)}
+.hs-tbl thead th{font-family:var(--f-label);font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hs-tbl tbody th{text-align:left;font-family:var(--f-label);font-weight:700;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase}
+.hs-tbl td{font-family:var(--f-display);font-weight:900;font-size:1.35rem}
+.hs-tbl tr:last-child th,.hs-tbl tr:last-child td{border-bottom:0}
+.hs-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.hs-nums b{display:block;font-family:var(--f-display);font-weight:900;font-size:1.9rem;line-height:1}
+.hs-nums span{font-family:var(--f-label);font-weight:700;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hs-dist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.hs-dist li{display:grid;grid-template-columns:2.2rem 1fr;gap:8px;align-items:center;font-family:var(--f-label);font-weight:700}
+.hs-dist .bar{justify-self:start;min-width:1.6rem;padding:2px 7px;border-radius:4px;background:var(--well);text-align:right;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: reduce){ .hs-sheet{animation:none} .hs-toast{transition:none} }
+</style>
+<script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}</script>
+<script>
+/* House of Hoss shared layer. Every game and page lives on houseofhoss.com, so they all share one browser save (localStorage).
+   This file holds every game's achievements, the site-wide Easter eggs and color schemes, the Awards / Stats sheet and the toasts.
+   site/hoss.py builds it into every page. Games call:
+     HOSS.earn(game, id)    an achievement ("tr" Title Run, "rr" Roydle Rumble, "bb" Blind Booker)
+     HOSS.foundEgg(id)      an Easter egg (shared by every game)
+     HOSS.look(theme)       an Egg Card's temporary theme ("" = back to the saved color scheme)
+     HOSS.open(view)        open the sheet: "stats", "ach", "eggs" or "unlocks"
+   Any element with data-hoss="stats|ach|eggs|unlocks" opens the sheet on that view. */
+(function(){
+const CFG = {"game": "", "launch": {"tr": "2026-10-26", "rr": "2026-11-03", "bb": "2026-11-03"}};
+const store = {
+  get(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+
+/* ---- Achievements, per game. The first entry of each game is its "first win", which also unlocks the default colors. */
+const GAMES = [
+  {id: "tr", name: "Title Run", url: "/titlerun/", ach: [
+    {id: "hoss",   g: "★",  title: "Certified Hoss",  desc: "Get your first Title Run right."},
+    {id: "squash", g: "1",  title: "Squash Match",    desc: "Win a Title Run with your first guess."},
+    {id: "count",  g: "5",  title: "Beat the Count",  desc: "Win a Title Run with your last guess."},
+    {id: "three",  g: "3",  title: "Three Count",     desc: "Win 3 dailies in a row."},
+    {id: "iron",   g: "7",  title: "Iron Man",        desc: "Win 7 dailies in a row."},
+    {id: "mark",   g: "M",  title: "Mark Out",        desc: "Win a Title Run in Mark mode."},
+    {id: "smart",  g: "S",  title: "Smart Mark",      desc: "Win a Title Run in Smart Mark mode."},
+    {id: "chaos",  g: "C",  title: "Agent of Chaos",  desc: "Win a Title Run in Chaos mode."},
+    {id: "vet",    g: "25", title: "Hall of Famer",   desc: "Win 25 Title Runs."}]},
+  {id: "rr", name: "Roydle Rumble", url: "/roydle/", ach: [
+    {id: "first",  g: "★",  title: "Over the Top",        desc: "Win your first Roydle Rumble."},
+    {id: "one",    g: "1",  title: "Instant Elimination", desc: "Win with your first guess."},
+    {id: "eight",  g: "8",  title: "Final Two",           desc: "Win with your last guess."},
+    {id: "women",  g: "W",  title: "Women's Revolution",  desc: "Win a women's Roydle Rumble."},
+    {id: "both",   g: "2",  title: "Double Duty",         desc: "Win the men's and women's dailies on the same day."},
+    {id: "three",  g: "3",  title: "Three-Time Winner",   desc: "Win 3 dailies in a row."},
+    {id: "iron",   g: "7",  title: "Iron Man Run",        desc: "Win 7 dailies in a row."},
+    {id: "vet",    g: "25", title: "Rumble Regular",      desc: "Win 25 Roydle Rumbles."}]},
+  {id: "bb", name: "Blind Booker", url: "/blindbooker/", ach: [
+    {id: "first",  g: "★",  title: "The Card Is Set",        desc: "Book your first full card."},
+    {id: "aminus", g: "A",  title: "Instant Classic",        desc: "Book a show that grades A- or better."},
+    {id: "aplus",  g: "A+", title: "Tape-Trading Material",  desc: "Book a show that grades A+."},
+    {id: "f",      g: "F",  title: "Buyrate Disaster",       desc: "Book a show that grades F."},
+    {id: "jobber", g: "J",  title: "Fans Want Refunds",      desc: "Put a jobber in your main event."},
+    {id: "dream",  g: "VS", title: "Dream Match",            desc: "Book an all-time rivalry."},
+    {id: "six",    g: "6",  title: "Meltzer Broke the Scale", desc: "Book a six-star match."},
+    {id: "week",   g: "7",  title: "Booker of the Week",     desc: "Book 7 daily cards in a row."}]},
+];
+const GAME = Object.fromEntries(GAMES.map(g => [g.id, g]));
+
+/* ---- Easter eggs, shared by every game. The title is the only hint. */
+const EGGS = [
+  {id: "deadlock", title: "The Long Way"},
+  {id: "taz",      title: "Color Scheme Jones"},
+  {id: "brodie",   title: "You Know What That Means"},
+  {id: "austin",   title: "What?"},
+  {id: "steiner",  title: "Holla If You Hear Me!"},
+  {id: "nacho",    title: "I Wanna Win!"},
+  {id: "angle",    title: "Broken Freaking Neck"},
+  {id: "hendry",   title: "Say His Name"},
+  {id: "knight",   title: "Yeah!"},
+  {id: "kennedy",  title: "Kennedy... Kennedy"},
+  {id: "jr",       title: "Bah Gawd"},
+  {id: "newday",   title: "Don't You Dare Be Sour"},
+  {id: "dibiase",  title: "Money Money Money"},
+  {id: "lod",      title: "What a Rush"},
+  {id: "lightsout",title: "Lights Out"},
+  {id: "suplex",   title: "Welcome to Suplex City"},
+  {id: "619",      title: "Booyaka Booyaka"},
+  {id: "cantsee",  title: "You Can't See Me"},
+  {id: "giant",    title: "Eighth Wonder of the World"},
+  {id: "tiny",     title: "Luck of the Irish"},
+  {id: "pose",     title: "Five-Second Pose"},
+  {id: "fiend",    title: "Let Me In"},
+  {id: "pyro",     title: "Big Red Machine"},
+];
+
+/* ---- Color schemes. "by" = the Easter egg that unlocks it; "first" = a first win in any game. The scheme is the
+   :root[data-egg="<id>"] theme in hoss.css; the default has no theme. */
+const SKINS = [
+  {id: "",         name: "Default",            by: "first",    note: "The original look.",                       sw: ["#BDC1C6", "#2F353C", "#5B18EA"]},
+  {id: "taz",      name: "Taz",                by: "taz",      note: "Orange and black.",                        sw: ["#F07A1A", "#0B0B0B", "#FF9B4A"]},
+  {id: "deadlock", name: "Deadlock",           by: "deadlock", note: "Orange, black and white. No stretching.",  sw: ["#F26A1B", "#0B0B0B", "#FFFFFF"]},
+  {id: "nacho",    name: "Nacho Libre",        by: "nacho",    note: "Blue and red.",                            sw: ["#5B8DEF", "#C8102E", "#FFFFFF"]},
+  {id: "angle",    name: "Kurt Angle",         by: "angle",    note: "Red, white and blue.",                     sw: ["#F3F5FA", "#0B1F4D", "#C8102E"]},
+  {id: "newday",   name: "The New Day",        by: "newday",   note: "Blue, pink and white.",                    sw: ["#8EC8F2", "#E8418B", "#FFFFFF"]},
+  {id: "dibiase",  name: "Million Dollar Man", by: "dibiase",  note: "Green and gold.",                          sw: ["#CFE3C4", "#14432A", "#D4AF37"]},
+  {id: "lod",      name: "Road Warriors",      by: "lod",      note: "Black and red.",                           sw: ["#141414", "#000000", "#E31B23"]},
+];
+
+const ACH_KEY = g => g + "-ach", EGG_KEY = "tr-eggs", SKIN_KEY = "hoh-skin";
+const achFound = g => store.get(ACH_KEY(g)) || {};
+const eggsFound = () => store.get(EGG_KEY) || {};
+const firstWin = () => GAMES.some(g => achFound(g.id)[g.ach[0].id]);
+const skinOpen = s => s.by === "first" ? firstWin() : !!eggsFound()[s.by];
+
+/* ---- Look: the saved color scheme, unless an Egg Card's theme is showing */
+let skin = "", temp = "";
+function savedSkin(){
+  let s = store.get(SKIN_KEY);
+  if(s === null){ s = store.get("tr-skin") || ""; store.set(SKIN_KEY, s); }          // Title Run used to keep its own
+  const k = SKINS.find(x => x.id === s);
+  return k && k.id && skinOpen(k) ? k.id : "";
+}
+function look(t){
+  if(t !== undefined) temp = t || "";
+  const v = temp || skin, r = document.documentElement;
+  if(v) r.dataset.egg = v; else delete r.dataset.egg;
+}
+function setSkin(id){
+  const s = SKINS.find(x => x.id === id); if(!s || !skinOpen(s)) return;
+  skin = id; store.set(SKIN_KEY, id); temp = ""; look();
+  document.dispatchEvent(new CustomEvent("hoss:skin", {detail: id}));                  // games drop any Egg Card that was up
+  render();
+}
+
+/* ---- Toasts (they queue; tapping one opens the sheet) */
+let toastEl = null, toastTimer = 0, toastQ = [], toastBusy = false, toastView = "ach";
+function toast(kicker, title, line, view){ toastQ.push({kicker, title, line, view}); if(!toastBusy) nextToast(); }
+function nextToast(){
+  if(!toastEl){
+    toastEl = document.createElement("div"); toastEl.className = "hs-toast"; toastEl.setAttribute("role", "status");
+    document.documentElement.appendChild(toastEl);                                       // outside <body>: page effects can't move it
+    toastEl.addEventListener("click", () => { clearTimeout(toastTimer); toastQ = []; toastBusy = false; toastEl.classList.remove("show"); open(toastView); });
+  }
+  const t = toastQ.shift();
+  if(!t){ toastBusy = false; toastEl.classList.remove("show"); return; }
+  toastBusy = true; toastView = t.view || "ach";
+  toastEl.innerHTML = `<span>${esc(t.kicker)}</span><b>${esc(t.title)}</b><small>${esc(t.line)}</small>`;
+  toastEl.classList.remove("show"); void toastEl.offsetWidth; toastEl.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(nextToast, 4500);
+}
+
+function earn(g, id){
+  const game = GAME[g]; if(!game) return;
+  const f = achFound(g); if(f[id]) return;
+  const a = game.ach.find(x => x.id === id); if(!a) return;
+  const unlocksDefault = id === game.ach[0].id && !firstWin() && skin;                  // a first win is the way back to the default colors
+  f[id] = Date.now(); store.set(ACH_KEY(g), f);
+  const n = game.ach.filter(x => f[x.id]).length;
+  toast("Achievement unlocked", a.title, unlocksDefault ? "Default colors unlocked. Tap to see them." : `${n} of ${game.ach.length} ${game.name} achievements. Tap to see them.`, unlocksDefault ? "unlocks" : "ach");
+  render();
+}
+function foundEgg(id){
+  const f = eggsFound(); if(!id || f[id]) return;
+  const a = EGGS.find(x => x.id === id); if(!a) return;
+  f[id] = Date.now(); store.set(EGG_KEY, f);
+  const n = EGGS.filter(x => f[x.id]).length, opens = SKINS.some(s => s.by === id);
+  toast("Easter egg found", a.title, opens ? "New color scheme unlocked. Tap to see it." : `${n} of ${EGGS.length} found. Tap to see the rest.`, opens ? "unlocks" : "eggs");
+  render();
+}
+
+/* ---- Stats (read straight from each game's save) */
+const dayNo = launch => { if(!launch) return 0; const d = new Date(), [y, m, dd] = launch.split("-").map(Number);
+  return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(y, m - 1, dd)) / 864e5) + 1; };
+const liveStreak = (st, n) => st.lastWin >= n - 1 ? st.streak : 0;
+function modeRows(prefix, modes, launch){
+  const n = dayNo(launch);
+  return `<table class="hs-tbl"><thead><tr><th></th><th>Played</th><th>Win %</th><th>Streak</th><th>Best</th></tr></thead><tbody>`
+    + modes.map(([k, label]) => { const st = Object.assign({played: 0, wins: 0, streak: 0, best: 0, lastWin: 0}, store.get(`${prefix}-stats-${k}`) || {});
+        return `<tr><th>${esc(label)}</th><td>${st.played}</td><td>${st.played ? Math.round(st.wins / st.played * 100) : 0}</td><td>${liveStreak(st, n)}</td><td>${st.best}</td></tr>`; }).join("")
+    + `</tbody></table>`;
+}
+const LETTERS = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"];
+function bbStats(){
+  const st = Object.assign({played: 0, cards: 0, streak: 0, best: 0, lastDone: 0, top: "", letters: {}}, store.get("bb-stats") || {});
+  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 ? st.streak : 0, max = Math.max(1, ...LETTERS.map(l => st.letters[l] || 0));
+  return `<div class="hs-nums"><div><b>${st.played}</b><span>Daily cards</span></div><div><b>${st.top || "-"}</b><span>Best grade</span></div>`
+    + `<div><b>${streak}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best streak</span></div></div>`
+    + `<ol class="hs-dist" aria-label="Grades">` + LETTERS.map(l => { const v = st.letters[l] || 0;
+        return `<li><span>${l}</span><span class="bar" style="width:${Math.max(9, v / max * 100)}%">${v}</span></li>`; }).join("") + `</ol>`
+    + `<p class="hs-fine">${st.cards} card${st.cards === 1 ? "" : "s"} booked in all, free play included. Grades count every finished card.</p>`;
+}
+function statsHTML(only){
+  const parts = {
+    tr: () => `<h3>Title Run</h3>` + modeRows("tr", [["base", "Base"], ["mark", "Mark"], ["smart", "Smart Mark"], ["chaos", "Chaos"]], CFG.launch.tr),
+    rr: () => `<h3>Roydle Rumble</h3>` + modeRows("rr", [["m", "Men's"], ["w", "Women's"]], CFG.launch.rr),
+    bb: () => `<h3>Blind Booker</h3>` + bbStats(),
+  };
+  const ids = only ? [only] : ["tr", "rr", "bb"];
+  return ids.map(id => `<section class="hs-sec">${parts[id]()}</section>`).join("")
+    + `<p class="hs-fine">Daily games only, except where noted. Everything is saved in this browser, so a new device starts fresh.</p>`;
+}
+
+/* ---- Awards */
+const shortDate = ts => new Date(ts).toLocaleDateString("en-US", {month: "short", day: "numeric"});
+const card = (a, i, ts, egg) => `<li class="hs-ach ${ts ? "got" : "locked"}"><span class="no">No. ${pad(i + 1)}</span><i class="emb" aria-hidden="true">${ts ? (egg ? "!" : esc(a.g)) : "?"}</i>`
+  + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
+function achHTML(){
+  const order = CFG.game ? [GAME[CFG.game], ...GAMES.filter(g => g.id !== CFG.game)] : GAMES;
+  return order.map(g => { const f = achFound(g.id), n = g.ach.filter(a => f[a.id]).length;
+    return `<section class="hs-sec"><h3>${esc(g.name)} · ${n} of ${g.ach.length}</h3><ul class="hs-roster">${g.ach.map((a, i) => card(a, i, f[a.id], false)).join("")}</ul></section>`; }).join("");
+}
+function eggsHTML(){
+  const f = eggsFound(), n = EGGS.filter(a => f[a.id]).length;
+  return `<section class="hs-sec"><h3>${n} of ${EGGS.length} found</h3><ul class="hs-roster">${EGGS.map((a, i) => card(a, i, f[a.id], true)).join("")}</ul>`
+    + `<p class="hs-fine">Hidden all over the games. Each title is your only hint.</p></section>`;
+}
+function unlocksHTML(){
+  const hidden = SKINS.some(s => s.by !== "first" && !skinOpen(s));
+  const tile = s => { const openNow = skinOpen(s), on = skin === s.id;
+    return `<li class="hs-skin${on ? " on" : ""}${openNow || on ? "" : " locked"}"><span class="sw" aria-hidden="true">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</span>`
+      + `<b>${esc(s.name)}</b><span class="d">${openNow || on ? esc(s.note) : "Win any game to unlock."}</span>`
+      + `<button type="button" class="hs-btn" data-skin="${esc(s.id)}"${openNow && !on ? "" : " disabled"}>${on ? "In use" : openNow ? "Use" : "Locked"}</button></li>`; };
+  const mystery = hidden ? `<li class="hs-skin locked"><span class="sw" aria-hidden="true"><i></i><i></i><i></i></span><b>???</b><span class="d">More color schemes are out there.</span></li>` : "";
+  return `<section class="hs-sec"><h3>Color schemes</h3><ul class="hs-roster">${SKINS.filter(s => s.by === "first" || skinOpen(s)).map(tile).join("")}${mystery}</ul>`
+    + `<p class="hs-fine">Your pick follows you to every game on the site, on this device. Once you pick something else, getting back to Default takes a first win in any game.</p></section>`;
+}
+
+/* ---- The sheet: a full-screen page over the site. X, Esc or the back button closes it. */
+const STATS_HERE = !CFG.game || CFG.game === "bb";        // homepage: every game's stats. Blind Booker: its own. The others have their own Stats pages.
+let sheet = null, view = "ach";
+function tabs(){ return [...(STATS_HERE ? [["stats", "Stats"]] : []), ["ach", "Achievements"], ["eggs", "Easter Eggs"], ["unlocks", "Unlocks"]]; }
+function render(){
+  if(!sheet) return;
+  if(!tabs().some(([v]) => v === view)) view = "ach";
+  const title = view === "stats" ? "Stats" : "Awards";
+  sheet.querySelector("h2").textContent = title;
+  sheet.setAttribute("aria-label", title);
+  sheet.querySelector(".hs-seg").innerHTML = tabs().map(([v, l]) => `<button type="button" data-view="${v}" aria-pressed="${view === v}">${l}</button>`).join("");
+  sheet.querySelector(".hs-body").innerHTML = view === "stats" ? statsHTML(CFG.game || "") : view === "eggs" ? eggsHTML() : view === "unlocks" ? unlocksHTML() : achHTML();
+}
+function open(v){
+  view = v || "ach";
+  if(!sheet){
+    sheet = document.createElement("div"); sheet.className = "hs-sheet"; sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-modal", "true");
+    sheet.innerHTML = `<div class="hs-in"><div class="hs-h"><h2></h2><button type="button" class="hs-x" aria-label="Close">&times;</button></div>`
+      + `<div class="hs-seg" role="group" aria-label="View"></div><div class="hs-body"></div></div>`;
+    sheet.addEventListener("click", e => {
+      const v2 = e.target.closest("button[data-view]"), k = e.target.closest("button[data-skin]");
+      if(e.target.closest(".hs-x")) close();
+      else if(v2){ view = v2.dataset.view; render(); sheet.scrollTop = 0; }
+      else if(k && !k.disabled) setSkin(k.dataset.skin);
+    });
+    document.documentElement.appendChild(sheet);
+    try{ history.pushState({hoss: 1}, ""); }catch(e){}
+  }
+  document.documentElement.classList.add("hs-open");
+  render(); sheet.scrollTop = 0;
+  const x = sheet.querySelector(".hs-x"); if(x) x.focus({preventScroll: true});
+}
+function close(fromHistory){
+  if(!sheet) return;
+  sheet.remove(); sheet = null; document.documentElement.classList.remove("hs-open");
+  if(!fromHistory){ try{ if(history.state && history.state.hoss) history.back(); }catch(e){} }
+}
+addEventListener("popstate", () => { if(sheet) close(true); });
+addEventListener("keydown", e => { if(e.key === "Escape" && sheet) close(); });
+document.addEventListener("click", e => { const b = e.target.closest("[data-hoss]"); if(b){ e.preventDefault(); open(b.dataset.hoss); } });
+
+skin = savedSkin(); look();
+window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, GAMES, EGGS, SKINS, store,
+  get skin(){ return skin; }};
+})();
+</script>
 </head>
 <body class="">
 <header class="bar">
