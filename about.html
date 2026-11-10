@@ -57,7 +57,7 @@ p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid
 .fine{font-size:.88rem;color:var(--muted)}
 .home .wrap{max-width:64rem}
 .games{display:grid;gap:16px;grid-template-columns:1fr;grid-auto-rows:1fr}
-@media (min-width:52rem){ .games{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (min-width:40rem){ .games{grid-template-columns:repeat(2,minmax(0,1fr))} }   /* 4 games: 2 x 2 on wider screens, never a lone card */
 .game{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
 .game h3{margin:0;font-family:var(--f-display);font-weight:900;font-size:2rem;line-height:.95;text-transform:uppercase}
 .game .tag{align-self:flex-start;font-family:var(--f-label);font-weight:700;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--gold);color:var(--gold-ink)}
@@ -212,7 +212,7 @@ html.hs-open{overflow:hidden}
      HOSS.open(view)        open the sheet: "stats", "ach", "eggs" or "unlocks"
    Any element with data-hoss="stats|ach|eggs|unlocks" opens the sheet on that view. */
 (function(){
-const CFG = {"game": "", "launch": {"tr": "2026-10-26", "rr": "2026-11-03", "bb": "2026-11-03"}};
+const CFG = {"game": "", "launch": {"tr": "2026-10-26", "rr": "2026-11-03", "bb": "2026-11-03", "cah": "2026-11-10"}};
 const store = {
   get(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -243,13 +243,23 @@ const GAMES = [
     {id: "vet",    g: "25", title: "Rumble Regular",      desc: "Win 25 Roydle Rumbles."}]},
   {id: "bb", name: "Blind Booker", url: "/blindbooker/", ach: [
     {id: "first",  g: "★",  title: "The Card Is Set",        desc: "Book your first full card."},
-    {id: "aminus", g: "A",  title: "Instant Classic",        desc: "Book a show that grades A- or better."},
-    {id: "aplus",  g: "A+", title: "Tape-Trading Material",  desc: "Book a show that grades A+."},
-    {id: "f",      g: "F",  title: "Buyrate Disaster",       desc: "Book a show that grades F."},
+    {id: "classic",  g: "3½", title: "Instant Classic",       desc: "Book a card rated ★★★½ or better."},
+    {id: "tape",     g: "4★", title: "Tape-Trading Material", desc: "Book a card rated ★★★★ or better."},
+    {id: "disaster", g: "1★", title: "Buyrate Disaster",      desc: "Book a card rated ★¼ or worse."},
     {id: "jobber", g: "J",  title: "Fans Want Refunds",      desc: "Put a jobber in your main event."},
     {id: "dream",  g: "VS", title: "Dream Match",            desc: "Book an all-time rivalry."},
     {id: "six",    g: "6",  title: "Meltzer Broke the Scale", desc: "Book a six-star match."},
     {id: "week",   g: "7",  title: "Booker of the Week",     desc: "Book 7 daily cards in a row."}]},
+  {id: "cah", name: "Create-A-Hoss", url: "/createahoss/", ach: [
+    {id: "first",   g: "★",  title: "It's Alive",                desc: "Finish your first Hoss."},
+    {id: "perfect", g: "✓",  title: "Perfect Hoss",              desc: "Build the best Hoss your five could make."},
+    {id: "great",   g: "90", title: "Great Hoss",                desc: "Build a Hoss with a 90 OVR or better."},
+    {id: "goat",    g: "99", title: "Greatest Hoss of All Time", desc: "Build a 99 OVR Hoss."},
+    {id: "noweak",  g: "+",  title: "No Weak Links",             desc: "Build a Hoss with no orange or red parts."},
+    {id: "awful",   g: "60", title: "Legit Awful",               desc: "Build a Hoss that's legit awful."},
+    {id: "three",   g: "3",  title: "Hoss Factory",              desc: "Build 3 daily Hosses in a row."},
+    {id: "iron",    g: "7",  title: "Iron Hoss",                 desc: "Build 7 daily Hosses in a row."},
+    {id: "vet",     g: "25", title: "Mad Scientist",             desc: "Build 25 Hosses."}]},
 ];
 const GAME = Object.fromEntries(GAMES.map(g => [g.id, g]));
 
@@ -366,23 +376,36 @@ function modeRows(prefix, modes, launch){
         return `<tr><th>${esc(label)}</th><td>${st.played}</td><td>${st.played ? Math.round(st.wins / st.played * 100) : 0}</td><td>${liveStreak(st, n)}</td><td>${st.best}</td></tr>`; }).join("")
     + `</tbody></table>`;
 }
-const LETTERS = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F"];
+const BB_STARS = [5, 4, 3, 2, 1];                          // card ratings by whole stars (3 = ★★★ to ★★★¾)
 function bbStats(){
-  const st = Object.assign({played: 0, cards: 0, streak: 0, best: 0, lastDone: 0, top: "", letters: {}}, store.get("bb-stats") || {});
-  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 ? st.streak : 0, max = Math.max(1, ...LETTERS.map(l => st.letters[l] || 0));
-  return `<div class="hs-nums"><div><b>${st.played}</b><span>Daily cards</span></div><div><b>${st.top || "-"}</b><span>Best grade</span></div>`
+  const st = Object.assign({played: 0, cards: 0, streak: 0, best: 0, lastDone: 0, topStars: 0, stars: {}}, store.get("bb-stats") || {});
+  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 ? st.streak : 0, max = Math.max(1, ...BB_STARS.map(k => st.stars[k] || 0));
+  return `<div class="hs-nums"><div><b>${st.topStars ? st.topStars.toFixed(2) : "-"}</b><span>Best rating</span></div><div><b>${st.played}</b><span>Daily cards</span></div>`
     + `<div><b>${streak}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best streak</span></div></div>`
-    + `<ol class="hs-dist" aria-label="Grades">` + LETTERS.map(l => { const v = st.letters[l] || 0;
-        return `<li><span>${l}</span><span class="bar" style="width:${Math.max(9, v / max * 100)}%">${v}</span></li>`; }).join("") + `</ol>`
-    + `<p class="hs-fine">${st.cards} card${st.cards === 1 ? "" : "s"} booked in all, free play included. Grades count every finished card.</p>`;
+    + `<ol class="hs-dist" aria-label="Card ratings">` + BB_STARS.map(k => { const v = st.stars[k] || 0;
+        return `<li><span>${k}★</span><span class="bar" style="width:${Math.max(9, v / max * 100)}%">${v}</span></li>`; }).join("") + `</ol>`
+    + `<p class="hs-fine">${st.cards} card${st.cards === 1 ? "" : "s"} booked in all, free play included. Best rating and the chart count every finished card.</p>`;
+}
+const CAH_BANDS = [[99, "99"], [90, "90+"], [80, "80+"], [76, "76+"], [70, "70+"], [0, "Under 70"]];
+function cahStats(){
+  const st = Object.assign({played: 0, hosses: 0, streak: 0, best: 0, lastDone: 0, top: 0, ovr: {}}, store.get("cah-stats") || {});
+  const n = dayNo(CFG.launch.cah), streak = st.lastDone >= n - 1 ? st.streak : 0, bands = CAH_BANDS.map(() => 0);
+  Object.entries(st.ovr).forEach(([o, c]) => { bands[CAH_BANDS.findIndex(([min]) => +o >= min)] += c; });
+  const max = Math.max(1, ...bands);
+  return `<div class="hs-nums"><div><b>${st.top || "-"}</b><span>Top OVR</span></div><div><b>${st.played}</b><span>Daily Hosses</span></div>`
+    + `<div><b>${streak}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best streak</span></div></div>`
+    + `<ol class="hs-dist" aria-label="OVR">` + CAH_BANDS.map(([, label], i) =>
+        `<li><span>${label}</span><span class="bar" style="width:${Math.max(9, bands[i] / max * 100)}%">${bands[i]}</span></li>`).join("") + `</ol>`
+    + `<p class="hs-fine">${st.hosses} Hoss${st.hosses === 1 ? "" : "es"} built in all, free play included. Top OVR and the chart count every finished Hoss.</p>`;
 }
 function statsHTML(only){
   const parts = {
     tr: () => `<h3>Title Run</h3>` + modeRows("tr", [["base", "Base"], ["mark", "Mark"], ["smart", "Smart Mark"], ["chaos", "Chaos"]], CFG.launch.tr),
     rr: () => `<h3>Roydle Rumble</h3>` + modeRows("rr", [["m", "Men's"], ["w", "Women's"]], CFG.launch.rr),
     bb: () => `<h3>Blind Booker</h3>` + bbStats(),
+    cah: () => `<h3>Create-A-Hoss</h3>` + cahStats(),
   };
-  const ids = only ? [only] : ["tr", "rr", "bb"];
+  const ids = only ? [only] : ["tr", "rr", "bb", "cah"];
   return ids.map(id => `<section class="hs-sec">${parts[id]()}</section>`).join("")
     + `<p class="hs-fine">Daily games only, except where noted. Everything is saved in this browser, so a new device starts fresh.</p>`;
 }
@@ -413,7 +436,7 @@ function unlocksHTML(){
 }
 
 /* ---- The sheet: a full-screen page over the site. X, Esc or the back button closes it. */
-const STATS_HERE = !CFG.game || CFG.game === "bb";        // homepage: every game's stats. Blind Booker: its own. The others have their own Stats pages.
+const STATS_HERE = !CFG.game || CFG.game === "bb" || CFG.game === "cah";        // homepage: every game's stats. Blind Booker: its own. The others have their own Stats pages.
 let sheet = null, view = "ach";
 function tabs(){ return [...(STATS_HERE ? [["stats", "Stats"]] : []), ["ach", "Achievements"], ["eggs", "Easter Eggs"], ["unlocks", "Unlocks"]]; }
 function render(){
@@ -507,7 +530,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, 
 <p>Reign histories are compiled from Wikipedia's championship lists and the promotions' official title histories. Vacancies and reigns a promotion doesn't recognize are left out. Spot a mistake? Email it in and it'll get fixed.</p>
 
 <footer>
-  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
+  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/createahoss/">Create-A-Hoss</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
   <p>House of Hoss games are fan-made and not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion.</p>
   <p>Contact: contact@houseofhoss.com</p>
 </footer>
