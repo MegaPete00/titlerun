@@ -80,7 +80,7 @@ button{font:inherit;color:inherit}
 .ropes i:nth-child(2){background:var(--rope-w)}
 .ropes i:nth-child(3){background:var(--rope-b)}
 
-main{display:grid;gap:16px;padding-block:18px 44px}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-block:18px 44px}   /* minmax(0,..): nothing can push the page wider than the phone */
 .meta{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-label);font-weight:600;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
 /* Belt nameplate */
@@ -153,7 +153,7 @@ main{display:grid;gap:16px;padding-block:18px 44px}
 .sq.miss{background:var(--miss)}
 .legend{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.92rem;color:var(--muted)}
 .legend li{display:flex;align-items:center;gap:7px}
-.meta select{font-family:var(--f-label);font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.meta select{font-family:var(--f-label);font-weight:600;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px;min-width:0;max-width:100%;text-overflow:ellipsis}   /* can shrink: long title names pushed phones sideways in free play */
 .log .nm{font-weight:600;min-width:0;overflow-wrap:anywhere}
 .log .why{font-family:var(--f-label);font-weight:600;font-size:.84rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 
@@ -214,6 +214,8 @@ footer p{margin:0}
 .egg-banner small{display:block;margin-top:8px;font-family:var(--f-label);font-weight:600;font-size:.72rem;letter-spacing:.16em;opacity:.7}
 .egg-banner p{margin:0}
 .egg-banner .sp{display:block;height:.5em}
+.egg-banner .slow span{opacity:0;animation:eggSlow .8s ease-out forwards}
+@keyframes eggSlow{to{opacity:1}}
 .egg-banner .quiet{font-family:var(--f-body);font-weight:500;font-size:.8rem;line-height:1.2;text-transform:none;letter-spacing:.02em;opacity:.7}
 .egg-banner.mid{font-size:clamp(1.6rem, 7vw, 2.2rem);line-height:1}
 .egg-banner.long{font-family:var(--f-body);font-weight:600;font-size:1rem;line-height:1.5;text-transform:none;text-align:left;padding:18px 18px 14px;display:grid;gap:10px}
@@ -275,13 +277,12 @@ body.fx-suplex{animation:fxSuplex 1.6s cubic-bezier(.4,0,.3,1) 1}
 @keyframes fxSuplex{0%{transform:none}38%{transform:translateY(-14vh) rotate(-175deg)}56%{transform:translateY(0) rotate(-360deg)}62%{transform:translateY(1.4vh) rotate(-360deg) scaleY(.97)}70%{transform:translateY(-.6vh) rotate(-360deg)}100%{transform:none}}
 body.fx-619{animation:fx619 1.5s ease-in-out 1}
 @keyframes fx619{0%{transform:none}28%{transform:perspective(1400px) translateX(38vw) rotateY(-60deg)}55%{transform:perspective(1400px) translateX(-14vw) rotateY(28deg)}76%{transform:perspective(1400px) translateX(4vw) rotateY(-8deg)}100%{transform:none}}
-body.fx-cantsee{animation:fxCantSee 2.6s ease-in-out 1}
-@keyframes fxCantSee{0%{opacity:1}35%,62%{opacity:0}100%{opacity:1}}
+@keyframes fxFade{0%{opacity:1}35%,62%{opacity:0}100%{opacity:1}}
 body.fx-giant{animation:fxGiant 2.8s cubic-bezier(.3,1.4,.5,1) 1}
 @keyframes fxGiant{0%{transform:none}30%,68%{transform:scale(1.7)}100%{transform:none}}
 body.fx-tiny{animation:fxTiny 2.8s cubic-bezier(.3,1.4,.5,1) 1}
 @keyframes fxTiny{0%{transform:none}30%,68%{transform:scale(.3)}100%{transform:none}}
-body.fx-fade{animation:fxCantSee 1.2s ease-in-out 1}
+body.fx-fade{animation:fxFade 1.2s ease-in-out 1}
 html.fx-mono body{filter:grayscale(1) contrast(1.15);transition:filter .3s}
 .fx-pose{display:grid;place-content:center;justify-items:center;gap:4px;text-align:center;background:radial-gradient(circle at 50% 50%, rgba(0,0,0,.45), rgba(0,0,0,.15) 60%)}
 .fx-pose b{font-family:var(--f-display);font-weight:900;font-size:min(40vw,14rem);line-height:.85;color:rgba(255,255,255,.92);text-shadow:0 6px 30px rgba(0,0,0,.55);animation:fxPop .25s ease-out}
@@ -366,6 +367,20 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
 :root[data-egg="deadlock"] .field input{background:#FFFFFF}
 :root[data-egg="taz"] .field input{background:#FFB676}
 /* Pages that name their accent differently pick the theme's accent up too */
+/* Game colors (Nov 14). Each game page uses its logo color as the accent unless a color scheme is on (data-game is set by
+   the boot script in hoss.py). The same colors are the game schemes a first win unlocks (data-egg="titlerun" etc.). */
+:root[data-game="tr"]:not([data-egg]),:root[data-egg="titlerun"]{--accent:#E0A800;--on-accent:#0E0F12;--rope-r:#F1C232;--focus:#8A6A00;--toast-hi:#F1C232;--gold:#E0A800;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #E0A800 16%, transparent)}
+@media (prefers-color-scheme: dark){ :root[data-game="tr"]:not([data-egg]):not([data-theme="light"]),:root[data-egg="titlerun"]:not([data-theme="light"]){--accent:#F1C232;--on-accent:#0E0F12;--rope-r:#F1C232;--focus:#F1C232;--toast-hi:#8A6A00;--gold:#F1C232;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #F1C232 16%, transparent)} }
+:root[data-game="tr"][data-theme="dark"]:not([data-egg]),:root[data-egg="titlerun"][data-theme="dark"]{--accent:#F1C232;--on-accent:#0E0F12;--rope-r:#F1C232;--focus:#F1C232;--toast-hi:#8A6A00;--gold:#F1C232;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #F1C232 16%, transparent)}
+:root[data-game="rr"]:not([data-egg]),:root[data-egg="roydle"]{--accent:#D42A20;--on-accent:#FFFFFF;--rope-r:#E8372D;--focus:#B3241B;--toast-hi:#FF7A70;--gold:#D42A20;--gold-ink:#FFFFFF;--accent-soft:color-mix(in srgb, #D42A20 16%, transparent)}
+@media (prefers-color-scheme: dark){ :root[data-game="rr"]:not([data-egg]):not([data-theme="light"]),:root[data-egg="roydle"]:not([data-theme="light"]){--accent:#FF5A4F;--on-accent:#0E0F12;--rope-r:#FF5A4F;--focus:#FF7A70;--toast-hi:#B3241B;--gold:#FF5A4F;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #FF5A4F 16%, transparent)} }
+:root[data-game="rr"][data-theme="dark"]:not([data-egg]),:root[data-egg="roydle"][data-theme="dark"]{--accent:#FF5A4F;--on-accent:#0E0F12;--rope-r:#FF5A4F;--focus:#FF7A70;--toast-hi:#B3241B;--gold:#FF5A4F;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #FF5A4F 16%, transparent)}
+:root[data-game="bb"]:not([data-egg]),:root[data-egg="blindbooker"]{--accent:#0077C2;--on-accent:#FFFFFF;--rope-r:#0086D4;--focus:#0066A8;--toast-hi:#5CC0FF;--gold:#0077C2;--gold-ink:#FFFFFF;--accent-soft:color-mix(in srgb, #0077C2 16%, transparent)}
+@media (prefers-color-scheme: dark){ :root[data-game="bb"]:not([data-egg]):not([data-theme="light"]),:root[data-egg="blindbooker"]:not([data-theme="light"]){--accent:#38A9F5;--on-accent:#0E0F12;--rope-r:#38A9F5;--focus:#6CC0FF;--toast-hi:#0066A8;--gold:#38A9F5;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #38A9F5 16%, transparent)} }
+:root[data-game="bb"][data-theme="dark"]:not([data-egg]),:root[data-egg="blindbooker"][data-theme="dark"]{--accent:#38A9F5;--on-accent:#0E0F12;--rope-r:#38A9F5;--focus:#6CC0FF;--toast-hi:#0066A8;--gold:#38A9F5;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #38A9F5 16%, transparent)}
+:root[data-game="cah"]:not([data-egg]),:root[data-egg="createahoss"]{--accent:#7809A4;--on-accent:#FFFFFF;--rope-r:#9B30D0;--focus:#7809A4;--toast-hi:#C77DF0;--gold:#7809A4;--gold-ink:#FFFFFF;--accent-soft:color-mix(in srgb, #7809A4 16%, transparent)}
+@media (prefers-color-scheme: dark){ :root[data-game="cah"]:not([data-egg]):not([data-theme="light"]),:root[data-egg="createahoss"]:not([data-theme="light"]){--accent:#B45CE8;--on-accent:#0E0F12;--rope-r:#B45CE8;--focus:#C77DF0;--toast-hi:#7809A4;--gold:#B45CE8;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #B45CE8 16%, transparent)} }
+:root[data-game="cah"][data-theme="dark"]:not([data-egg]),:root[data-egg="createahoss"][data-theme="dark"]{--accent:#B45CE8;--on-accent:#0E0F12;--rope-r:#B45CE8;--focus:#C77DF0;--toast-hi:#7809A4;--gold:#B45CE8;--gold-ink:#0E0F12;--accent-soft:color-mix(in srgb, #B45CE8 16%, transparent)}
 :root[data-egg]{--gold:var(--accent);--gold-ink:var(--on-accent);--accent-soft:color-mix(in srgb, var(--accent) 22%, var(--panel))}
 
 /* Header buttons that open the sheet (pages that don't already style a .statbtn) */
@@ -402,6 +417,21 @@ html.hs-open{overflow:hidden}
 .hs-sec{display:grid;gap:12px;padding:16px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
 .hs-sec h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .hs-fine{margin:0;font-size:.84rem;line-height:1.4;color:var(--muted)}
+/* Game logos (Nov 14). Pete's colors are fixed, so they always sit on a dark plate that color schemes don't touch. */
+:root{--logo-bg:#2F353C}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--logo-bg:#0B0C0E} }
+:root[data-theme="dark"]{--logo-bg:#0B0C0E}
+.hs-logo{display:block;width:auto;height:auto;max-width:100%;max-height:28px}     /* max-* on both: shrinks in proportion when space is tight */
+.hs-logo.lg-tr{max-height:36px} .hs-logo.lg-bb{max-height:44px}
+.hs-sec .hs-lhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-16px -16px 0;padding:14px 16px;min-height:72px;
+  background:var(--logo-bg);border-radius:11px 11px 0 0;border-bottom:3px solid var(--accent, var(--gold));color:#AEB4BB}
+.hs-lhead .hs-logo{min-width:0;flex:0 1 auto}
+.hs-lhead span{flex:none}
+/* Game headers: the logo replaces the name. A color scheme can turn the header any color, so then the logo gets a dark outline. */
+.mark .hs-logo{max-height:32px}
+.mark .hs-logo.lg-tr{max-height:40px} .mark .hs-logo.lg-bb{max-height:48px}
+.mark .hs-logo + span{margin-top:8px}
+:root[data-egg] .mark .hs-logo{filter:drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000)}
 .hs-roster{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,9.5rem),1fr));gap:10px}
 .hs-ach,.hs-skin{display:grid;gap:5px;align-content:start;justify-items:start;padding:12px;border-radius:12px;background:var(--canvas);box-shadow:inset 0 0 0 1px var(--line);min-width:0}
 .hs-ach .no{font-family:var(--f-label);font-weight:700;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
@@ -436,7 +466,7 @@ html.hs-open{overflow:hidden}
 .hs-dist .bar{justify-self:start;min-width:1.6rem;padding:2px 7px;border-radius:4px;background:var(--well);text-align:right;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion: reduce){ .hs-sheet{animation:none} .hs-toast{transition:none} }
 </style>
-<script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}</script>
+<script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}document.documentElement.dataset.game="tr";</script>
 <script>
 /* House of Hoss shared layer. Every game and page lives on houseofhoss.com, so they all share one browser save (localStorage).
    This file holds every game's achievements, the site-wide Easter eggs and color schemes, the Awards / Stats sheet and the toasts.
@@ -457,7 +487,7 @@ const pad = n => String(n).padStart(2, "0");
 
 /* ---- Achievements, per game. The first entry of each game is its "first win", which also unlocks the default colors. */
 const GAMES = [
-  {id: "tr", name: "Title Run", url: "/titlerun/", ach: [
+  {id: "tr", name: "Title Run", url: "/titlerun/", logo: "/logo-titlerun.svg", ach: [
     {id: "hoss",   g: "★",  title: "Certified Hoss",  desc: "Get your first Title Run right."},
     {id: "squash", g: "1",  title: "Squash Match",    desc: "Win a Title Run with your first guess."},
     {id: "count",  g: "5",  title: "Beat the Count",  desc: "Win a Title Run with your last guess."},
@@ -467,7 +497,7 @@ const GAMES = [
     {id: "smart",  g: "S",  title: "Smart Mark",      desc: "Win a Title Run in Smart Mark mode."},
     {id: "chaos",  g: "C",  title: "Agent of Chaos",  desc: "Win a Title Run in Chaos mode."},
     {id: "vet",    g: "25", title: "Hall of Famer",   desc: "Win 25 Title Runs."}]},
-  {id: "rr", name: "Roydle Rumble", url: "/roydle/", ach: [
+  {id: "rr", name: "Roydle Rumble", url: "/roydle/", logo: "/logo-roydle.svg", ach: [
     {id: "first",  g: "★",  title: "Over the Top",        desc: "Win your first Roydle Rumble."},
     {id: "one",    g: "1",  title: "Instant Elimination", desc: "Win with your first guess."},
     {id: "eight",  g: "8",  title: "Final Two",           desc: "Win with your last guess."},
@@ -476,7 +506,7 @@ const GAMES = [
     {id: "three",  g: "3",  title: "Three-Time Winner",   desc: "Win 3 dailies in a row."},
     {id: "iron",   g: "7",  title: "Iron Man Run",        desc: "Win 7 dailies in a row."},
     {id: "vet",    g: "25", title: "Rumble Regular",      desc: "Win 25 Roydle Rumbles."}]},
-  {id: "bb", name: "Blind Booker", url: "/blindbooker/", ach: [
+  {id: "bb", name: "Blind Booker", url: "/blindbooker/", logo: "/logo-blindbooker.svg", ach: [
     {id: "first",  g: "★",  title: "The Card Is Set",        desc: "Book your first full card."},
     {id: "classic",  g: "3½", title: "Instant Classic",       desc: "Book a card rated ★★★½ or better."},
     {id: "tape",     g: "4★", title: "Tape-Trading Material", desc: "Book a card rated ★★★★ or better."},
@@ -485,7 +515,7 @@ const GAMES = [
     {id: "dream",  g: "VS", title: "Dream Match",            desc: "Book an all-time rivalry."},
     {id: "six",    g: "6",  title: "Meltzer Broke the Scale", desc: "Book a six-star match."},
     {id: "week",   g: "7",  title: "Booker of the Week",     desc: "Book 7 daily cards in a row."}]},
-  {id: "cah", name: "Create-A-Hoss", url: "/createahoss/", ach: [
+  {id: "cah", name: "Create-A-Hoss", url: "/createahoss/", logo: "/logo-createahoss.svg", ach: [
     {id: "first",   g: "★",  title: "It's Alive",                desc: "Finish your first Hoss."},
     {id: "perfect", g: "✓",  title: "Perfect Hoss",              desc: "Build the best Hoss your five could make."},
     {id: "great",   g: "90", title: "Great Hoss",                desc: "Build a Hoss with a 90 OVR or better."},
@@ -517,7 +547,6 @@ const EGGS = [
   {id: "lightsout",title: "Lights Out"},
   {id: "suplex",   title: "Welcome to Suplex City"},
   {id: "619",      title: "Booyaka Booyaka"},
-  {id: "cantsee",  title: "You Can't See Me"},
   {id: "giant",    title: "Eighth Wonder of the World"},
   {id: "tiny",     title: "Luck of the Irish"},
   {id: "pose",     title: "Five-Second Pose"},
@@ -525,10 +554,14 @@ const EGGS = [
   {id: "pyro",     title: "Big Red Machine"},
 ];
 
-/* ---- Color schemes. "by" = the Easter egg that unlocks it; "first" = a first win in any game. The scheme is the
-   :root[data-egg="<id>"] theme in hoss.css; the default has no theme. */
+/* ---- Color schemes. "by": "" = always open (Base), "win:<game>" = that game's first achievement (its first win), anything
+   else = the Easter egg that unlocks it. The scheme is the :root[data-egg="<id>"] theme in hoss.css; Base has no theme. */
 const SKINS = [
-  {id: "",         name: "Default",            by: "first",    note: "The original look.",                       sw: ["#BDC1C6", "#2F353C", "#5B18EA"]},
+  {id: "",            name: "Base",           by: "",         note: "Each game in its own color, the home page in purple.", sw: ["#BDC1C6", "#2F353C", "#5B18EA"]},
+  {id: "titlerun",    name: "Title Run",      by: "win:tr",   note: "Title Run gold on every page.",      lock: "Win your first Title Run.",     sw: ["#BDC1C6", "#2F353C", "#F1C232"]},
+  {id: "roydle",      name: "Roydle Rumble",  by: "win:rr",   note: "Roydle red on every page.",          lock: "Win your first Roydle Rumble.", sw: ["#BDC1C6", "#2F353C", "#E8372D"]},
+  {id: "blindbooker", name: "Blind Booker",   by: "win:bb",   note: "Blind Booker blue on every page.",   lock: "Book your first full card.",    sw: ["#BDC1C6", "#2F353C", "#0086D4"]},
+  {id: "createahoss", name: "Create-A-Hoss",  by: "win:cah",  note: "Create-A-Hoss purple on every page.", lock: "Finish your first Hoss.",      sw: ["#BDC1C6", "#2F353C", "#9B30D0"]},
   {id: "taz",      name: "Taz",                by: "taz",      note: "Orange and black.",                        sw: ["#F07A1A", "#0B0B0B", "#FF9B4A"]},
   {id: "deadlock", name: "Deadlock",           by: "deadlock", note: "Orange, black and white. No stretching.",  sw: ["#F26A1B", "#0B0B0B", "#FFFFFF"]},
   {id: "nacho",    name: "Nacho Libre",        by: "nacho",    note: "Blue and red.",                            sw: ["#5B8DEF", "#C8102E", "#FFFFFF"]},
@@ -541,8 +574,8 @@ const SKINS = [
 const ACH_KEY = g => g + "-ach", EGG_KEY = "tr-eggs", SKIN_KEY = "hoh-skin";
 const achFound = g => store.get(ACH_KEY(g)) || {};
 const eggsFound = () => store.get(EGG_KEY) || {};
-const firstWin = () => GAMES.some(g => achFound(g.id)[g.ach[0].id]);
-const skinOpen = s => s.by === "first" ? firstWin() : !!eggsFound()[s.by];
+const won = g => !!achFound(g)[GAME[g].ach[0].id];                                       // a game's first achievement is its first win
+const skinOpen = s => !s.by ? true : s.by.startsWith("win:") ? won(s.by.slice(4)) : !!eggsFound()[s.by];
 
 /* ---- Look: the saved color scheme, unless an Egg Card's theme is showing */
 let skin = "", temp = "";
@@ -585,10 +618,10 @@ function earn(g, id){
   const game = GAME[g]; if(!game) return;
   const f = achFound(g); if(f[id]) return;
   const a = game.ach.find(x => x.id === id); if(!a) return;
-  const unlocksDefault = id === game.ach[0].id && !firstWin() && skin;                  // a first win is the way back to the default colors
+  const opens = id === game.ach[0].id && SKINS.some(s => s.by === "win:" + g);           // first win: that game's color scheme opens
   f[id] = Date.now(); store.set(ACH_KEY(g), f);
   const n = game.ach.filter(x => f[x.id]).length;
-  toast("Achievement unlocked", a.title, unlocksDefault ? "Default colors unlocked. Tap to see them." : `${n} of ${game.ach.length} ${game.name} achievements. Tap to see them.`, unlocksDefault ? "unlocks" : "ach");
+  toast("Achievement unlocked", a.title, opens ? `${game.name} color scheme unlocked. Tap to see it.` : `${n} of ${game.ach.length} ${game.name} achievements. Tap to see them.`, opens ? "unlocks" : "ach");
   render();
 }
 function foundEgg(id){
@@ -633,12 +666,15 @@ function cahStats(){
         `<li><span>${label}</span><span class="bar" style="width:${Math.max(9, bands[i] / max * 100)}%">${bands[i]}</span></li>`).join("") + `</ol>`
     + `<p class="hs-fine">${st.hosses} Hoss${st.hosses === 1 ? "" : "es"} built in all, free play included. Top OVR and the chart count every finished Hoss.</p>`;
 }
+// Section heading with the game's logo on a dark plate (logos live in the homepage repo: /logo-<game>.svg)
+const logoHead = (id, right) => `<h3 class="hs-lhead"><img class="hs-logo lg-${id}" src="${GAME[id].logo}" alt="${esc(GAME[id].name)}">`
+  + (right ? `<span>${right}</span>` : "") + `</h3>`;
 function statsHTML(only){
   const parts = {
-    tr: () => `<h3>Title Run</h3>` + modeRows("tr", [["base", "Base"], ["mark", "Mark"], ["smart", "Smart Mark"], ["chaos", "Chaos"]], CFG.launch.tr),
-    rr: () => `<h3>Roydle Rumble</h3>` + modeRows("rr", [["m", "Men's"], ["w", "Women's"]], CFG.launch.rr),
-    bb: () => `<h3>Blind Booker</h3>` + bbStats(),
-    cah: () => `<h3>Create-A-Hoss</h3>` + cahStats(),
+    tr: () => logoHead("tr") + modeRows("tr", [["base", "Base"], ["mark", "Mark"], ["smart", "Smart Mark"], ["chaos", "Chaos"]], CFG.launch.tr),
+    rr: () => logoHead("rr") + modeRows("rr", [["m", "Men's"], ["w", "Women's"]], CFG.launch.rr),
+    bb: () => logoHead("bb") + bbStats(),
+    cah: () => logoHead("cah") + cahStats(),
   };
   const ids = only ? [only] : ["tr", "rr", "bb", "cah"];
   return ids.map(id => `<section class="hs-sec">${parts[id]()}</section>`).join("")
@@ -652,7 +688,7 @@ const card = (a, i, ts, egg) => `<li class="hs-ach ${ts ? "got" : "locked"}"><sp
 function achHTML(){
   const order = CFG.game ? [GAME[CFG.game], ...GAMES.filter(g => g.id !== CFG.game)] : GAMES;
   return order.map(g => { const f = achFound(g.id), n = g.ach.filter(a => f[a.id]).length;
-    return `<section class="hs-sec"><h3>${esc(g.name)} · ${n} of ${g.ach.length}</h3><ul class="hs-roster">${g.ach.map((a, i) => card(a, i, f[a.id], false)).join("")}</ul></section>`; }).join("");
+    return `<section class="hs-sec">${logoHead(g.id, `${n} of ${g.ach.length}`)}<ul class="hs-roster">${g.ach.map((a, i) => card(a, i, f[a.id], false)).join("")}</ul></section>`; }).join("");
 }
 function eggsHTML(){
   const f = eggsFound(), n = EGGS.filter(a => f[a.id]).length;
@@ -660,14 +696,14 @@ function eggsHTML(){
     + `<p class="hs-fine">Hidden all over the games. Each title is your only hint.</p></section>`;
 }
 function unlocksHTML(){
-  const hidden = SKINS.some(s => s.by !== "first" && !skinOpen(s));
+  const egg = s => s.by && !s.by.startsWith("win:"), hidden = SKINS.some(s => egg(s) && !skinOpen(s));
   const tile = s => { const openNow = skinOpen(s), on = skin === s.id;
     return `<li class="hs-skin${on ? " on" : ""}${openNow || on ? "" : " locked"}"><span class="sw" aria-hidden="true">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</span>`
-      + `<b>${esc(s.name)}</b><span class="d">${openNow || on ? esc(s.note) : "Win any game to unlock."}</span>`
+      + `<b>${esc(s.name)}</b><span class="d">${openNow || on ? esc(s.note) : esc(s.lock || "")}</span>`
       + `<button type="button" class="hs-btn" data-skin="${esc(s.id)}"${openNow && !on ? "" : " disabled"}>${on ? "In use" : openNow ? "Use" : "Locked"}</button></li>`; };
   const mystery = hidden ? `<li class="hs-skin locked"><span class="sw" aria-hidden="true"><i></i><i></i><i></i></span><b>???</b><span class="d">More color schemes are out there.</span></li>` : "";
-  return `<section class="hs-sec"><h3>Color schemes</h3><ul class="hs-roster">${SKINS.filter(s => s.by === "first" || skinOpen(s)).map(tile).join("")}${mystery}</ul>`
-    + `<p class="hs-fine">Your pick follows you to every game on the site, on this device. Once you pick something else, getting back to Default takes a first win in any game.</p></section>`;
+  return `<section class="hs-sec"><h3>Color schemes</h3><ul class="hs-roster">${SKINS.filter(s => !egg(s) || skinOpen(s)).map(tile).join("")}${mystery}</ul>`
+    + `<p class="hs-fine">Your pick follows you to every game on the site, on this device. A first win in each game unlocks its colors.</p></section>`;
 }
 
 /* ---- The sheet: a full-screen page over the site. X, Esc or the back button closes it. */
@@ -722,7 +758,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, 
   <div class="wrap bar-in">
     <div class="brand">
       <a class="home" href="/"><img src="/icon-192.png" alt="">House of Hoss</a>
-      <p class="mark">Title Run<span>Name the reign</span></p>
+      <p class="mark"><img class="hs-logo lg-tr" src="/logo-titlerun.svg" alt="Title Run" width="984" height="195"><span>Name the reign</span></p>
     </div>
     <div class="bar-right">
       <div class="modes" role="group" aria-label="Daily or free play">
@@ -1143,12 +1179,11 @@ const DEFAULT_HINT = "Pick a name from the list. Every champion in the game is i
 function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.toggle("err", !!err); }
 
 /* Easter eggs: type one of these names in the guess box. Doesn't use a guess. Tap the banner to switch it off. */
-// Each person shows up in the autocomplete like a real champion (typing "John" or "Tony" finds them). Picking one never uses a guess.
+// Each person shows up in the autocomplete like a real champion (typing "John" finds John Blud). Picking one never uses a guess.
 const EGGS = [
   {id:"nacho", theme:"nacho", banner:"Get that corn out of my face!", people:[{name:"Nacho Libre", aka:["Ignacio"]}]},
   {id:"jr", banner:"BAH GAWD ALMIGHTY", people:[{name:"Jim Ross", aka:["Good Ol' JR","Good Ole JR"]}]},
   {id:"deadlock", theme:"deadlock", banner:"The long way", people:[
-    {name:"Anthony Douglas", aka:["TonyPizzaGuy","Tony Pizza Guy"]},
     {name:"James Darnell",   aka:["Pulse","CMPuls3","CMPulse","CMPuls","CM Puls3","CM Pulse"]},   // spacing and case don't matter
     {name:"John Blud",       aka:["Jawnny"]}]},
 ];
@@ -1212,7 +1247,7 @@ document.addEventListener("click", e => { if(e.target.closest("[data-close]")) c
 /* Effect eggs: one-shot animations and sounds. They never touch the game, never block a tap, and clean up after themselves.
    Overlays live on <html> (like the toast) so body transforms can't move them. Reduced-motion users get a simple fade. */
 const CALM = (() => { try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } })();
-const FX_BODY = ["fx-suplex", "fx-619", "fx-cantsee", "fx-giant", "fx-tiny", "fx-glitch", "fx-fade"];
+const FX_BODY = ["fx-suplex", "fx-619", "fx-giant", "fx-tiny", "fx-glitch", "fx-fade"];
 let fxLayer = null, fxTimers = [];
 const later = (ms, f) => fxTimers.push(setTimeout(f, ms));
 function fxClear(){
@@ -1280,7 +1315,6 @@ const FX = {
   },
   suplex(){ bodyFx(CALM ? "fx-fade" : "fx-suplex", 1600, "center"); noise(.25, {at: .85, vol: .5, type: "lowpass", freq: 300}); },
   swing(){ bodyFx(CALM ? "fx-fade" : "fx-619", 1500, "center"); },
-  cantsee(){ bodyFx("fx-cantsee", 2600); },
   giant(){ bodyFx(CALM ? "fx-fade" : "fx-giant", 2800, "top"); },
   tiny(){ bodyFx(CALM ? "fx-fade" : "fx-tiny", 2800, "top"); },
   pose(){                                                 // Edge & Christian: everything holds still for a 5-count. Still fully playable.
@@ -1299,6 +1333,8 @@ const FX = {
   },
 };
 function runFx(name){ fxClear(); if(FX[name]) FX[name](); }
+// Card line starting with ^: shows up after a pause, one |-separated piece at a time (Kennedy's slow second "Kennedy").
+const slowLine = s => `<p class="slow">${s.trim().split("|").map((x, i) => `<span style="animation-delay:${(1.6 + i * .75).toFixed(2)}s">${esc(x)}</span>`).join("")}</p>`;
 function showEgg({id, theme, card, lead, title, img, size, fx}){
   if(theme){ tempEgg = theme; applyLook(); }
   if(fx) runFx(fx);
@@ -1309,7 +1345,7 @@ function showEgg({id, theme, card, lead, title, img, size, fx}){
     b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "");
     b.innerHTML = (img ? `<img class="egg-img" src="${esc(img.src)}" alt="${esc(img.alt)}">` + (img.credit ? `<span class="egg-credit">${img.credit}</span>` : "") : "")
       + (title ? `<div class="egg-head">${lead ? `<span class="egg-lead">${esc(lead)}</span>` : ""}<span class="egg-title">${esc(title)}</span></div>` : "")
-      + (card || "").trim().split("\n").map(l => { l = l.trim(); return !l ? `<i class="sp"></i>` : l[0] === "~" ? `<p class="quiet">${esc(l.slice(1).trim())}</p>` : `<p>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
+      + (card || "").trim().split("\n").map(l => { l = l.trim(); return !l ? `<i class="sp"></i>` : l[0] === "~" ? `<p class="quiet">${esc(l.slice(1).trim())}</p>` : l[0] === "^" ? slowLine(l.slice(1)) : `<p>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
       + "<small>Tap to go back</small>";
     const im = b.querySelector(".egg-img");               // no photo uploaded yet: drop the slot, keep the text
     if(im) im.addEventListener("error", () => { im.remove(); const c = b.querySelector(".egg-credit"); if(c) c.remove(); });
@@ -1333,7 +1369,7 @@ function eggOff(){ tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
 /* Guess eggs: real guesses that count, keyed by the wrestler's canonical name (any billing triggers it). */
 const GUESS_EGGS = {
   "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!"},                  // also Eli Drake
-  "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n\n\n\n\n\n\n\n~Kennedy"},     // also Mr. Anderson
+  "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n^Ken|ne|dy"},     // also Mr. Anderson
   "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
   // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
   "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
@@ -1343,7 +1379,6 @@ const GUESS_EGGS = {
   "The Undertaker": {id:"lightsout", fx:"lightsout"},
   "Brock Lesnar": {id:"suplex", fx:"suplex"},
   "Rey Mysterio": {id:"619", fx:"swing"},
-  "John Cena": {id:"cantsee", fx:"cantsee"},
   "André the Giant": {id:"giant", fx:"giant"},
   "Hornswoggle": {id:"tiny", fx:"tiny"},
   "Edge": {id:"pose", fx:"pose"},
