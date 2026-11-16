@@ -69,7 +69,7 @@ p,li{max-width:65ch} p{margin:0} ul,ol{margin:0;padding-left:1.2rem;display:grid
 .play{justify-self:start;align-self:flex-start;margin-top:auto;display:inline-block;padding:10px 18px;border-radius:10px;background:var(--gold);color:var(--gold-ink);text-decoration:none;font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
 .chips li{display:flex;align-items:center;gap:7px;font-size:.95rem}
-.sq{display:inline-block;width:14px;height:14px;border-radius:3px} .hit{background:#1B7F46} .near{background:#B88412} .miss{background:#C8232F}
+.sq{display:inline-block;width:14px;height:14px;border-radius:3px} .hit{background:#1B7F46} .near{background:#D9661C} .era{background:#B88412} .miss{background:#C8232F}
 footer{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:6px;font-size:.88rem;color:var(--muted)}
 footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 </style>
@@ -121,7 +121,7 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
   --bar:#14432A; --bar-ink:#F2D16B; --bar-muted:#C9A227; --bar-line:#C9A227;
   --rope-r:#D4AF37; --rope-w:#14432A; --rope-b:#D4AF37;
   --plate-a:#F7E08A; --plate-b:#D4AF37; --plate-c:#8A6B12; --plate-edge:#14432A; --plate-ink:#10231A;
-  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#10231A;
+  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#10231A; --era-pip:#FFFFFF;
   --focus:#14432A; --shadow:rgba(16,35,26,.25); --accent:#14432A; --on-accent:#F2D16B; --toast-hi:#F2D16B; color-scheme:light;
 }
 :root[data-egg="lod"]{
@@ -131,6 +131,62 @@ footer nav{display:flex;flex-wrap:wrap;gap:6px 18px}
   --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#E31B23; --plate-ink:#E31B23;
   --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(227,27,35,.5); --near-pip:#FFFFFF;
   --focus:#E31B23; --shadow:rgba(0,0,0,.6); --accent:#E31B23; --on-accent:#FFFFFF; --toast-hi:#E31B23; color-scheme:dark;
+}
+:root[data-egg="newyear"]{
+  --canvas:#0B0B14; --panel:#17172A; --ink:#F4F1E6; --muted:#B9B4A0; --line:#4A4330; --well:#24243A;
+  --bar:#000000; --bar-ink:#F2D16B; --bar-muted:#C9C9D6; --bar-line:#D4AF37;
+  --rope-r:#D4AF37; --rope-w:#C0C0C8; --rope-b:#D4AF37;
+  --plate-a:#F7E08A; --plate-b:#D4AF37; --plate-c:#8A6B12; --plate-edge:#0B0B14; --plate-ink:#0B0B14;
+  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#D9661C; --era-pip:#FFFFFF;
+  --focus:#F2D16B; --shadow:rgba(0,0,0,.6); --accent:#F2D16B; --on-accent:#0B0B14; --toast-hi:#8A6B12; color-scheme:dark;
+}
+:root[data-egg="valentine"]{
+  --canvas:#FFD6E0; --panel:#FFFFFF; --ink:#3D0A1E; --muted:#6E2A44; --line:#E37A9A; --well:#FFE8EF;
+  --bar:#A4133C; --bar-ink:#FFFFFF; --bar-muted:#FFB3C6; --bar-line:#FF8FAB;
+  --rope-r:#FF4D6D; --rope-w:#FFFFFF; --rope-b:#A4133C;
+  --plate-a:#FF8FAB; --plate-b:#D6336C; --plate-c:#800F2F; --plate-edge:#3D0A1E; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.35); --plate-pip:rgba(255,255,255,.4); --near-pip:#FFFFFF; --era-pip:#F2C230;
+  --focus:#A4133C; --shadow:rgba(61,10,30,.25); --accent:#C9184A; --on-accent:#FFFFFF; --toast-hi:#FF8FAB; color-scheme:light;
+}
+:root[data-egg="stpat"]{
+  --canvas:#CDEBD3; --panel:#FFFFFF; --ink:#0B2E17; --muted:#2D5A3A; --line:#169B62; --well:#E3F4E8;
+  --bar:#0B6E3D; --bar-ink:#FFFFFF; --bar-muted:#BFE8CD; --bar-line:#FF883E;
+  --rope-r:#169B62; --rope-w:#FFFFFF; --rope-b:#FF883E;
+  --plate-a:#F7E08A; --plate-b:#D4AF37; --plate-c:#8A6B12; --plate-edge:#0B6E3D; --plate-ink:#0B2E17;
+  --plate-shine:rgba(255,250,220,.55); --plate-pip:rgba(255,250,220,.45); --near-pip:#D9661C; --era-pip:#FFFFFF;
+  --focus:#0B6E3D; --shadow:rgba(11,46,23,.25); --accent:#0B6E3D; --on-accent:#FFFFFF; --toast-hi:#7FD69B; color-scheme:light;
+}
+:root[data-egg="july4"]{
+  --canvas:#0A1633; --panel:#14244D; --ink:#F3F5FA; --muted:#AFC0E8; --line:#33508F; --well:#1D3163;
+  --bar:#B22234; --bar-ink:#FFFFFF; --bar-muted:#FFC2C9; --bar-line:#FFFFFF;
+  --rope-r:#B22234; --rope-w:#FFFFFF; --rope-b:#3C5BC7;
+  --plate-a:#FFFFFF; --plate-b:#D7DCE8; --plate-c:#8E9AB8; --plate-edge:#B22234; --plate-ink:#0A1633;
+  --plate-shine:rgba(255,255,255,.6); --plate-pip:rgba(255,255,255,.5); --near-pip:#D9661C; --era-pip:#F2C230;
+  --focus:#FFFFFF; --shadow:rgba(0,0,0,.6); --accent:#E8414F; --on-accent:#FFFFFF; --toast-hi:#B22234; color-scheme:dark;
+}
+:root[data-egg="halloween"]{
+  --canvas:#1A1024; --panel:#261933; --ink:#F5EBDD; --muted:#C9B8A6; --line:#4D3366; --well:#33224A;
+  --bar:#0B0710; --bar-ink:#FF7518; --bar-muted:#B98CFF; --bar-line:#FF7518;
+  --rope-r:#FF7518; --rope-w:#0B0710; --rope-b:#7B3FBF;
+  --plate-a:#3A2A4D; --plate-b:#1E1429; --plate-c:#0B0710; --plate-edge:#FF7518; --plate-ink:#FF7518;
+  --plate-shine:rgba(255,117,24,.15); --plate-pip:rgba(255,117,24,.25); --near-pip:#FFFFFF; --era-pip:#F2C230;
+  --focus:#FF7518; --shadow:rgba(0,0,0,.6); --accent:#FF7518; --on-accent:#1A1024; --toast-hi:#C2410C; color-scheme:dark;
+}
+:root[data-egg="thanks"]{
+  --canvas:#E8C9A0; --panel:#FFF8EE; --ink:#2B1708; --muted:#5A3A1E; --line:#B07A4A; --well:#F3E2C8;
+  --bar:#5A2E0E; --bar-ink:#FFD08A; --bar-muted:#E0A458; --bar-line:#C8641C;
+  --rope-r:#C8641C; --rope-w:#FFF8EE; --rope-b:#8B2E16;
+  --plate-a:#F0B062; --plate-b:#C8641C; --plate-c:#7A3410; --plate-edge:#2B1708; --plate-ink:#2B1708;
+  --plate-shine:rgba(255,240,210,.45); --plate-pip:rgba(255,240,210,.45); --near-pip:#2B1708; --era-pip:#FFF1B8;
+  --focus:#8B2E16; --shadow:rgba(43,23,8,.25); --accent:#8B2E16; --on-accent:#FFFFFF; --toast-hi:#F0B062; color-scheme:light;
+}
+:root[data-egg="xmas"]{
+  --canvas:#E9F3EC; --panel:#FFFFFF; --ink:#0E2A19; --muted:#2E4A38; --line:#7DB892; --well:#F7E3E5;
+  --bar:#B3121F; --bar-ink:#FFFFFF; --bar-muted:#FFD6DA; --bar-line:#F2C230;
+  --rope-r:#C8102E; --rope-w:#FFFFFF; --rope-b:#1E7A3C;
+  --plate-a:#FFFFFF; --plate-b:#DDE3E6; --plate-c:#9AA5AB; --plate-edge:#B3121F; --plate-ink:#0E2A19;
+  --plate-shine:rgba(255,255,255,.7); --plate-pip:rgba(255,255,255,.55); --near-pip:#D9661C; --era-pip:#F2C230;
+  --focus:#1E7A3C; --shadow:rgba(14,42,25,.2); --accent:#1E7A3C; --on-accent:#FFFFFF; --toast-hi:#FF6B7A; color-scheme:light;
 }
 :root[data-egg="deadlock"] .field input{background:#FFFFFF}
 :root[data-egg="taz"] .field input{background:#FFB676}
@@ -185,6 +241,7 @@ html.hs-open{overflow:hidden}
 .hs-sec{display:grid;gap:12px;padding:16px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
 .hs-sec h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .hs-fine{margin:0;font-size:.84rem;line-height:1.4;color:var(--muted)}
+.hs-sec .hs-dh{display:flex;justify-content:space-between;gap:12px}
 /* Game logos (Nov 14). Pete's colors are fixed, so they always sit on a dark plate that color schemes don't touch. */
 :root{--logo-bg:#2F353C}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--logo-bg:#0B0C0E} }
@@ -322,8 +379,24 @@ const EGGS = [
   {id: "pyro",     title: "Big Red Machine"},
 ];
 
-/* ---- Color schemes. "by": "" = always open (Base), "win:<game>" = that game's first achievement (its first win), anything
-   else = the Easter egg that unlocks it. The scheme is the :root[data-egg="<id>"] theme in hoss.css; Base has no theme. */
+/* ---- Holidays (Nov 15). Solve any puzzle on the day (win a Title Run or a Roydle Rumble, book a full card, finish a Hoss;
+   daily or free play, by the player's own clock) and that holiday's award and color scheme unlock for good.
+   on(year) = [month, day]. Cosmetic only: nothing here touches a game. */
+const nthDay = (y, m, dow, n) => 1 + (dow - new Date(y, m - 1, 1).getDay() + 7) % 7 + (n - 1) * 7;     // dow: 0 = Sunday
+const HOLIDAYS = [
+  {id: "newyear",   day: "New Year's Day",     on: () => [1, 1],                    g: "NY", title: "New Year's Revolution"},
+  {id: "valentine", day: "Valentine's Day",    on: () => [2, 14],                   g: "♥",  title: "St. Valentine's Day Massacre"},
+  {id: "stpat",     day: "St. Patrick's Day",  on: () => [3, 17],                   g: "☘",  title: "Irish Whip"},
+  {id: "july4",     day: "the Fourth of July", on: () => [7, 4],                    g: "★",  title: "The Great American Bash"},
+  {id: "halloween", day: "Halloween",          on: () => [10, 31],                  g: "☾",  title: "Halloween Havoc"},
+  {id: "thanks",    day: "Thanksgiving",       on: y => [11, nthDay(y, 11, 4, 4)],  g: "T",  title: "Gobbledy Gooker"},
+  {id: "xmas",      day: "Christmas Day",      on: () => [12, 25],                  g: "❄",  title: "Santa with Muscles"},
+];
+const holidayToday = (d = new Date()) => HOLIDAYS.find(h => { const [m, dd] = h.on(d.getFullYear()); return m === d.getMonth() + 1 && dd === d.getDate(); });
+
+/* ---- Color schemes. "by": "" = always open (Base), "win:<game>" = that game's first achievement (its first win),
+   "day:<holiday>" = solving a puzzle on that holiday, anything else = the Easter egg that unlocks it.
+   The scheme is the :root[data-egg="<id>"] theme in hoss.css; Base has no theme. */
 const SKINS = [
   {id: "",            name: "Base",           by: "",         note: "Each game in its own color, the home page in purple.", sw: ["#BDC1C6", "#2F353C", "#5B18EA"]},
   {id: "titlerun",    name: "Title Run",      by: "win:tr",   note: "Title Run gold on every page.",      lock: "Win your first Title Run.",     sw: ["#BDC1C6", "#2F353C", "#F1C232"]},
@@ -337,13 +410,23 @@ const SKINS = [
   {id: "newday",   name: "The New Day",        by: "newday",   note: "Blue, pink and white.",                    sw: ["#8EC8F2", "#E8418B", "#FFFFFF"]},
   {id: "dibiase",  name: "Million Dollar Man", by: "dibiase",  note: "Green and gold.",                          sw: ["#CFE3C4", "#14432A", "#D4AF37"]},
   {id: "lod",      name: "Road Warriors",      by: "lod",      note: "Black and red.",                           sw: ["#141414", "#000000", "#E31B23"]},
+  // Holidays, in calendar order
+  {id: "newyear",   name: "New Year's",        by: "day:newyear",   note: "Midnight blue and gold.",          sw: ["#0B0B14", "#F2D16B", "#C0C0C8"]},
+  {id: "valentine", name: "Valentine's Day",   by: "day:valentine", note: "Pink, red and white.",             sw: ["#FFD6E0", "#C9184A", "#FFFFFF"]},
+  {id: "stpat",     name: "St. Patrick's Day", by: "day:stpat",     note: "Green, white and gold.",           sw: ["#CDEBD3", "#0B6E3D", "#D4AF37"]},
+  {id: "july4",     name: "Fourth of July",    by: "day:july4",     note: "Red, white and blue, after dark.", sw: ["#0A1633", "#B22234", "#FFFFFF"]},
+  {id: "halloween", name: "Halloween",         by: "day:halloween", note: "Pumpkin orange and purple.",       sw: ["#1A1024", "#FF7518", "#7B3FBF"]},
+  {id: "thanks",    name: "Thanksgiving",      by: "day:thanks",    note: "Harvest orange and brown.",        sw: ["#E8C9A0", "#5A2E0E", "#C8641C"]},
+  {id: "xmas",      name: "Christmas",         by: "day:xmas",      note: "Red, green and snow.",             sw: ["#E9F3EC", "#B3121F", "#1E7A3C"]},
 ];
 
-const ACH_KEY = g => g + "-ach", EGG_KEY = "tr-eggs", SKIN_KEY = "hoh-skin";
+const ACH_KEY = g => g + "-ach", EGG_KEY = "tr-eggs", SKIN_KEY = "hoh-skin", DAY_KEY = "hoh-days";
 const achFound = g => store.get(ACH_KEY(g)) || {};
 const eggsFound = () => store.get(EGG_KEY) || {};
+const daysFound = () => store.get(DAY_KEY) || {};
 const won = g => !!achFound(g)[GAME[g].ach[0].id];                                       // a game's first achievement is its first win
-const skinOpen = s => !s.by ? true : s.by.startsWith("win:") ? won(s.by.slice(4)) : !!eggsFound()[s.by];
+const skinOpen = s => !s.by ? true : s.by.startsWith("win:") ? won(s.by.slice(4)) : s.by.startsWith("day:") ? !!daysFound()[s.by.slice(4)] : !!eggsFound()[s.by];
+const holidaySkin = s => s.by.startsWith("day:");
 
 /* ---- Look: the saved color scheme, unless an Egg Card's theme is showing */
 let skin = "", temp = "";
@@ -384,12 +467,21 @@ function nextToast(){
 
 function earn(g, id){
   const game = GAME[g]; if(!game) return;
+  if(id === game.ach[0].id) holiday();                    // every game calls its first achievement on every solve
   const f = achFound(g); if(f[id]) return;
   const a = game.ach.find(x => x.id === id); if(!a) return;
   const opens = id === game.ach[0].id && SKINS.some(s => s.by === "win:" + g);           // first win: that game's color scheme opens
   f[id] = Date.now(); store.set(ACH_KEY(g), f);
   const n = game.ach.filter(x => f[x.id]).length;
   toast("Achievement unlocked", a.title, opens ? `${game.name} color scheme unlocked. Tap to see it.` : `${n} of ${game.ach.length} ${game.name} achievements. Tap to see them.`, opens ? "unlocks" : "ach");
+  render();
+}
+function holiday(){
+  const h = holidayToday(); if(!h) return;
+  const f = daysFound(); if(f[h.id]) return;
+  f[h.id] = Date.now(); store.set(DAY_KEY, f);
+  const s = SKINS.find(x => x.by === "day:" + h.id);
+  toast("Holiday award", h.title, `${s ? s.name : h.day} color scheme unlocked. Tap to see it.`, "unlocks");
   render();
 }
 function foundEgg(id){
@@ -455,8 +547,12 @@ const card = (a, i, ts, egg) => `<li class="hs-ach ${ts ? "got" : "locked"}"><sp
   + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
 function achHTML(){
   const order = CFG.game ? [GAME[CFG.game], ...GAMES.filter(g => g.id !== CFG.game)] : GAMES;
+  const f = daysFound(), n = HOLIDAYS.filter(h => f[h.id]).length;
   return order.map(g => { const f = achFound(g.id), n = g.ach.filter(a => f[a.id]).length;
-    return `<section class="hs-sec">${logoHead(g.id, `${n} of ${g.ach.length}`)}<ul class="hs-roster">${g.ach.map((a, i) => card(a, i, f[a.id], false)).join("")}</ul></section>`; }).join("");
+    return `<section class="hs-sec">${logoHead(g.id, `${n} of ${g.ach.length}`)}<ul class="hs-roster">${g.ach.map((a, i) => card(a, i, f[a.id], false)).join("")}</ul></section>`; }).join("")
+    + `<section class="hs-sec"><h3 class="hs-dh"><span>Holidays</span><span>${n} of ${HOLIDAYS.length}</span></h3><ul class="hs-roster">`
+    + HOLIDAYS.map((h, i) => card({g: h.g, title: h.title, desc: `Solve any puzzle on ${h.day}.`}, i, f[h.id], false)).join("")
+    + `</ul><p class="hs-fine">Win a Title Run or a Roydle Rumble, book a full card or finish a Hoss on the day, daily or free play. Each one unlocks that holiday's color scheme for good.</p></section>`;
 }
 function eggsHTML(){
   const f = eggsFound(), n = EGGS.filter(a => f[a.id]).length;
@@ -464,14 +560,14 @@ function eggsHTML(){
     + `<p class="hs-fine">Hidden all over the games. Each title is your only hint.</p></section>`;
 }
 function unlocksHTML(){
-  const egg = s => s.by && !s.by.startsWith("win:"), hidden = SKINS.some(s => egg(s) && !skinOpen(s));
+  const egg = s => s.by && !s.by.startsWith("win:") && !holidaySkin(s), hidden = SKINS.some(s => egg(s) && !skinOpen(s));
   const tile = s => { const openNow = skinOpen(s), on = skin === s.id;
     return `<li class="hs-skin${on ? " on" : ""}${openNow || on ? "" : " locked"}"><span class="sw" aria-hidden="true">${s.sw.map(c => `<i style="background:${c}"></i>`).join("")}</span>`
-      + `<b>${esc(s.name)}</b><span class="d">${openNow || on ? esc(s.note) : esc(s.lock || "")}</span>`
+      + `<b>${esc(s.name)}</b><span class="d">${openNow || on ? esc(s.note) : esc(s.lock || (holidaySkin(s) ? `Solve any puzzle on ${HOLIDAYS.find(h => "day:" + h.id === s.by).day}.` : ""))}</span>`
       + `<button type="button" class="hs-btn" data-skin="${esc(s.id)}"${openNow && !on ? "" : " disabled"}>${on ? "In use" : openNow ? "Use" : "Locked"}</button></li>`; };
   const mystery = hidden ? `<li class="hs-skin locked"><span class="sw" aria-hidden="true"><i></i><i></i><i></i></span><b>???</b><span class="d">More color schemes are out there.</span></li>` : "";
   return `<section class="hs-sec"><h3>Color schemes</h3><ul class="hs-roster">${SKINS.filter(s => !egg(s) || skinOpen(s)).map(tile).join("")}${mystery}</ul>`
-    + `<p class="hs-fine">Your pick follows you to every game on the site, on this device. A first win in each game unlocks its colors.</p></section>`;
+    + `<p class="hs-fine">Your pick follows you to every game on the site, on this device. A first win in each game unlocks its colors. Holiday colors unlock when you solve any puzzle on the day.</p></section>`;
 }
 
 /* ---- The sheet: a full-screen page over the site. X, Esc or the back button closes it. */
@@ -516,7 +612,7 @@ addEventListener("keydown", e => { if(e.key === "Escape" && sheet) close(); });
 document.addEventListener("click", e => { const b = e.target.closest("[data-hoss]"); if(b){ e.preventDefault(); open(b.dataset.hoss); } });
 
 skin = savedSkin(); look();
-window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, GAMES, EGGS, SKINS, store,
+window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound, setSkin, GAMES, EGGS, SKINS, HOLIDAYS, store,
   get skin(){ return skin; }};
 })();
 </script>
@@ -546,19 +642,21 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, 
   <li><b>Days held:</b> how long the reign lasted.</li>
   <li><b>Won it:</b> the show where they won it and who they took it from.</li>
 </ol>
+<p>Royal Rumble and Money in the Bank winners play the same way, with two clues swapped. For a Rumble, you get the number they entered at instead of Days held, and Won it names the last man they threw out. For Money in the Bank, Days held is how long they carried the briefcase, and Won it tells you how the cash-in went.</p>
 <h2>Reading your guesses</h2>
 <ul class="chips">
   <li><span class="sq hit"></span>Right wrestler</li>
-  <li><span class="sq near"></span>Held this title, but a different reign</li>
-  <li><span class="sq miss"></span>Never held this title</li>
+  <li><span class="sq era"></span>Held this title in the same era, just not this reign (or won a Rumble or briefcase in this era)</li>
+  <li><span class="sq near"></span>Held this title, but never in this era (or won a Rumble or briefcase in a different era)</li>
+  <li><span class="sq miss"></span>Never held this title (or never won it)</li>
 </ul>
 <p>Multi-time champs count as long as it's their name on this reign. Alternate billings count as the same person: The Giant is Big Show, Diesel is Kevin Nash, Mankind is Mick Foley.</p>
 <h2>Modes</h2>
 <ul>
   <li><b>Base:</b> the big world titles. WWE, WCW, World Heavyweight, Universal and AEW.</li>
-  <li><b>Mark:</b> none of the Base belts. ECW, TNA, NXT, the Intercontinental and United States titles from the modern eras, and AEW's secondary belts.</li>
-  <li><b>Smart Mark:</b> everything in Mark, plus the NWA lineage back to 1948, the early IC and US reigns, both Cruiserweight titles, the European and WWF Light Heavyweight titles, the ECW and WCW TV titles, the ROH World title, the X Division title and the NXT UK title.</li>
-  <li><b>Chaos:</b> everything in Smart Mark, plus the WWE Hardcore title, the 24/7 title, the Million Dollar title and the FTW title. Hundreds of short, ridiculous reigns. Good luck.</li>
+  <li><b>Mark:</b> none of the Base belts. ECW, TNA, NXT, the Intercontinental and United States titles from the modern eras, AEW's secondary belts, and every men's Royal Rumble winner.</li>
+  <li><b>Smart Mark:</b> everything in Mark, plus the NWA lineage back to 1948, the early IC and US reigns, both Cruiserweight titles, the European and WWF Light Heavyweight titles, the ECW and WCW TV titles, the ROH World title, the X Division title, the NXT UK title, and every men's Money in the Bank winner.</li>
+  <li><b>Chaos:</b> just the chaos belts: the WWE Hardcore title, the 24/7 title, the Million Dollar title and the FTW title. Hundreds of short, ridiculous reigns. Good luck.</li>
 </ul>
 <p>Each mode has its own daily puzzle and its own stats. A new puzzle drops at midnight your time. Free play gives you random reigns whenever you want, and doesn't count toward stats.</p>
 <h2>Streaks and stats</h2>
@@ -569,7 +667,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, setSkin, 
 <p>Reign histories are compiled from Wikipedia's championship lists and the promotions' official title histories. Vacancies and reigns a promotion doesn't recognize are left out. Spot a mistake? Email it in and it'll get fixed.</p>
 
 <footer>
-  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/createahoss/">Create-A-Hoss</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
+  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/createahoss/">Create-A-Hoss</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a></nav>
   <p>House of Hoss games are fan-made and not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion.</p>
   <p>Contact: contact@houseofhoss.com</p>
 </footer>
