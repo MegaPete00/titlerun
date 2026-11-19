@@ -525,6 +525,34 @@ html.hs-open{overflow:hidden}
 .hs-dist li{display:grid;grid-template-columns:2.2rem 1fr;gap:8px;align-items:center;font-family:var(--f-label);font-weight:700}
 .hs-dist .bar{justify-self:start;min-width:1.6rem;padding:2px 7px;border-radius:4px;background:var(--well);text-align:right;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion: reduce){ .hs-sheet{animation:none} .hs-toast{transition:none} }
+
+/* After-game box: rate this game + Buy me an ice cold milk (Nov 19). Filled by hoss.js into each game's result card. */
+.hs-after{display:grid;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.hs-after:empty{display:none}
+.hs-rate{display:grid;gap:6px;justify-items:start}
+.hs-rate-q{margin:0;font-family:var(--f-label, var(--f-body));font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.85rem;color:var(--muted)}
+.hs-stars{display:flex}
+.hs-stars button{appearance:none;-webkit-appearance:none;border:0;background:none;margin:0;padding:0;width:46px;height:46px;font-size:2.2rem;line-height:1;
+  color:var(--muted);opacity:.3;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.hs-stars button.on{color:var(--accent, var(--gold));opacity:1}
+@media (hover:hover){.hs-stars:hover button{color:var(--accent, var(--gold));opacity:1}.hs-stars button:hover ~ button{color:var(--muted);opacity:.3}}
+.hs-stars button:focus-visible{outline:2px solid var(--focus);outline-offset:-4px;border-radius:8px}
+.hs-rate-more{display:grid;gap:8px;width:100%}
+.hs-rate-more[hidden]{display:none}
+.hs-rate-c{width:100%;box-sizing:border-box;font:400 1rem var(--f-body);color:var(--ink);background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;resize:vertical}
+.hs-rate-send{justify-self:start;font:700 .9rem var(--f-label, var(--f-body));letter-spacing:.1em;text-transform:uppercase;padding:11px 16px;border-radius:8px;border:0;
+  background:var(--accent, var(--gold));color:var(--on-accent, #FFFFFF);cursor:pointer}
+.hs-rate-send:disabled{opacity:.6;cursor:default}
+.hs-rate-msg{margin:0;font-size:.9rem;color:var(--muted)}
+.hs-rate-msg:empty{display:none}
+.hs-rate-done{margin:0;font-size:.95rem;color:var(--muted)}
+.hs-rate-done span{color:var(--accent, var(--gold));letter-spacing:.04em}
+.hs-milk{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--well);color:var(--ink);text-decoration:none}
+.hs-milk img{width:87px;height:81px;flex:none;border-radius:8px;image-rendering:pixelated}
+.hs-milk span{display:grid;gap:3px;min-width:0}
+.hs-milk b{font-family:var(--f-display);font-weight:900;text-transform:uppercase;font-size:1.2rem;line-height:1.05}
+.hs-milk small{font-size:.86rem;color:var(--muted)}
+.hs-milk:hover b{text-decoration:underline}
 </style>
 <script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}document.documentElement.dataset.game="tr";</script>
 <script>
@@ -537,7 +565,7 @@ html.hs-open{overflow:hidden}
      HOSS.open(view)        open the sheet: "stats", "ach", "eggs" or "unlocks"
    Any element with data-hoss="stats|ach|eggs|unlocks" opens the sheet on that view. */
 (function(){
-const CFG = {"game": "tr", "launch": {"tr": "2026-11-19", "rr": "2026-11-19", "bb": "2026-11-19", "cah": "2026-11-19"}};
+const CFG = {"game": "tr", "launch": {"tr": "2026-11-19", "rr": "2026-11-19", "bb": "2026-11-19", "cah": "2026-11-19"}, "tip": "https://paypal.me/mondopete", "fb": {"post": "https://docs.google.com/forms/d/e/1FAIpQLScxIRY-z0ewbWReV9wCH5vi8oXLf5incJ8YezwCiZaaAxRa0g/formResponse", "game": "entry.198049826", "stars": "entry.1176867423", "comment": "entry.1963543314"}};
 const store = {
   get(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -846,6 +874,51 @@ addEventListener("popstate", () => { if(sheet) close(true); });
 addEventListener("keydown", e => { if(e.key === "Escape" && sheet) close(); });
 document.addEventListener("click", e => { const b = e.target.closest("[data-hoss]"); if(b){ e.preventDefault(); open(b.dataset.hoss); } });
 
+/* ---- After a game (Nov 19, Pete): "Rate <game>" stars that post to Pete's Google Form, plus "Buy me an ice cold milk".
+   Every game's result card has an empty <div data-hoss-after>; it's filled here at load and shows when the card does.
+   One rating per game per day per browser (hoh-rated). The post is no-cors, so the page can't read Google's reply: a network
+   error shows "try again", anything else counts as sent. Settings (form + field IDs, tip link) live in site/hoss.py. */
+const RATED = "hoh-rated";
+const localDay = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const starRow = n => "★".repeat(n) + "☆".repeat(5 - n);
+function afterHTML(){
+  const g = GAME[CFG.game]; if(!g) return "";
+  const r = (store.get(RATED) || {})[CFG.game], done = r && r.day === localDay();
+  const rate = !CFG.fb ? "" : done
+    ? `<p class="hs-rate-done">You gave ${esc(g.name)} <span aria-label="${r.stars} out of 5 stars">${starRow(r.stars)}</span> today. Thanks!</p>`
+    : `<div class="hs-rate"><p class="hs-rate-q">Rate ${esc(g.name)}</p>
+      <div class="hs-stars">${[1, 2, 3, 4, 5].map(v => `<button type="button" data-star="${v}" aria-pressed="false" aria-label="${v} out of 5 stars">★</button>`).join("")}</div>
+      <div class="hs-rate-more" hidden>
+        <textarea class="hs-rate-c" maxlength="500" rows="2" placeholder="Anything else? (optional)" aria-label="Comment (optional)"></textarea>
+        <button type="button" class="hs-rate-send">Send rating</button>
+      </div>
+      <p class="hs-rate-msg" aria-live="polite"></p></div>`;
+  const tip = CFG.tip ? `<a class="hs-milk" href="${esc(CFG.tip)}" target="_blank" rel="noopener"><img src="/milk.png" alt="" width="116" height="108">`
+    + `<span><b>Buy me an ice cold milk</b><small>House of Hoss is free. Tips go through PayPal.</small></span></a>` : "";
+  return rate + tip;
+}
+function fillAfter(){ document.querySelectorAll("[data-hoss-after]").forEach(el => { el.classList.add("hs-after"); el.innerHTML = afterHTML(); }); }
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", fillAfter); else fillAfter();
+document.addEventListener("click", e => {
+  const s = e.target.closest(".hs-stars [data-star]");
+  if(s){
+    const box = s.closest(".hs-rate"), v = +s.dataset.star; box.dataset.v = v;
+    box.querySelectorAll("[data-star]").forEach(b => { b.classList.toggle("on", +b.dataset.star <= v); b.setAttribute("aria-pressed", +b.dataset.star === v ? "true" : "false"); });
+    box.querySelector(".hs-rate-more").hidden = false;
+    return;
+  }
+  const send = e.target.closest(".hs-rate-send");
+  if(!send) return;
+  const box = send.closest(".hs-rate"), v = +box.dataset.v, g = GAME[CFG.game], msg = box.querySelector(".hs-rate-msg");
+  if(!v || !g || !CFG.fb) return;
+  send.disabled = true; msg.textContent = "Sending...";
+  const body = new URLSearchParams({[CFG.fb.game]: g.name, [CFG.fb.stars]: String(v), [CFG.fb.comment]: box.querySelector(".hs-rate-c").value.trim()});
+  fetch(CFG.fb.post, {method: "POST", mode: "no-cors", body}).then(() => {
+    const all = store.get(RATED) || {}; all[CFG.game] = {day: localDay(), stars: v}; store.set(RATED, all);
+    box.outerHTML = `<p class="hs-rate-done">Thanks! Your <span aria-label="${v} out of 5 stars">${starRow(v)}</span> for ${esc(g.name)} is in.</p>`;
+  }).catch(() => { send.disabled = false; msg.textContent = "Couldn't send that. Check your connection and try again."; });
+});
+
 skin = savedSkin(); look();
 window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound, setSkin, GAMES, EGGS, SKINS, HOLIDAYS, store,
   get skin(){ return skin; }};
@@ -930,6 +1003,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
     </div>
     <div class="next" id="nextLine"></div>
     <p class="sponsor" id="sponsor" hidden></p>
+    <div data-hoss-after></div>
     <div class="ad-slot" data-ad="result" hidden></div>
   </section>
 
@@ -941,6 +1015,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
       <a href="about.html">How to play</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/">More from House of Hoss</a>
+    <a href="https://paypal.me/mondopete" target="_blank" rel="noopener">🥛 Buy me an ice cold milk</a>
     </nav>
     <p class="disclaimer">Title Run is a fan-made game. It is not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion. Reign data compiled from Wikipedia's title history lists.</p>
     <p id="foot"></p>
