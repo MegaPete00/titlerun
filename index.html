@@ -1029,7 +1029,6 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
     <pre class="share" id="share"></pre>
     <div class="actions">
       <button type="button" class="btn" id="copyBtn">Copy result</button>
-      <button type="button" class="btn alt" id="discordBtn">Copy for Discord</button>
       <button type="button" class="btn alt" id="againBtn">Play a random reign</button>
       <span class="status" id="copyStatus" aria-live="polite"></span>
     </div>
@@ -1163,6 +1162,8 @@ const CLUES = [
   {label:"Won it",    val: r => `${r.event}: ${beatLine(r)}`,
                       html: r => `<span class="ev">${esc(r.event)}</span><span class="bt">${esc(beatLine(r))}</span>`}
 ];
+// Royal Rumble winners (Nov 19, Pete): Year goes last. The year all but names the winner, so it's the final clue.
+const cluesOf = r => KIND(r) === "rumble" ? [CLUES[0], CLUES[2], CLUES[3], CLUES[1]] : CLUES;
 
 let S = null;          // {mode, reign, guesses, started, iso, n}
 let gm = "base";       // game mode
@@ -1272,9 +1273,9 @@ function render(){
     const g = S.guesses[i]; return `<i class="pip ${g ? kind(g) : ""}"></i>`;
   }).join("") + `<span>${over ? (won() ? "Got it" : "Out of guesses") : S.started ? `Guess ${S.guesses.length+1} of ${MAX}` : `${MAX} guesses`}</span>`;
 
-  const shownClues = over ? CLUES.length : Math.min(m, CLUES.length);
-  $("#tapeCount").textContent = `${shownClues} of ${CLUES.length} clues`;
-  $("#clues").innerHTML = CLUES.map((c,i) => {
+  const CL = cluesOf(r), shownClues = over ? CL.length : Math.min(m, CL.length);
+  $("#tapeCount").textContent = `${shownClues} of ${CL.length} clues`;
+  $("#clues").innerHTML = CL.map((c,i) => {
     const open = over || i < m, label = typeof c.label === "function" ? c.label(r) : c.label;
     if(!open) return `<div class="row locked"><dt>${label}</dt><dd>Unlocks after miss ${i+1}</dd></div>`;
     const long = c.long && c.long(r);
@@ -1316,7 +1317,7 @@ function renderResult(){
   $("#facts").innerHTML = facts.map(f => `<span>${esc(f)}</span>`).join("");
   $("#resultStats").hidden = S.mode !== "daily";
   if(S.mode === "daily") $("#resultStats").innerHTML = `<h3>${MODE_LABEL[gm]} daily stats</h3>` + statsHTML(gm, S.n, won() ? S.guesses.length : "x");
-  $("#share").textContent = shareText(false);
+  $("#share").textContent = shareText();
   const sp = $("#sponsor");
   sp.hidden = !(SPONSOR && SPONSOR.name);
   if(!sp.hidden) sp.innerHTML = `Today's Title Run is brought to you by ` + (SPONSOR.url ? `<a href="${esc(SPONSOR.url)}" rel="sponsored noopener" target="_blank">${esc(SPONSOR.name)}</a>` : esc(SPONSOR.name));
@@ -1326,7 +1327,7 @@ function renderResult(){
   updateNext();
 }
 
-function shareText(spoiler){
+function shareText(){
   const SQ = {hit:"🟩", era:"🟨", near:"🟧", miss:"🟥"};
   const sq = S.guesses.map(g => SQ[kind(g)]).join("") + "⬜".repeat(MAX - S.guesses.length);
   const score = won() ? `${S.guesses.length}/${MAX}` : `X/${MAX}`;
@@ -1334,7 +1335,6 @@ function shareText(spoiler){
   const lines = [S.mode === "daily" ? `Title Run #${S.n}${mode}` : `Title Run free play${mode}`,
                  `${titleOf(S.reign)} (${TITLE_BY[S.reign.t].years})`, `${sq} ${score}`];
   if(S.mode === "daily"){ const st = liveStreak(getStats(gm), S.n); if(st >= 2) lines.push(`🔥 ${st} day streak`); }
-  if(spoiler) lines.push(`Answer: ||${whoOf(S.reign)}||`);          // Discord spoiler bars
   if(SITE_URL) lines.push(SITE_URL);
   return lines.join("\n");
 }
@@ -1708,8 +1708,7 @@ function copy(text, ok){
     rng.selectNodeContents($("#share")); sel.removeAllRanges(); sel.addRange(rng); st.textContent = "Selected. Copy it from here."; };
   try{ navigator.clipboard.writeText(text).then(() => { st.textContent = ok; }, fallback); }catch(e){ fallback(); }
 }
-$("#copyBtn").addEventListener("click", () => copy(shareText(false), "Copied"));
-$("#discordBtn").addEventListener("click", () => copy(shareText(true), "Copied with the answer hidden"));
+$("#copyBtn").addEventListener("click", () => copy(shareText(), "Copied"));
 $("#statsBtn").addEventListener("click", () => $("#statsPanel").hidden ? openPanel("stats") : closePage());
 setInterval(updateNext, 30000);
 
