@@ -330,7 +330,7 @@ html.hs-open{overflow:hidden}
      HOSS.open(view)        open the sheet: "stats", "ach", "eggs" or "unlocks"
    Any element with data-hoss="stats|ach|eggs|unlocks" opens the sheet on that view. */
 (function(){
-const CFG = {"game": "", "launch": {"tr": "2026-11-19", "rr": "2026-11-19", "bb": "2026-11-19", "cah": "2026-11-19"}, "tip": "https://paypal.me/mondopete", "fb": {"post": "https://docs.google.com/forms/d/e/1FAIpQLScxIRY-z0ewbWReV9wCH5vi8oXLf5incJ8YezwCiZaaAxRa0g/formResponse", "game": "entry.198049826", "stars": "entry.1176867423", "comment": "entry.1963543314"}};
+const CFG = {"game": "", "launch": {"tr": "2026-11-19", "rr": "2026-11-19", "bb": "2026-11-19", "cah": "2026-11-19"}, "tip": "https://buymeacoffee.com/houseofhoss", "fb": {"post": "https://docs.google.com/forms/d/e/1FAIpQLScxIRY-z0ewbWReV9wCH5vi8oXLf5incJ8YezwCiZaaAxRa0g/formResponse", "game": "entry.198049826", "stars": "entry.1176867423", "comment": "entry.1963543314"}};
 const store = {
   get(k){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
   set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -659,7 +659,7 @@ function afterHTML(){
       </div>
       <p class="hs-rate-msg" aria-live="polite"></p></div>`;
   const tip = CFG.tip ? `<a class="hs-milk" href="${esc(CFG.tip)}" target="_blank" rel="noopener"><img src="/milk.png" alt="" width="116" height="108">`
-    + `<span><b>Buy me an ice cold milk</b><small>House of Hoss is free. Tips go through PayPal.</small></span></a>` : "";
+    + `<span><b>Buy me an ice cold milk</b><small>House of Hoss is free. Tips go through Buy Me a Coffee.</small></span></a>` : "";
   return rate + tip;
 }
 function fillAfter(){ document.querySelectorAll("[data-hoss-after]").forEach(el => { el.classList.add("hs-after"); el.innerHTML = afterHTML(); }); }
@@ -740,7 +740,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
 <p>Reign histories are compiled from Wikipedia's championship lists and the promotions' official title histories. Vacancies and reigns a promotion doesn't recognize are left out. Spot a mistake? Email it in and it'll get fixed.</p>
 
 <footer>
-  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/createahoss/">Create-A-Hoss</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a><a href="https://paypal.me/mondopete" target="_blank" rel="noopener">🥛 Buy me an ice cold milk</a></nav>
+  <nav aria-label="Site"><a href="/">Home</a><a href="/titlerun/">Title Run</a><a href="/roydle/">Roydle Rumble</a><a href="/blindbooker/">Blind Booker</a><a href="/createahoss/">Create-A-Hoss</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="mailto:contact@houseofhoss.com">Contact</a><a href="https://buymeacoffee.com/houseofhoss" target="_blank" rel="noopener">🥛 Buy me an ice cold milk</a></nav>
   <p>House of Hoss games are fan-made and not affiliated with or endorsed by WWE, AEW, TNA, NWA or any other promotion.</p>
   <p>Contact: contact@houseofhoss.com</p>
 </footer>
