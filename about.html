@@ -19,6 +19,8 @@
   --canvas:#BDC1C6; --panel:#FFFFFF; --ink:#0E0F12; --muted:#40474F; --line:#A3A8AF; --well:#D0D3D7;
   --bar:#2F353C; --bar-ink:#FFFFFF; --bar-muted:#AEB4BB;
   --rope-r:#5B18EA; --rope-w:#FFFFFF; --rope-b:#0E0F12; --gold:#5B18EA; --gold-ink:#FFFFFF; --focus:#5B18EA;
+  --accent:#5B18EA; --on-accent:#FFFFFF; --toast-hi:#5B18EA;
+  --plate-a:#F4F5F7; --plate-b:#C3C7CD; --plate-c:#7D848D; --plate-edge:#3D444C; --plate-ink:#0E0F12; --plate-shine:rgba(255,255,255,.6);
   --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
   --f-label:"Barlow Condensed","Arial Narrow",sans-serif;
@@ -27,12 +29,14 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
   --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
-  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF;
+  --accent:#8F5CFF; --on-accent:#0E0F12; --toast-hi:#8F5CFF; color-scheme:dark }
  }
 :root[data-theme="dark"]{
   --canvas:#16181B; --panel:#212429; --ink:#EEEFF1; --muted:#9BA2AA; --line:#33383F; --well:#2A2E34;
   --bar:#0B0C0E; --bar-ink:#FFFFFF; --bar-muted:#8D949C;
-  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF; color-scheme:dark }
+  --rope-r:#8F5CFF; --rope-w:#E6E7EA; --rope-b:#5A616A; --gold:#8F5CFF; --gold-ink:#0E0F12; --focus:#A57DFF;
+  --accent:#8F5CFF; --on-accent:#0E0F12; --toast-hi:#8F5CFF; color-scheme:dark }
 *,*::before,*::after{box-sizing:border-box}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased}
@@ -318,6 +322,36 @@ html.hs-open{overflow:hidden}
 .hs-milk b{font-family:var(--f-display);font-weight:900;text-transform:uppercase;font-size:1.2rem;line-height:1.05}
 .hs-milk small{font-size:.86rem;color:var(--muted)}
 .hs-milk:hover b{text-decoration:underline}
+
+/* Color scheme changes fade instead of snapping (Nov 19, Pete: "very sudden and disorienting"). These tokens are registered as real
+   colors so the browser can tween them; every page and every scheme defines all of them (checked Nov 19), so registering can't
+   turn a missing token into a wrong color. Tokens that only some pages have (plate, guess colors) still switch instantly.
+   Adding a token here is only safe if every page and scheme defines it: a registered token that's missing becomes its
+   initial-value instead of falling back. Browsers without @property just switch instantly, like before. */
+@property --canvas{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --panel{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --muted{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --line{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --well{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar-ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar-muted{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --logo-bg{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-r{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-w{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-b{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --focus{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --accent{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --on-accent{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --toast-hi{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-a{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-b{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-c{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-edge{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-shine{syntax:'<color>';inherits:true;initial-value:transparent}
+:root{transition:--canvas .7s ease-in-out,--panel .7s ease-in-out,--ink .7s ease-in-out,--muted .7s ease-in-out,--line .7s ease-in-out,--well .7s ease-in-out,--bar .7s ease-in-out,--bar-ink .7s ease-in-out,--bar-muted .7s ease-in-out,--logo-bg .7s ease-in-out,--rope-r .7s ease-in-out,--rope-w .7s ease-in-out,--rope-b .7s ease-in-out,--focus .7s ease-in-out,--accent .7s ease-in-out,--on-accent .7s ease-in-out,--toast-hi .7s ease-in-out,--plate-a .7s ease-in-out,--plate-b .7s ease-in-out,--plate-c .7s ease-in-out,--plate-edge .7s ease-in-out,--plate-ink .7s ease-in-out,--plate-shine .7s ease-in-out}
 </style>
 <script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}</script>
 <script>
@@ -393,7 +427,6 @@ const EGGS = [
   {id: "hendry",   title: "Say His Name"},
   {id: "knight",   title: "Yeah!"},
   {id: "kennedy",  title: "Kennedy... Kennedy"},
-  {id: "jr",       title: "Bah Gawd"},
   {id: "newday",   title: "Don't You Dare Be Sour"},
   {id: "dibiase",  title: "Money Money Money"},
   {id: "lod",      title: "What a Rush"},
@@ -464,7 +497,7 @@ function savedSkin(){
   const k = SKINS.find(x => x.id === s);
   return k && k.id && skinOpen(k) ? k.id : "";
 }
-function look(t){
+function look(t){                         // color changes fade in CSS (hoss.css @property block), so this just sets the attribute
   if(t !== undefined) temp = t || "";
   const v = temp || skin, r = document.documentElement;
   if(v) r.dataset.egg = v; else delete r.dataset.egg;

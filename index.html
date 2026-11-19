@@ -219,6 +219,9 @@ footer p{margin:0}
 .egg-banner .sp{display:block;height:.5em}
 .egg-banner .slow span{opacity:0;animation:eggSlow .8s ease-out forwards}
 @keyframes eggSlow{to{opacity:1}}
+.egg-banner.beats{animation:none}                                         /* LA Knight: no pop-in, each word cuts in on its beat */
+.egg-banner .beat{visibility:hidden;animation:eggBeat 0s step-end forwards}
+@keyframes eggBeat{to{visibility:visible}}
 .egg-banner .quiet{font-family:var(--f-body);font-weight:500;font-size:.8rem;line-height:1.2;text-transform:none;letter-spacing:.02em;opacity:.7}
 .egg-banner.mid{font-size:clamp(1.6rem, 7vw, 2.2rem);line-height:1}
 .egg-banner.long{font-family:var(--f-body);font-weight:600;font-size:1rem;line-height:1.5;text-transform:none;text-align:left;padding:18px 18px 14px;display:grid;gap:10px}
@@ -553,6 +556,36 @@ html.hs-open{overflow:hidden}
 .hs-milk b{font-family:var(--f-display);font-weight:900;text-transform:uppercase;font-size:1.2rem;line-height:1.05}
 .hs-milk small{font-size:.86rem;color:var(--muted)}
 .hs-milk:hover b{text-decoration:underline}
+
+/* Color scheme changes fade instead of snapping (Nov 19, Pete: "very sudden and disorienting"). These tokens are registered as real
+   colors so the browser can tween them; every page and every scheme defines all of them (checked Nov 19), so registering can't
+   turn a missing token into a wrong color. Tokens that only some pages have (plate, guess colors) still switch instantly.
+   Adding a token here is only safe if every page and scheme defines it: a registered token that's missing becomes its
+   initial-value instead of falling back. Browsers without @property just switch instantly, like before. */
+@property --canvas{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --panel{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --muted{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --line{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --well{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar-ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --bar-muted{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --logo-bg{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-r{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-w{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --rope-b{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --focus{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --accent{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --on-accent{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --toast-hi{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-a{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-b{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-c{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-edge{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-ink{syntax:'<color>';inherits:true;initial-value:transparent}
+@property --plate-shine{syntax:'<color>';inherits:true;initial-value:transparent}
+:root{transition:--canvas .7s ease-in-out,--panel .7s ease-in-out,--ink .7s ease-in-out,--muted .7s ease-in-out,--line .7s ease-in-out,--well .7s ease-in-out,--bar .7s ease-in-out,--bar-ink .7s ease-in-out,--bar-muted .7s ease-in-out,--logo-bg .7s ease-in-out,--rope-r .7s ease-in-out,--rope-w .7s ease-in-out,--rope-b .7s ease-in-out,--focus .7s ease-in-out,--accent .7s ease-in-out,--on-accent .7s ease-in-out,--toast-hi .7s ease-in-out,--plate-a .7s ease-in-out,--plate-b .7s ease-in-out,--plate-c .7s ease-in-out,--plate-edge .7s ease-in-out,--plate-ink .7s ease-in-out,--plate-shine .7s ease-in-out}
 </style>
 <script>try{var s=localStorage.getItem("hoh-skin");s=s!==null?JSON.parse(s):JSON.parse(localStorage.getItem("tr-skin")||'""');if(s)document.documentElement.dataset.egg=s}catch(e){}document.documentElement.dataset.game="tr";</script>
 <script>
@@ -628,7 +661,6 @@ const EGGS = [
   {id: "hendry",   title: "Say His Name"},
   {id: "knight",   title: "Yeah!"},
   {id: "kennedy",  title: "Kennedy... Kennedy"},
-  {id: "jr",       title: "Bah Gawd"},
   {id: "newday",   title: "Don't You Dare Be Sour"},
   {id: "dibiase",  title: "Money Money Money"},
   {id: "lod",      title: "What a Rush"},
@@ -699,7 +731,7 @@ function savedSkin(){
   const k = SKINS.find(x => x.id === s);
   return k && k.id && skinOpen(k) ? k.id : "";
 }
-function look(t){
+function look(t){                         // color changes fade in CSS (hoss.css @property block), so this just sets the attribute
   if(t !== undefined) temp = t || "";
   const v = temp || skin, r = document.documentElement;
   if(v) r.dataset.egg = v; else delete r.dataset.egg;
@@ -1380,7 +1412,6 @@ function hint(msg, err){ const h = $("#hint"); h.textContent = msg; h.classList.
 // Each person shows up in the autocomplete like a real champion (typing "John" finds John Blud). Picking one never uses a guess.
 const EGGS = [
   {id:"nacho", theme:"nacho", banner:"Get that corn out of my face!", people:[{name:"Nacho Libre", aka:["Ignacio"]}]},
-  {id:"jr", banner:"BAH GAWD ALMIGHTY", people:[{name:"Jim Ross", aka:["Good Ol' JR","Good Ole JR"]}]},
   {id:"deadlock", theme:"deadlock", banner:"The long way", people:[
     {name:"James Darnell",   aka:["Pulse","CMPuls3","CMPulse","CMPuls","CM Puls3","CM Pulse"]},   // spacing and case don't matter
     {name:"John Blud",       aka:["Jawnny"]}]},
@@ -1533,25 +1564,32 @@ const FX = {
 function runFx(name){ fxClear(); if(FX[name]) FX[name](); }
 // Card line starting with ^: shows up after a pause, one |-separated piece at a time (Kennedy's slow second "Kennedy").
 const slowLine = s => `<p class="slow">${s.trim().split("|").map((x, i) => `<span style="animation-delay:${(1.6 + i * .75).toFixed(2)}s">${esc(x)}</span>`).join("")}</p>`;
-function showEgg({id, theme, card, lead, title, img, size, fx}){
+// beats: seconds at which each line of the card cuts in (no fade, no pop-in), for catchphrases said one hard word at a time.
+const beatAt = (beats, i) => ` class="beat" style="animation-delay:${beats[Math.min(i, beats.length - 1)]}s"`;
+let eggToken = 0;                                         // a later egg or guess cancels a card that's still waiting to show
+function showEgg({id, theme, card, lead, title, img, size, fx, beats, cardDelay}){
   if(theme){ tempEgg = theme; applyLook(); }
   if(fx) runFx(fx);
+  const tok = ++eggToken;
+  if(cardDelay && (card || title || img)){ foundEgg(id); setTimeout(() => { if(tok === eggToken) showEgg({card, lead, title, img, size, beats}); }, cardDelay); return; }
   if(card || title || img){
+    let n = 0;
     const b = $("#eggBanner");
     b.hidden = true; void b.offsetWidth;                // restart the pop-in if it's already showing
     const len = (card || "").length;
-    b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "");
+    b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "") + (beats ? " beats" : "");
     b.innerHTML = (img ? `<img class="egg-img" src="${esc(img.src)}" alt="${esc(img.alt)}">` + (img.credit ? `<span class="egg-credit">${img.credit}</span>` : "") : "")
       + (title ? `<div class="egg-head">${lead ? `<span class="egg-lead">${esc(lead)}</span>` : ""}<span class="egg-title">${esc(title)}</span></div>` : "")
-      + (card || "").trim().split("\n").map(l => { l = l.trim(); return !l ? `<i class="sp"></i>` : l[0] === "~" ? `<p class="quiet">${esc(l.slice(1).trim())}</p>` : l[0] === "^" ? slowLine(l.slice(1)) : `<p>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
-      + "<small>Tap to go back</small>";
+      + (card || "").trim().split("\n").map(l => { l = l.trim(); if(!l) return `<i class="sp"></i>`; const at = beats ? beatAt(beats, n++) : "";
+        return l[0] === "~" ? `<p class="quiet"${at}>${esc(l.slice(1).trim())}</p>` : l[0] === "^" ? slowLine(l.slice(1)) : `<p${at}>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
+      + `<small${beats ? beatAt(beats, beats.length - 1) : ""}>Tap to go back</small>`;
     const im = b.querySelector(".egg-img");               // no photo uploaded yet: drop the slot, keep the text
     if(im) im.addEventListener("error", () => { im.remove(); const c = b.querySelector(".egg-credit"); if(c) c.remove(); });
     b.querySelectorAll(".egg-credit a").forEach(a => a.addEventListener("click", ev => ev.stopPropagation()));   // credit links open without dismissing the card
     b.hidden = false;
     window.scrollTo({top: 0, behavior: "smooth"});          // phones: bring the card into view so it can't be missed
   }
-  foundEgg(id);
+  if(id) foundEgg(id);
 }
 function egg(raw){
   const e = EGG_BY[compact(raw || "")];
@@ -1562,11 +1600,11 @@ function egg(raw){
   if(e.banner) input.blur();                              // drop the phone keyboard so the card is visible
   return true;
 }
-function eggOff(){ tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
+function eggOff(){ eggToken++; tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
 
 /* Guess eggs: real guesses that count, keyed by the wrestler's canonical name (any billing triggers it). */
 const GUESS_EGGS = {
-  "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!"},                  // also Eli Drake
+  "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!", beats:[0, .6, 1.2, 2]},   // also Eli Drake. One hard word at a time (Nov 19, Pete)
   "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n^Ken|ne|dy"},     // also Mr. Anderson
   "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
   // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
@@ -1575,7 +1613,7 @@ const GUESS_EGGS = {
   "Big E": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
   "Xavier Woods": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
   "The Undertaker": {id:"lightsout", fx:"lightsout"},
-  "Brock Lesnar": {id:"suplex", fx:"suplex"},
+  "Brock Lesnar": {id:"suplex", fx:"suplex", card:"You just went to Suplex City.", cardDelay:1500},   // card lands with the page
   "Rey Mysterio": {id:"619", fx:"swing"},
   "André the Giant": {id:"giant", fx:"giant"},
   "Hornswoggle": {id:"tiny", fx:"tiny"},
