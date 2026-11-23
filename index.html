@@ -267,6 +267,11 @@ footer p{margin:0}
 .egg-credit a{color:inherit;text-decoration:underline}
 @keyframes appear{0%{opacity:0;filter:blur(14px) brightness(2.2);transform:scale(.85)}60%{opacity:1;filter:blur(0) brightness(1.4)}100%{filter:none;transform:none}}
 @keyframes eggIn{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+/* The long way: the whole page stretches tall. Transforms still count toward scroll height, so you can scroll all of it. */
+body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+:root[data-long] body{transform:scaleY(1.75);transform-origin:50% 0}
+@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd,.egg-banner{animation:none} body,.toast{transition:none} }
+/* House of Hoss egg effects (Nov 22): shared by Title Run and Roydle, put into each page's <style> by its build. */
 /* Effect eggs (script.js FX). Overlays sit above everything but never take taps. */
 .fx{position:fixed;inset:0;z-index:60;pointer-events:none}
 .fx-lights i{position:absolute;inset:0}
@@ -304,11 +309,94 @@ body.fx-glitch{animation:fxGlitch 2.3s steps(1) 1}
   background:radial-gradient(ellipse at 50% 85%, #fff7b0 0%, #ffc400 22%, #ff5a00 48%, rgba(200,0,0,.6) 64%, rgba(200,0,0,0) 76%);filter:blur(3px);
   transform-origin:50% 100%;opacity:0;animation:fxFlame var(--d) ease-out 2 alternate}
 @keyframes fxFlame{0%{transform:scaleY(.15) scaleX(.8);opacity:0}25%{opacity:1}100%{transform:scaleY(1.1) scaleX(1.05) translateY(-6vh);opacity:.15}}
-@media (prefers-reduced-motion: reduce){ .fx-glass polygon{transition:none !important} .fx-pyro i{animation:none} }
-/* The long way: the whole page stretches tall. Transforms still count toward scroll height, so you can scroll all of it. */
-body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
-:root[data-long] body{transform:scaleY(1.75);transform-origin:50% 0}
-@media (prefers-reduced-motion: reduce){ .plate.glint::after,.row.fresh dd,.egg-banner{animation:none} body,.toast{transition:none} }
+/* Carlito: apple pops up, a bite comes out (the skin's bite holes are a little bigger than the cream copy's, so a rim of apple flesh
+   shows), it turns into a talking head that rears back and spits, and the bits splat on the screen and slide off. */
+.fx-apple{display:grid;place-items:center;overflow:hidden}
+.fx-apple .fruit,.fx-apple .head{grid-area:1/1;position:relative;font-size:min(44vw,14rem);line-height:1;filter:drop-shadow(0 10px 22px rgba(0,0,0,.35))}
+.fx-apple .fruit{animation:fxPop .3s ease-out}
+.fx-apple .fruit i{display:block;font-style:normal}
+.fx-apple .fruit .pulp{position:absolute;inset:0;filter:grayscale(1) brightness(2.5) sepia(.7) saturate(1.7)}   /* the apple's shape in cream: shows as the bitten edge */
+.fx-apple .fruit .rind{position:relative}                                                                    /* red apple on top of the cream copy */
+.fx-apple .fruit.bit .rind{--h:.225em;--h2:.12em;--h3:.12em}
+.fx-apple .fruit.bit .pulp{--h:.2em;--h2:.095em;--h3:.095em}
+.fx-apple .fruit.bit i{
+  -webkit-mask:radial-gradient(circle var(--h) at 101% 49%,#0000 97%,#000),radial-gradient(circle var(--h2) at 89% 30%,#0000 97%,#000),radial-gradient(circle var(--h3) at 89% 68%,#0000 97%,#000);
+  -webkit-mask-composite:source-in,source-in;
+  mask:radial-gradient(circle var(--h) at 101% 49%,#0000 97%,#000),radial-gradient(circle var(--h2) at 89% 30%,#0000 97%,#000),radial-gradient(circle var(--h3) at 89% 68%,#0000 97%,#000);
+  mask-composite:intersect}
+.fx-apple .fruit.bit{animation:fxChomp .22s ease-out}
+.fx-apple .fruit.gone{animation:fxGone .25s ease-in forwards}
+.fx-apple .crumb{position:absolute;left:84%;top:46%;z-index:1;width:var(--s);height:var(--s);border-radius:40%;background:#F2E3B3;animation:fxCrumb .7s cubic-bezier(.2,.6,.6,1) forwards}
+.fx-apple .head{animation:fxPop .25s ease-out}
+.fx-apple .head.spit{animation:fxSpitHead .6s ease-in-out forwards}
+.fx-apple .chunk,.fx-apple .drop{position:absolute;left:50%;top:50%;width:var(--s);height:calc(var(--s) * .8);margin:calc(var(--s) * -.4) 0 0 calc(var(--s) * -.5);
+  border-radius:var(--br);opacity:0;animation:fxSplat 2.2s forwards}
+.fx-apple .chunk{background:radial-gradient(circle at 35% 30%,#FFFBEA,#F2E3B3 55%,#E3CB86);box-shadow:inset -.3vmin -.35vmin 0 rgba(170,20,20,.6),0 .4vmin 1.2vmin rgba(0,0,0,.28)}
+.fx-apple .drop{background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(215,232,246,.5) 45%,rgba(175,205,228,.35));box-shadow:0 0 0 .25vmin rgba(255,255,255,.4),0 .3vmin .8vmin rgba(0,0,0,.15)}
+@keyframes fxChomp{40%{transform:scale(.94) rotate(-3deg)}}
+@keyframes fxGone{to{transform:scale(.4);opacity:0}}
+@keyframes fxCrumb{from{transform:none;opacity:1}60%{opacity:1}to{transform:translate(var(--dx),calc(var(--dy) + .5em)) rotate(200deg);opacity:0}}
+@keyframes fxSpitHead{40%{transform:scale(.88) rotate(-9deg)}55%{transform:scale(1.18) rotate(5deg)}75%{transform:scale(1.12);opacity:1}to{transform:scale(1.05);opacity:0}}
+@keyframes fxSplat{
+  0%{opacity:0;transform:translate(0,0) scale(.05);animation-timing-function:cubic-bezier(.6,0,.9,.5)}
+  4%{opacity:1}
+  16%{transform:translate(var(--x),var(--y)) scale(1.3,.7) rotate(var(--r));animation-timing-function:ease-out}
+  22%{transform:translate(var(--x),var(--y)) scale(1) rotate(var(--r));animation-timing-function:ease-in}
+  70%{opacity:1;transform:translate(var(--x),calc(var(--y) + 3vh)) scale(1,1.08) rotate(var(--r))}
+  100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 9vh)) scale(1,1.15) rotate(var(--r))}}
+body.fx-hit{animation:fxHit .36s 1}
+@keyframes fxHit{25%{transform:translate(-6px,4px)}50%{transform:translate(5px,-3px)}75%{transform:translate(-2px,1px)}}
+@media (prefers-reduced-motion: reduce){ .fx-glass polygon{transition:none !important} .fx-pyro i{animation:none} .fx-apple *{animation:none !important} }
+
+/* Road Dogg (Nov 22): each letter cuts in on its own beat (eggs.js talkHTML); words never break across lines. */
+.egg-banner .tw{display:inline-block;white-space:nowrap}
+.egg-banner .tk{visibility:hidden;animation:eggBeat 0s step-end forwards}
+@keyframes eggBeat{to{visibility:visible}}
+/* DX Army: two green rockets corner to corner leave a burning X; sparks fall, the far corners burst. */
+.fx-dx{background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.15),rgba(0,0,0,.45));animation:fxDxDim 3.3s both}
+.fx-dx svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fx-dx line{stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:fxDxDraw .55s cubic-bezier(.3,.6,.4,1) forwards,fxDxFade 1s forwards}
+.fx-dx .trail{stroke:#39FF14;stroke-width:22;opacity:.5;filter:blur(7px)}
+.fx-dx .core{stroke:#F2FFE8;stroke-width:6;filter:drop-shadow(0 0 6px #39FF14) drop-shadow(0 0 16px #39FF14)}
+.fx-dx .sparks circle{fill:#8CFF6A;opacity:0;animation:fxDxSpark 1.2s ease-out forwards}
+.fx-dx .burst circle{fill:#D8FFC8;animation-duration:1s}
+@keyframes fxDxDraw{to{stroke-dashoffset:0}}
+@keyframes fxDxFade{to{opacity:0}}
+@keyframes fxDxSpark{0%{opacity:1;transform:none}100%{opacity:0;transform:translate(var(--dx),var(--dy))}}
+@keyframes fxDxDim{0%{opacity:0}8%,75%{opacity:1}100%{opacity:0}}
+/* Too Sweet: "HoH" spray-painted on a white wall, nWo style. Each letter wipes in top to bottom, then drips, then it all fades. */
+.fx-spray{display:grid;place-items:center;background:rgba(246,246,242,.72);animation:fxWall 4.3s both}
+.fx-spray svg{width:min(96vw,760px);height:auto;overflow:visible}
+.fx-spray text{font-family:var(--f-display),Impact,sans-serif;font-weight:900;text-anchor:middle}
+.fx-spray .paint{fill:#0B0B0B;filter:url(#hohRough)}
+.fx-spray .mist{fill:#0B0B0B;stroke:#0B0B0B;stroke-width:10;opacity:.28;filter:url(#hohMist)}
+.fx-spray .speck circle{fill:#0B0B0B;opacity:.55}
+.fx-spray .wipe{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);animation:fxWipe .42s linear forwards}
+.fx-spray .drip{fill:#0B0B0B;transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);animation:fxDrip 1.3s ease-in forwards}
+@keyframes fxWipe{to{transform:scaleY(1)}}
+@keyframes fxDrip{to{transform:scaleY(1)}}
+@keyframes fxWall{0%{opacity:0}6%,84%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){ .egg-banner .tk{animation-delay:0s !important} .fx-dx *,.fx-spray .drip{animation:none} .fx-spray .wipe{animation-duration:.01s} }
+/* Poison Mist (Tajiri, The Great Muta): a green cloud rushes in from --cx/--cy, the spray canvas lands on the glass,
+   the film tints and blurs the page behind it, a few drops run down, then the whole layer fades. */
+.fx-mist{animation:fxMistOut 4.6s both}
+.fx-mist .film,.fx-mist canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.fx-mist .film{background:radial-gradient(ellipse at var(--cx) var(--cy),hsla(134,90%,45%,.42),hsla(134,90%,40%,.16) 55%,hsla(134,90%,40%,.06));
+  -webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px);animation:fxMistFilm 4.2s .34s forwards}
+.fx-mist canvas{animation:fxMistHit .5s .34s forwards}
+.fx-mist .puff{position:absolute;left:calc(var(--cx) + var(--ox));top:calc(var(--cy) + var(--oy));width:60vmin;height:60vmin;margin:-30vmin 0 0 -30vmin;border-radius:50%;
+  background:radial-gradient(circle,hsla(132,95%,58%,.95),hsla(134,90%,45%,.6) 38%,hsla(134,90%,45%,.2) 55%,hsla(134,90%,45%,0) 70%);transform:scale(.1);opacity:0;
+  animation:fxMistPuff .42s cubic-bezier(.4,0,.8,.5) forwards}
+.fx-mist .drip{position:absolute;width:var(--w);height:0;margin-left:calc(var(--w) * -.5);border-radius:0 0 var(--w) var(--w);
+  background:linear-gradient(to bottom,hsla(134,85%,42%,0),hsla(134,85%,42%,.7) 30%,hsla(134,90%,36%,.9));animation:fxMistDrip 2.6s cubic-bezier(.5,0,.8,.6) forwards}
+.fx-mist .drip::after{content:"";position:absolute;left:50%;bottom:0;width:calc(var(--w) * 1.7);height:calc(var(--w) * 1.9);margin:0 0 calc(var(--w) * -.6) calc(var(--w) * -.85);
+  border-radius:50% 50% 50% 50% / 40% 40% 60% 60%;background:hsla(134,88%,38%,.92);box-shadow:inset -1px -1px 0 hsla(134,90%,25%,.6),inset 1px 1px 0 rgba(255,255,255,.4)}
+@keyframes fxMistPuff{0%{transform:scale(.1);opacity:0}12%{opacity:1}78%{opacity:.95}100%{transform:scale(3.6);opacity:0}}
+@keyframes fxMistHit{0%{opacity:0;transform:scale(1.08)}30%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes fxMistFilm{0%{opacity:0}6%{opacity:1}55%{opacity:.8}100%{opacity:0}}
+@keyframes fxMistDrip{to{height:var(--l)}}
+@keyframes fxMistOut{0%,64%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){ .fx-mist canvas{animation:fxIn .4s .1s forwards} .fx-mist .film{animation:fxMistFilm 4.2s .1s forwards} }
 </style>
 
 <style>
@@ -369,6 +457,30 @@ body{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
   --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#E31B23; --plate-ink:#E31B23;
   --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(227,27,35,.5); --near-pip:#FFFFFF;
   --focus:#E31B23; --shadow:rgba(0,0,0,.6); --accent:#E31B23; --on-accent:#FFFFFF; --toast-hi:#E31B23; color-scheme:dark;
+}
+:root[data-egg="dx"]{                                                       /* DX Army (Nov 22): black and green */
+  --canvas:#0E0E0E; --panel:#1B1B1B; --ink:#F2F2F2; --muted:#A9B5A6; --line:#39FF14; --well:#2A2A2A;
+  --bar:#000000; --bar-ink:#39FF14; --bar-muted:#39FF14; --bar-line:#39FF14;
+  --rope-r:#39FF14; --rope-w:#000000; --rope-b:#39FF14;
+  --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#39FF14; --plate-ink:#39FF14;
+  --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(57,255,20,.5); --near-pip:#FFFFFF;
+  --focus:#39FF14; --shadow:rgba(0,0,0,.6); --accent:#39FF14; --on-accent:#000000; --toast-hi:#39FF14; color-scheme:dark;
+}
+:root[data-egg="nwo"]{                                                      /* Too Sweet (Nov 22): nWo black and white */
+  --canvas:#0B0B0B; --panel:#191919; --ink:#FFFFFF; --muted:#A8A8A8; --line:#FFFFFF; --well:#2B2B2B;
+  --bar:#000000; --bar-ink:#FFFFFF; --bar-muted:#BDBDBD; --bar-line:#FFFFFF;
+  --rope-r:#FFFFFF; --rope-w:#000000; --rope-b:#FFFFFF;
+  --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#FFFFFF; --plate-ink:#FFFFFF;
+  --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(255,255,255,.45); --near-pip:#FFFFFF;
+  --focus:#FFFFFF; --shadow:rgba(0,0,0,.6); --accent:#FFFFFF; --on-accent:#000000; --toast-hi:#FFFFFF; color-scheme:dark;
+}
+:root[data-egg="nation"]{                                                   /* We Are the Nation (Nov 22): Pan-African, mostly black */
+  --canvas:#0B0B0B; --panel:#181818; --ink:#F4F1E8; --muted:#B3AE9F; --line:#1FA34A; --well:#272727;
+  --bar:#000000; --bar-ink:#E8B923; --bar-muted:#1FA34A; --bar-line:#D7262E;
+  --rope-r:#D7262E; --rope-w:#000000; --rope-b:#1FA34A;
+  --plate-a:#3A3A3A; --plate-b:#121212; --plate-c:#000000; --plate-edge:#D7262E; --plate-ink:#E8B923;
+  --plate-shine:rgba(255,255,255,.12); --plate-pip:rgba(31,163,74,.55); --near-pip:#FFFFFF;
+  --focus:#1FA34A; --shadow:rgba(0,0,0,.6); --accent:#D7262E; --on-accent:#FFFFFF; --toast-hi:#E8B923; color-scheme:dark;
 }
 :root[data-egg="newyear"]{
   --canvas:#0B0B14; --panel:#17172A; --ink:#F4F1E6; --muted:#B9B4A0; --line:#4A4330; --well:#24243A;
@@ -672,6 +784,12 @@ const EGGS = [
   {id: "pose",     title: "Five-Second Pose"},
   {id: "fiend",    title: "Let Me In"},
   {id: "pyro",     title: "Big Red Machine"},
+  {id: "apple",    title: "An Apple a Day"},
+  {id: "roaddogg", title: "Oh, You Didn't Know?"},
+  {id: "mist",     title: "Poison Mist"},                 // Tajiri or The Great Muta, either one
+  {id: "dx",       title: "DX Army",   set: 5},       // stables (site/eggs.js SETS): find every member, progress in hoh-sets
+  {id: "nwo",      title: "Too Sweet", set: 4},
+  {id: "nation",   title: "We Are the Nation", set: 6},
 ];
 
 /* ---- Holidays (Nov 15). Solve any puzzle on the day (win a Title Run or a Roydle Rumble, book a full card, finish a Hoss;
@@ -701,6 +819,9 @@ const SKINS = [
   {id: "taz",      name: "Taz",                by: "taz",      note: "Orange and black.",                        sw: ["#F07A1A", "#0B0B0B", "#FF9B4A"]},
   {id: "deadlock", name: "Deadlock",           by: "deadlock", note: "Orange, black and white. No stretching.",  sw: ["#F26A1B", "#0B0B0B", "#FFFFFF"]},
   {id: "nacho",    name: "Nacho Libre",        by: "nacho",    note: "Blue and red.",                            sw: ["#5B8DEF", "#C8102E", "#FFFFFF"]},
+  {id: "dx",       name: "DX",                 by: "dx",       note: "Black and green. Suck it.",                sw: ["#0B0B0B", "#39FF14", "#FFFFFF"]},
+  {id: "nwo",      name: "nWo",                by: "nwo",      note: "Black and white. 4 Life.",                 sw: ["#0B0B0B", "#FFFFFF", "#8A8A8A"]},
+  {id: "nation",   name: "Nation of Domination", by: "nation", note: "Pan-African: black, with red, green and gold.", sw: ["#0B0B0B", "#D7262E", "#1FA34A"]},
   {id: "angle",    name: "Kurt Angle",         by: "angle",    note: "Red, white and blue.",                     sw: ["#F3F5FA", "#0B1F4D", "#C8102E"]},
   {id: "newday",   name: "The New Day",        by: "newday",   note: "Blue, pink and white.",                    sw: ["#8EC8F2", "#E8418B", "#FFFFFF"]},
   {id: "dibiase",  name: "Million Dollar Man", by: "dibiase",  note: "Green and gold.",                          sw: ["#CFE3C4", "#14432A", "#D4AF37"]},
@@ -791,7 +912,7 @@ function foundEgg(id){
 /* ---- Stats (read straight from each game's save) */
 const dayNo = launch => { if(!launch) return 0; const d = new Date(), [y, m, dd] = launch.split("-").map(Number);
   return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(y, m - 1, dd)) / 864e5) + 1; };
-const liveStreak = (st, n) => st.lastWin >= n - 1 ? st.streak : 0;
+const liveStreak = (st, n) => st.lastWin >= n - 1 && st.lastWin <= n + 1 ? st.streak : 0;   // a marker past tomorrow = pre-launch numbering
 function modeRows(prefix, modes, launch){
   const n = dayNo(launch);
   return `<table class="hs-tbl"><thead><tr><th></th><th>Played</th><th>Win %</th><th>Streak</th><th>Best</th></tr></thead><tbody>`
@@ -802,7 +923,7 @@ function modeRows(prefix, modes, launch){
 const BB_STARS = [5, 4, 3, 2, 1];                          // card ratings by whole stars (3 = ★★★ to ★★★¾)
 function bbStats(){
   const st = Object.assign({played: 0, cards: 0, streak: 0, best: 0, lastDone: 0, topStars: 0, stars: {}}, store.get("bb-stats") || {});
-  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 ? st.streak : 0, max = Math.max(1, ...BB_STARS.map(k => st.stars[k] || 0));
+  const n = dayNo(CFG.launch.bb), streak = st.lastDone >= n - 1 && st.lastDone <= n + 1 ? st.streak : 0, max = Math.max(1, ...BB_STARS.map(k => st.stars[k] || 0));
   return `<div class="hs-nums"><div><b>${st.topStars ? st.topStars.toFixed(2) : "-"}</b><span>Best rating</span></div><div><b>${st.played}</b><span>Daily cards</span></div>`
     + `<div><b>${streak}</b><span>Streak</span></div><div><b>${st.best}</b><span>Best streak</span></div></div>`
     + `<ol class="hs-dist" aria-label="Card ratings">` + BB_STARS.map(k => { const v = st.stars[k] || 0;
@@ -812,7 +933,7 @@ function bbStats(){
 const CAH_BANDS = [[99, "99"], [90, "90+"], [80, "80+"], [76, "76+"], [70, "70+"], [0, "Under 70"]];
 function cahStats(){
   const st = Object.assign({played: 0, hosses: 0, streak: 0, best: 0, lastDone: 0, top: 0, ovr: {}}, store.get("cah-stats") || {});
-  const n = dayNo(CFG.launch.cah), streak = st.lastDone >= n - 1 ? st.streak : 0, bands = CAH_BANDS.map(() => 0);
+  const n = dayNo(CFG.launch.cah), streak = st.lastDone >= n - 1 && st.lastDone <= n + 1 ? st.streak : 0, bands = CAH_BANDS.map(() => 0);
   Object.entries(st.ovr).forEach(([o, c]) => { bands[CAH_BANDS.findIndex(([min]) => +o >= min)] += c; });
   const max = Math.max(1, ...bands);
   return `<div class="hs-nums"><div><b>${st.top || "-"}</b><span>Top OVR</span></div><div><b>${st.played}</b><span>Daily Hosses</span></div>`
@@ -839,7 +960,10 @@ function statsHTML(only){
 /* ---- Awards */
 const shortDate = ts => new Date(ts).toLocaleDateString("en-US", {month: "short", day: "numeric"});
 const card = (a, i, ts, egg) => `<li class="hs-ach ${ts ? "got" : "locked"}"><span class="no">No. ${pad(i + 1)}</span><i class="emb" aria-hidden="true">${ts ? (egg ? "!" : esc(a.g)) : "?"}</i>`
-  + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? "Not found yet" : "Locked"}</span></li>`;
+  + `<b>${esc(a.title)}</b>${egg ? "" : `<span class="d">${esc(a.desc)}</span>`}<span class="st">${ts ? "Earned " + shortDate(ts) : egg ? setProgress(a) : "Locked"}</span></li>`;
+const setProgress = a => { if(!a.set) return "Not found yet";
+  let n = 0; try{ n = ((JSON.parse(localStorage.getItem("hoh-sets")) || {})[a.id] || []).length; }catch(e){}
+  return n ? `${n} of ${a.set} found` : "Not found yet"; };
 function achHTML(){
   const order = CFG.game ? [GAME[CFG.game], ...GAMES.filter(g => g.id !== CFG.game)] : GAMES;
   const f = daysFound(), n = HOLIDAYS.filter(h => f[h.id]).length;
@@ -996,7 +1120,7 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
   </section>
 
   <section id="startPanel" class="card">
-    <p>Name the wrestler who held this title reign. You get five guesses. Every miss unlocks the next clue: the era, the year, how many days the reign lasted, then where they won it and who they beat.</p>
+    <p>Name the wrestler who held this title reign. You get five guesses. Every miss unlocks the next clue: the era, the year, how many days the reign lasted, then where they won it and who they beat. Royal Rumble winners save the year for last.</p>
     <p>Multi-time champs count as long as it is their name on this reign. Alternate billings count too, so The Giant is Big Show.</p>
     <ul class="legend">
       <li><span class="sq hit"></span>Right wrestler</li>
@@ -1054,6 +1178,348 @@ window.HOSS = {earn, foundEgg, look, open, close, achFound, eggsFound, daysFound
 </main>
 
 <script>
+/* House of Hoss egg engine (Nov 22): one copy shared by Title Run and Roydle. Each game's build puts this file in front of its
+   own script, and site/eggs.css into its page. Every guess egg, effect, sound and stable works in both games, keyed by the
+   wrestler's canonical roster name (Roydle passes its display name, which is the roster name). Name eggs (Nacho, Deadlock)
+   stay in each game's own EGGS list. Was Title Run only until Nov 22; Roydle only had the original cards. */
+const HOH_EGGS = (function(){
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const foundEgg = id => { if(window.HOSS) HOSS.foundEgg(id); };
+
+let tempEgg = "";
+function applyLook(){                       // an Egg Card's theme wins over the saved color scheme until it clears
+  HOSS.look(tempEgg);
+  const r = document.documentElement;
+  if(tempEgg === "deadlock") r.dataset.long = "1"; else delete r.dataset.long;    // the stretch belongs to the Egg Card, not the saved scheme
+}
+document.addEventListener("hoss:skin", () => { tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); });
+
+/* Effect eggs: one-shot animations and sounds. They never touch the game, never block a tap, and clean up after themselves.
+   Overlays live on <html> (like the toast) so body transforms can't move them. Reduced-motion users get a simple fade. */
+const CALM = (() => { try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } })();
+const FX_BODY = ["fx-suplex", "fx-619", "fx-giant", "fx-tiny", "fx-glitch", "fx-fade", "fx-hit"];
+let fxLayer = null, fxTimers = [];
+const later = (ms, f) => fxTimers.push(setTimeout(f, ms));
+function fxClear(){
+  fxTimers.forEach(clearTimeout); fxTimers = [];
+  if(fxLayer){ fxLayer.remove(); fxLayer = null; }
+  document.body.classList.remove(...FX_BODY); document.body.style.transformOrigin = "";
+  document.documentElement.classList.remove("fx-mono");
+}
+function fxLayerOn(cls, html){
+  fxLayer = document.createElement("div"); fxLayer.className = "fx " + cls; fxLayer.setAttribute("aria-hidden", "true");
+  if(html) fxLayer.innerHTML = html;
+  document.documentElement.appendChild(fxLayer); return fxLayer;
+}
+function bodyFx(cls, ms, origin){                         // origin: "center" = middle of what's on screen, "top" = top of the screen
+  const b = document.body, y = origin === "top" ? scrollY : scrollY + innerHeight / 2;
+  b.style.transformOrigin = `50% ${Math.round(y)}px`;
+  b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls);
+  later(ms, () => { b.classList.remove(cls); b.style.transformOrigin = ""; });
+}
+// Sounds are synthesized here (no recordings). Browsers only allow them after a tap, and every egg starts from one.
+let AC = null;
+function ac(){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); return AC; }catch(e){ return null; } }
+function tone(partials, {at = 0, vol = .2, decay = 3, type = "sine"} = {}){
+  const c = ac(); if(!c) return;
+  const t = c.currentTime + at, out = c.createGain();
+  out.gain.setValueAtTime(.0001, t); out.gain.exponentialRampToValueAtTime(vol, t + .01); out.gain.exponentialRampToValueAtTime(.0001, t + decay);
+  out.connect(c.destination);
+  partials.forEach(([f, a]) => { const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f; g.gain.value = a; o.connect(g); g.connect(out); o.start(t); o.stop(t + decay + .1); });
+}
+const gong = at => tone([[98, 1], [196, .55], [233, .3], [294, .25], [392, .15], [523, .08]], {at, vol: .32, decay: 4.5});
+function noise(dur, {at = 0, vol = .3, type = "highpass", freq = 2500} = {}){
+  const c = ac(); if(!c) return;
+  const t = c.currentTime + at, n = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+  const src = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
+  src.buffer = buf; fl.type = type; fl.frequency.value = freq; g.gain.value = vol;
+  src.connect(fl); fl.connect(g); g.connect(c.destination); src.start(t);
+}
+const FX = {
+  lightsout(){                                            // Undertaker: lights cut, the gong, then a purple glow that fades back to normal
+    gong(0);
+    fxLayerOn("fx-lights", `<i class="black"></i><i class="glow"></i>`);
+    later(3800, fxClear);
+  },
+  shatter(){                                              // Stone Cold: cracks spread from the middle, then the glass falls away
+    const W = innerWidth, H = innerHeight, cx = W * (.42 + Math.random() * .16), cy = H * (.32 + Math.random() * .16), N = 14;
+    const edge = a => { const dx = Math.cos(a), dy = Math.sin(a), ts = [];
+      if(dx > 0) ts.push((W - cx) / dx); if(dx < 0) ts.push(-cx / dx); if(dy > 0) ts.push((H - cy) / dy); if(dy < 0) ts.push(-cy / dy);
+      const t = Math.min(...ts) * 1.15; return [cx + dx * t, cy + dy * t]; };
+    const rays = Array.from({length: N}, (_, i) => { const a = (i + Math.random() * .6) / N * Math.PI * 2, e = edge(a), r = .25 + Math.random() * .3;
+      return {e, m: [cx + (e[0] - cx) * r, cy + (e[1] - cy) * r]}; });
+    const pt = p => p.map(Math.round).join(","), polys = [], cracks = [];
+    rays.forEach((r, i) => { const n = rays[(i + 1) % N];
+      polys.push([[cx, cy], r.m, n.m]); polys.push([r.m, r.e, n.e, n.m]);
+      cracks.push(`<line x1="${Math.round(cx)}" y1="${Math.round(cy)}" x2="${Math.round(r.e[0])}" y2="${Math.round(r.e[1])}"/>`);
+      cracks.push(`<line x1="${Math.round(r.m[0])}" y1="${Math.round(r.m[1])}" x2="${Math.round(n.m[0])}" y2="${Math.round(n.m[1])}"/>`); });
+    const L = fxLayerOn("fx-glass", `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><g class="cracks">${cracks.join("")}</g>`
+      + polys.map(p => `<polygon points="${p.map(pt).join(" ")}"/>`).join("") + `</svg>`);
+    noise(.7, {vol: .35, freq: 3000}); [0, .05, .12, .2, .3, .38].forEach(a => tone([[2000 + Math.random() * 2500, 1]], {at: a, vol: .05, decay: .45, type: "triangle"}));
+    later(550, () => L.querySelectorAll("polygon").forEach(g => {
+      const dur = 0.9 + Math.random() * .6, rot = (Math.random() * 2 - 1) * 70, dx = (Math.random() * 2 - 1) * 60;
+      g.style.transition = `transform ${dur}s cubic-bezier(.5,0,.9,.6), opacity ${dur}s ease-in`;
+      g.style.transform = `translate(${dx}px, ${H * 1.1}px) rotate(${rot}deg)`; g.style.opacity = "0"; }));
+    later(2300, fxClear);
+  },
+  suplex(){ bodyFx(CALM ? "fx-fade" : "fx-suplex", 1600, "center"); noise(.25, {at: .85, vol: .5, type: "lowpass", freq: 300}); },
+  swing(){ bodyFx(CALM ? "fx-fade" : "fx-619", 1500, "center"); },
+  giant(){ bodyFx(CALM ? "fx-fade" : "fx-giant", 2800, "top"); },
+  tiny(){ bodyFx(CALM ? "fx-fade" : "fx-tiny", 2800, "top"); },
+  pose(){                                                 // Edge & Christian: everything holds still for a 5-count. Still fully playable.
+    document.documentElement.classList.add("fx-mono");
+    const L = fxLayerOn("fx-pose");
+    const tick = n => { L.innerHTML = `<b>${n}</b><span>Five-second pose</span>`; tone([[880, 1]], {vol: .06, decay: .25, type: "square"});
+      if(n > 1) later(1000, () => tick(n - 1)); else later(1000, fxClear); };
+    tick(5);
+  },
+  fiend(){ bodyFx(CALM ? "fx-fade" : "fx-glitch", 2300); fxLayerOn("fx-red"); noise(.15, {vol: .2, freq: 800, type: "bandpass"}); noise(.12, {at: .7, vol: .2, freq: 1200, type: "bandpass"}); later(2300, fxClear); },
+  pyro(){                                                 // Kane: flames burst up from the bottom of the screen
+    const flames = Array.from({length: 16}, (_, i) => `<i style="left:${(i / 16 * 108 - 6).toFixed(1)}%;--d:${(1 + Math.random() * .5).toFixed(2)}s;--w:${(.8 + Math.random() * .7).toFixed(2)};animation-delay:${(Math.random() * .35).toFixed(2)}s"></i>`).join("");
+    fxLayerOn("fx-pyro", flames);
+    noise(1.4, {vol: .45, type: "lowpass", freq: 500}); noise(1.2, {at: .5, vol: .35, type: "lowpass", freq: 700});
+    later(2600, fxClear);
+  },
+};
+// Carlito's apple bits: chunks of apple and spit, each flying from the middle of the screen to its own spot on the "glass".
+const blob = () => Array.from({length: 8}, () => 35 + Math.round(Math.random() * 30) + "%").join(" ").replace(/^((?:\S+ ){3}\S+) /, "$1 / ");
+const spray = () => Array.from({length: 17}, (_, i) => {
+  const drop = i % 3 === 2, a = Math.random() * Math.PI * 2, r = .12 + Math.random() * .85, s = drop ? 4 + Math.random() * 5 : 7 + Math.random() * 10;
+  return `<b class="${drop ? "drop" : "chunk"}" style="--x:${(Math.cos(a) * r * 44).toFixed(1)}vw;--y:${(Math.sin(a) * r * 40).toFixed(1)}vh;--s:${s.toFixed(1)}vmin;`
+    + `--r:${Math.round(Math.random() * 360)}deg;--br:${blob()};animation-delay:${(Math.random() * .07).toFixed(2)}s"></b>`;
+}).join("");
+FX.apple = function(){                                    // Carlito (Nov 22): an apple, a bite out of it (crunch), then he spits it at you and it splats on the glass
+  const L = fxLayerOn("fx-apple", `<span class="fruit"><i class="pulp">\u{1F34E}</i><i class="rind">\u{1F34E}</i></span>`), fruit = L.querySelector(".fruit");
+  later(900, () => {
+    fruit.classList.add("bit"); [0, .06, .13].forEach(a => noise(.07, {at: a, vol: .4, type: "bandpass", freq: 2200 + Math.random() * 1500}));   // crunch
+    if(!CALM) fruit.insertAdjacentHTML("beforeend", Array.from({length: 7}, () => `<b class="crumb" style="--dx:${(.08 + Math.random() * .3).toFixed(2)}em;`
+      + `--dy:${(-.25 + Math.random() * .3).toFixed(2)}em;--s:${(.025 + Math.random() * .03).toFixed(3)}em"></b>`).join(""));
+  });
+  later(1750, () => { fruit.classList.add("gone"); L.insertAdjacentHTML("beforeend", `<span class="head">\u{1F5E3}\u{FE0F}</span>`); });
+  if(CALM){ later(3400, fxClear); return; }
+  later(2150, () => L.querySelector(".head").classList.add("spit"));                     // rears back, then lunges
+  later(2420, () => { L.insertAdjacentHTML("beforeend", spray());                       // ptoo
+    noise(.16, {vol: .45, type: "bandpass", freq: 1100}); tone([[180, 1], [90, .5]], {vol: .05, decay: .12, type: "square"}); });
+  later(2780, () => { noise(.3, {vol: .45, type: "lowpass", freq: 700}); noise(.2, {at: .06, vol: .3, type: "lowpass", freq: 500}); bodyFx("fx-hit", 360); });   // splat
+  later(4800, fxClear);
+};
+/* DX Army (Nov 22): two green rockets cross the screen corner to corner and leave a burning X, like DX's pyro.
+   Bottom left to top right first, then bottom right to top left; sparks fall off both, and the far corners burst. */
+FX.dxpyro = function(){
+  const W = innerWidth, H = innerHeight, len = Math.ceil(Math.hypot(W, H)), r1 = n => Math.round(n);
+  const paths = [[0, H, W, 0], [W, H, 0, 0]];
+  const sparks = [], bursts = [];
+  paths.forEach(([x1, y1, x2, y2], k) => {
+    for(let i = 0; i < 34; i++){ const t = Math.random();
+      sparks.push(`<circle cx="${r1(x1 + (x2 - x1) * t)}" cy="${r1(y1 + (y2 - y1) * t)}" r="${(1.5 + Math.random() * 3).toFixed(1)}"`
+        + ` style="--dx:${r1((Math.random() * 2 - 1) * 45)}px;--dy:${r1(25 + Math.random() * 110)}px;animation-delay:${(k * .3 + t * .55).toFixed(2)}s"/>`); }
+    for(let i = 0; i < 18; i++){ const a = i / 18 * Math.PI * 2, d = 40 + Math.random() * 70;
+      bursts.push(`<circle cx="${x2}" cy="${y2}" r="${(2 + Math.random() * 2.5).toFixed(1)}"`
+        + ` style="--dx:${r1(Math.cos(a) * d)}px;--dy:${r1(Math.sin(a) * d + 30)}px;animation-delay:${(k * .3 + .55).toFixed(2)}s"/>`); }
+  });
+  const ln = (p, k, cls) => `<line class="${cls}" x1="${p[0]}" y1="${p[1]}" x2="${p[2]}" y2="${p[3]}" style="--len:${len};animation-delay:${k * .3}s,${(2.1 + k * .15).toFixed(2)}s"/>`;
+  fxLayerOn("fx-dx", `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`
+    + paths.map((p, k) => ln(p, k, "trail") + ln(p, k, "core")).join("")
+    + `<g class="sparks">${sparks.join("")}</g><g class="sparks burst">${bursts.join("")}</g></svg>`);
+  [0, .3].forEach(at => noise(.6, {at, vol: .32, type: "bandpass", freq: 700}));                 // two launches
+  for(let i = 0; i < 16; i++) noise(.04, {at: .6 + Math.random() * 1.1, vol: .22, type: "highpass", freq: 3000});   // crackle
+  later(3300, fxClear);
+};
+/* Too Sweet (Nov 22): the can rattles, then "HoH" gets spray-painted in black on a white wall, nWo style, drips, and fades.
+   Each letter is wiped in top to bottom under a hiss; rough edges and overspray come from SVG filters. */
+FX.spray = function(){
+  const letters = [["H", 140, -5, 240], ["o", 300, 4, 200], ["H", 460, -3, 240]];   // letter, x, tilt, size
+  const speck = (x, n) => Array.from({length: n}, () => `<circle cx="${Math.round(x + (Math.random() * 2 - 1) * 95)}" cy="${Math.round(165 + (Math.random() * 2 - 1) * 110)}"`
+    + ` r="${(.8 + Math.random() * 2.2).toFixed(1)}"/>`).join("");
+  const drips = [[-58, 250], [58, 250], [0, 246]];
+  const g = letters.map(([ch, x, tilt, sz], i) => `<clipPath id="hohc${i}"><rect class="wipe" x="${x - 120}" y="20" width="240" height="280" style="animation-delay:${(.45 + i * .5).toFixed(2)}s"/></clipPath>`).join("");
+  const body = letters.map(([ch, x, tilt, sz], i) => `<g clip-path="url(#hohc${i})" transform="rotate(${tilt} ${x} 170)">`
+      + `<text class="mist" x="${x}" y="250" font-size="${sz}">${ch}</text><text class="paint" x="${x}" y="250" font-size="${sz}">${ch}</text>`
+      + `<g class="speck">${speck(x, 26)}</g></g>`
+      + (ch === "o" ? [drips[2]] : [drips[0], drips[1]]).map(([dx, y]) => `<rect class="drip" x="${x + dx - 3}" y="${y - 8}" width="6" height="${Math.round(22 + Math.random() * 40)}" rx="3"`
+      + ` style="animation-delay:${(.95 + i * .5).toFixed(2)}s"/>`).join("")).join("");
+  fxLayerOn("fx-spray", `<svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet"><defs>${g}`
+    + `<filter id="hohRough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>`
+    + `<feDisplacementMap in="SourceGraphic" in2="n" scale="9"/></filter>`
+    + `<filter id="hohMist" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter></defs>${body}</svg>`);
+  [0, .08, .16, .24, .32].forEach(at => noise(.03, {at, vol: .3, type: "bandpass", freq: 2400}));      // can rattle
+  letters.forEach((_, i) => noise(.42, {at: .45 + i * .5, vol: .24, type: "highpass", freq: 3800}));  // hiss
+  later(4300, fxClear);
+};
+/* Poison Mist (Nov 22, Pete): Tajiri and The Great Muta. A cloud of green mist rushes at you from the middle of the screen,
+   hits the glass as a fine spray with heavier drops (pssht), the page behind goes blurry, a few drops run, then it fades.
+   The spray is drawn once on a canvas: thickest where it hit, thinning out toward the edges. */
+FX.mist = function(){
+  const W = innerWidth, H = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2), R = Math.hypot(W, H) / 2;
+  const cx = W * (.44 + Math.random() * .12), cy = H * (.38 + Math.random() * .14), k = Math.min(1.6, Math.max(.8, R / 500));
+  const rn = () => { let u = 0; while(!u) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2832 * Math.random()); };
+  const hue = () => Math.round(126 + Math.random() * 16);
+  const spot = s => { const a = Math.random() * 6.2832, d = Math.abs(rn()) * R * s; return [cx + Math.cos(a) * d, cy + Math.sin(a) * d * .82]; };
+  const heavy = Array.from({length: 13}, () => spot(.2));
+  const drips = CALM ? "" : heavy.slice(0, 4).map(([x, y]) => `<b class="drip" style="left:${Math.round(x)}px;top:${Math.round(y)}px;`
+    + `--w:${(3 + Math.random() * 3).toFixed(1)}px;--l:${Math.round(50 + Math.random() * 130)}px;animation-delay:${(.9 + Math.random() * .8).toFixed(2)}s"></b>`).join("");
+  const puffs = CALM ? "" : [0, .05, .1].map(d => `<i class="puff" style="--ox:${Math.round((Math.random() * 2 - 1) * 5)}vmin;`
+    + `--oy:${Math.round((Math.random() * 2 - 1) * 5)}vmin;animation-delay:${d}s"></i>`).join("");
+  const L = fxLayerOn("fx-mist", `<i class="film"></i><canvas width="${Math.round(W * dpr)}" height="${Math.round(H * dpr)}"></canvas>${drips}${puffs}`);
+  L.style.setProperty("--cx", Math.round(cx) + "px"); L.style.setProperty("--cy", Math.round(cy) + "px");
+  const g = L.querySelector("canvas").getContext("2d");
+  if(g){
+    g.scale(dpr, dpr);
+    const dot = (x, y, r, c) => { g.fillStyle = c; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); };
+    for(let i = 0; i < 16; i++){                                                           // haze where it landed thickest
+      const [x, y] = spot(.2), r = R * (.1 + Math.random() * .16), grd = g.createRadialGradient(x, y, 0, x, y, r), h = hue();
+      grd.addColorStop(0, `hsla(${h},90%,46%,.36)`); grd.addColorStop(1, `hsla(${h},90%,46%,0)`);
+      g.fillStyle = grd; g.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    const fine = Math.min(14000, Math.max(6000, Math.round(W * H / 40)));
+    for(let i = 0; i < fine; i++){ const [x, y] = spot(i % 3 ? .3 : .5);                                // fine mist
+      dot(x, y, (.3 + Math.random() * .9) * k, `hsla(${hue()},88%,${Math.round(38 + Math.random() * 26)}%,${(.2 + Math.random() * .5).toFixed(2)})`); }
+    for(let i = 0; i < 170; i++){ const [x, y] = spot(.28), r = (1 + Math.random() * 2) * k;   // droplets
+      dot(x, y, r, `hsla(${hue()},85%,40%,.7)`); if(r > 2) dot(x - r * .3, y - r * .3, r * .28, "rgba(255,255,255,.4)"); }
+    heavy.forEach(([x, y]) => { const r = (3 + Math.random() * 5) * k, h = hue();           // heavy drops: dark rim, bright middle, shine
+      dot(x, y, r, `hsla(${h},85%,30%,.85)`); dot(x, y, r * .74, `hsla(${h},92%,47%,.9)`); dot(x - r * .32, y - r * .34, r * .26, "rgba(255,255,255,.6)"); });
+  }
+  noise(.06, {at: .28, vol: .35, type: "bandpass", freq: 900});                            // the p of pssht
+  noise(.5, {at: .3, vol: .38, type: "highpass", freq: 3600}); noise(.35, {at: .32, vol: .22, type: "bandpass", freq: 1800});
+  if(!CALM) later(360, () => bodyFx("fx-hit", 360));
+  later(4600, fxClear);
+};
+
+function runFx(name){ fxClear(); if(FX[name]) FX[name](); }
+
+// Card line starting with ^: shows up after a pause, one |-separated piece at a time (Kennedy's slow second "Kennedy").
+const slowLine = s => `<p class="slow">${s.trim().split("|").map((x, i) => `<span style="animation-delay:${(1.6 + i * .75).toFixed(2)}s">${esc(x)}</span>`).join("")}</p>`;
+// beats: seconds at which each line of the card cuts in (no fade, no pop-in), for catchphrases said one hard word at a time.
+const beatAt = (beats, i, cls = "") => ` class="${(cls + " beat").trim()}" style="animation-delay:${beats[Math.min(i, beats.length - 1)]}s"`;
+/* talk (Road Dogg, Nov 22): every letter cuts in on its own beat, in his cadence. A letter that repeats the one before it
+   ("OHHHHHH", "CALLLLL") is held, so the stretched letters drag out; everything else comes fast, with a breath between lines.
+   Returns the html for the big lines and the second the last letter lands (quiet lines and "Tap to go back" wait for it). */
+function talkHTML(lines){
+  let t = 0;
+  const html = lines.map(line => {
+    let prev = "";
+    const words = line.split(" ").map(w => `<span class="tw">${[...w].map(ch => {
+      t += /[A-Za-z]/.test(ch) && ch.toLowerCase() === prev.toLowerCase() ? .17 : /[?!.]/.test(ch) ? .12 : .055; prev = ch;
+      return `<span class="tk" style="animation-delay:${t.toFixed(2)}s">${esc(ch)}</span>`; }).join("")}</span>`);
+    t += .1; prev = "";
+    const out = `<p>${words.join(" ")}</p>`; t += .55; return out;
+  }).join("");
+  return {html, end: t};
+}
+let eggToken = 0;                                         // a later egg or guess cancels a card that's still waiting to show
+function showEgg({id, theme, card, lead, title, img, size, fx, beats, talk, cardDelay}){
+  if(theme){ tempEgg = theme; applyLook(); }
+  if(fx) runFx(fx);
+  const tok = ++eggToken;
+  if(cardDelay && (card || title || img)){ foundEgg(id); setTimeout(() => { if(tok === eggToken) showEgg({card, lead, title, img, size, beats, talk}); }, cardDelay); return; }
+  if(card || title || img){
+    let n = 0;
+    const b = $("#eggBanner");
+    b.hidden = true; void b.offsetWidth;                // restart the pop-in if it's already showing
+    const len = (card || "").length, lines = (card || "").trim().split("\n").map(l => l.trim());
+    const said = talk ? talkHTML(lines.filter(l => l && l[0] !== "~")) : null;
+    const after = (cls = "") => said ? beatAt([said.end.toFixed(2)], 0, cls) : (cls ? ` class="${cls}"` : "");   // quiet lines wait for the talking
+    b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "") + (beats || talk ? " beats" : "");
+    b.innerHTML = (img ? `<img class="egg-img" src="${esc(img.src)}" alt="${esc(img.alt)}">` + (img.credit ? `<span class="egg-credit">${img.credit}</span>` : "") : "")
+      + (title ? `<div class="egg-head">${lead ? `<span class="egg-lead">${esc(lead)}</span>` : ""}<span class="egg-title">${esc(title)}</span></div>` : "")
+      + (said ? said.html + lines.filter(l => l[0] === "~").map(l => `<p${after("quiet")}>${esc(l.slice(1).trim())}</p>`).join("")
+        : lines.map(l => { if(!l) return `<i class="sp"></i>`; const q = l[0] === "~", at = beats ? beatAt(beats, n++, q ? "quiet" : "") : q ? ` class="quiet"` : "";
+          return q ? `<p${at}>${esc(l.slice(1).trim())}</p>` : l[0] === "^" ? slowLine(l.slice(1)) : `<p${at}>${esc(l)}</p>`; }).join(""))   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
+      + `<small${beats ? beatAt(beats, beats.length - 1) : after()}>Tap to go back</small>`;
+    const im = b.querySelector(".egg-img");               // no photo uploaded yet: drop the slot, keep the text
+    if(im) im.addEventListener("error", () => { im.remove(); const c = b.querySelector(".egg-credit"); if(c) c.remove(); });
+    b.querySelectorAll(".egg-credit a").forEach(a => a.addEventListener("click", ev => ev.stopPropagation()));   // credit links open without dismissing the card
+    b.hidden = false;
+    window.scrollTo({top: 0, behavior: "smooth"});          // phones: bring the card into view so it can't be missed
+  }
+  if(id) foundEgg(id);
+}
+
+function eggOff(){ eggToken++; tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
+
+/* Guess eggs: real guesses that count, keyed by the wrestler's canonical name (any billing triggers it). */
+const GUESS_EGGS = {
+  "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!", beats:[0, .6, 1.2, 2]},   // also Eli Drake. One hard word at a time (Nov 19, Pete)
+  "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n^Ken|ne|dy"},     // also Mr. Anderson
+  "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
+  // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
+  "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
+  "Kofi Kingston": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "Big E": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "Xavier Woods": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
+  "The Undertaker": {id:"lightsout", fx:"lightsout"},
+  "Brock Lesnar": {id:"suplex", fx:"suplex", card:"You just went to Suplex City.", cardDelay:1500},   // card lands with the page
+  "Rey Mysterio": {id:"619", fx:"swing"},
+  "André the Giant": {id:"giant", fx:"giant"},
+  "Hornswoggle": {id:"tiny", fx:"tiny"},
+  "Edge": {id:"pose", fx:"pose"},
+  "Christian Cage": {id:"pose", fx:"pose"},
+  "Bray Wyatt": {id:"fiend", fx:"fiend", placeholder:"Let me in."},
+  "Kane": {id:"pyro", fx:"pyro"},
+  "Carlito": {id:"apple", fx:"apple"},                  // the apple spit (Nov 22, Pete)
+  "Road Dogg": {id:"roaddogg", talk:true, size:"mid", card:"OHHHHHH YOU DIDN'T KNOWWW??\nYOUR ASS BETTER CALLLLL SOMEBODYYYY"},   // his cadence, letter by letter (Nov 22, Pete)
+  "Tajiri": {id:"mist", fx:"mist"},                     // green mist on the glass (Nov 22, Pete). One award for either of them
+  "The Great Muta": {id:"mist", fx:"mist"},             // Title Run only: never in a Rumble
+  "Ted DiBiase": {id:"dibiase", theme:"dibiase", card:"Everybody has a price."},     // Sr. only: Ted DiBiase Jr. is his own roster entry
+  "Road Warrior Hawk": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
+  "Road Warrior Animal": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
+  "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over here, made the friggin' color scheme change"},
+  "Luke Harper": {id:"brodie", card:"It's House of Hoss and you know what that means"},          // also Mr. Brodie Lee
+  '"Stone Cold" Steve Austin': {id:"austin", fx:"shatter", size:"big", card:"WHAT?", placeholder:"What?"},
+  "Scott Steiner": {id:"steiner", lead:"You know they say that", title:"all men are created equal,", card:`but you look at me and you look at Samoa Joe and you can see that statement is not true. See, normally if you go one on one with another wrestler, you got a 50/50 chance of winning. But I'm a genetic freak and I'm not normal! So you got a 25%, AT BEST, at beat me. Then you add Kurt Angle to the mix, your chances of winning drastic go down. See the 3 way at Sacrifice, you got a 33 1/3 chance of winning, but I, I got a 66 and 2/3 chance of winning, because Kurt Angle KNOWS he can't beat me and he's not even gonna try!
+
+So Samoa Joe, you take your 33 1/3 chance, minus my 25% chance and you got an 8 1/3 chance of winning at Sacrifice. But then you take my 75% chance of winning, if we was to go one on one, and then add 66 2/3 per cents, I got 141 2/3 chance of winning at Sacrifice. See Joe, the numbers don't lie, and they spell disaster for you at Sacrifice.
+
+See, but I'm gonna break it down for all you ladies. Would you rather be with me? Or would you rather be with Joe?`},
+};
+
+/* Stables (Nov 22, Pete): find every member of a group, across both games and any number of days, to unlock its egg and color
+   scheme. Each member's guess shows the group's line and the count; the last one also fires the group's finale. Saved per
+   browser in hoh-sets {dx: [names], nwo: [names]}. X-Pac counts for both (Sean Waltman was Syxx in the nWo). */
+const SETS = [
+  {id: "dx",  label: "DX",  line: "Suck it!",   finale: "dxpyro", members: ["Shawn Michaels", "Triple H", "X-Pac", "Billy Gunn", "Road Dogg"]},
+  {id: "nwo", label: "nWo", line: "nWo 4 Life", finale: "spray",  members: ["Hulk Hogan", "Kevin Nash", "Razor Ramon", "X-Pac"]},   // Razor Ramon = Scott Hall
+  {id: "nation", label: "Nation", line: "Nation of Domination", finale: null,     // Nov 22, Pete. Ron Simmons = Faarooq
+   members: ["Ron Simmons", "The Rock", "D'Lo Brown", "The Godfather", "Mark Henry", "Owen Hart"]},
+];
+const SET_KEY = "hoh-sets";
+const setsGet = () => { try{ return JSON.parse(localStorage.getItem(SET_KEY)) || {}; }catch(e){ return {}; } };
+const setsPut = v => { try{ localStorage.setItem(SET_KEY, JSON.stringify(v)); }catch(e){} };
+function setHits(name){                                   // -> {lines: [...], finales: [fx names], done: [egg ids]}
+  const groups = SETS.filter(s => s.members.includes(name));
+  if(!groups.length) return null;
+  const all = setsGet(), out = {lines: [], finales: [], done: []};
+  groups.forEach(s => {
+    const got = all[s.id] = (all[s.id] || []).filter(n => s.members.includes(n));
+    const fresh = !got.includes(name); if(fresh) got.push(name);
+    out.lines.push(s.line, `~${s.label}: ${got.length} of ${s.members.length}`);
+    if(fresh && got.length === s.members.length){ if(s.finale) out.finales.push(s.finale); out.done.push(s.id); }
+  });
+  setsPut(all);
+  return out;
+}
+/* A real guess: the wrestler's own egg (if any), plus the stable count if they're in one. Returns true when a card is showing. */
+function guessEgg(name, input){
+  const e = GUESS_EGGS[name], hit = setHits(name);
+  if(!e && !hit) return false;
+  if(e && e.placeholder && input) input.placeholder = e.placeholder;   // sticks until the page reloads
+  const opts = Object.assign({}, e || {});
+  if(hit){
+    opts.card = e && e.card ? [e.card, ...hit.lines.filter(l => l[0] === "~")].join("\n")   // personal egg first, then the count
+                            : hit.lines.join("\n");                                            // otherwise "Suck it!" / "DX: 2 of 5"
+    if(hit.finales[0]) opts.fx = hit.finales[0];
+    if(hit.finales[1]) setTimeout(() => runFx(hit.finales[1]), 3600);                          // X-Pac finishing both at once
+  }
+  showEgg(opts);
+  hit && hit.done.forEach(id => foundEgg(id));
+  return !!(opts.card || opts.title || opts.img);
+}
+
+return {showEgg, eggOff, runFx, applyLook, guessEgg};
+})();
+
 function titleRun(D){
 const REIGNS = D.reigns;
 const TITLES = D.titles;
@@ -1197,7 +1663,27 @@ function save(){ if(S.mode === "daily") store.set(`tr-daily-${gm}-${S.iso}`, {gu
 /* Stats: daily games only, one set per mode, kept in this browser */
 const STAT0 = () => ({played:0, wins:0, losses:0, streak:0, best:0, dist:[0,0,0,0,0], lastWin:0, lastDone:0});
 const getStats = k => Object.assign(STAT0(), store.get(`tr-stats-${k}`) || {});
-const liveStreak = (st, n) => st.lastWin >= n - 1 ? st.streak : 0;    // a skipped day breaks the streak
+const liveStreak = (st, n) => st.lastWin >= n - 1 && st.lastWin <= n + 1 ? st.streak : 0;    // a skipped day breaks the streak
+/* Nov 21 fix (Pete's streak read 0 while friends' worked): stats saved while testing before launch carry the OLD puzzle numbers, which
+   are higher than the real ones, so recordDaily skipped every real daily as "already counted". Once per mode, rebuild the stats from
+   the daily games saved in this browser since launch (tr-daily-<mode>-<date>, never deleted). Stats marked since = launch date are
+   done. For anyone who only played after launch this gives the same numbers they had; pre-launch test plays drop out. */
+const isoOfDay = n => new Date(EPOCH + (n - 1) * 86400000).toISOString().slice(0, 10);
+function rebuildStats(k){
+  const old = store.get(`tr-stats-${k}`);
+  if(old && old.since === SCHEDULE.start) return;
+  const st = Object.assign(STAT0(), {since: SCHEDULE.start}), today = dayNumber(localISO());
+  for(let n = 1; n <= today; n++){
+    const g = (store.get(`tr-daily-${k}-${isoOfDay(n)}`) || {}).guesses || [], reign = dailyReign(k, n);
+    const w = g.some(x => champsOf(reign).some(p => canon(p) === canon(x)));
+    if(!w && g.length < MAX) continue;                                     // not played, or not finished yet
+    st.played++; st.lastDone = n;
+    if(w){ st.wins++; st.dist[g.length - 1]++; st.streak = st.lastWin === n - 1 ? st.streak + 1 : 1; st.best = Math.max(st.best, st.streak); st.lastWin = n; }
+    else { st.losses++; st.streak = 0; }
+  }
+  store.set(`tr-stats-${k}`, st);
+  if(st.streak >= 3) earn("three"); if(st.streak >= 7) earn("iron");
+}
 function recordDaily(){
   if(S.mode !== "daily" || !done()) return;
   const st = getStats(gm);
@@ -1298,7 +1784,7 @@ function render(){
   renderStatsPanel();
   const inMode = titlesIn(gm);
   const counts = inMode.map(t => `${t.short} (${poolFor(gm).filter(x => x.t === t.key).length})`).join(", ");
-  $("#foot").textContent = `${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia, updated ${D.version}. Current reigns are left out.`;
+  $("#foot").textContent = `${MODE_LABEL[gm]} mode: ${poolFor(gm).length} reigns across ${inMode.length} titles: ${counts}. Data from Wikipedia. Current reigns are left out.`;
 }
 
 function renderResult(){
@@ -1424,13 +1910,7 @@ EGGS.forEach(e => e.people.forEach(p => {
 /* Achievements, Easter eggs, color schemes, toasts and the Awards sheet live in the shared House of Hoss layer
    (site/hoss.js, built into every page): one save across every game on the site. */
 const WINS_KEY = "tr-wins";
-let tempEgg = "";
-function applyLook(){                       // an Egg Card's theme wins over the saved color scheme until it clears
-  HOSS.look(tempEgg);
-  const r = document.documentElement;
-  if(tempEgg === "deadlock") r.dataset.long = "1"; else delete r.dataset.long;    // the stretch belongs to the Egg Card, not the saved scheme
-}
-document.addEventListener("hoss:skin", () => { tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); });
+const {showEgg, eggOff, runFx, applyLook} = HOH_EGGS;   // shared egg engine (site/eggs.js, Nov 22): effects, cards, guess eggs, stables
 const earn = id => HOSS.earn("tr", id);
 const foundEgg = id => HOSS.foundEgg(id);
 function afterWin(){                                      // runs once per winning guess, daily or free play
@@ -1471,126 +1951,6 @@ addEventListener("popstate", e => openPanel((e.state && e.state.trPage) || "", t
 addEventListener("keydown", e => { if(e.key === "Escape") closePage(); });
 document.addEventListener("click", e => { if(e.target.closest("[data-close]")) closePage(); });
 
-// Egg card: the banner at the top of the page. Text size follows length (a few words big, a sentence medium, a promo small).
-// Optional lead + title put a small kicker and a big headline above the body text.
-/* Effect eggs: one-shot animations and sounds. They never touch the game, never block a tap, and clean up after themselves.
-   Overlays live on <html> (like the toast) so body transforms can't move them. Reduced-motion users get a simple fade. */
-const CALM = (() => { try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } })();
-const FX_BODY = ["fx-suplex", "fx-619", "fx-giant", "fx-tiny", "fx-glitch", "fx-fade"];
-let fxLayer = null, fxTimers = [];
-const later = (ms, f) => fxTimers.push(setTimeout(f, ms));
-function fxClear(){
-  fxTimers.forEach(clearTimeout); fxTimers = [];
-  if(fxLayer){ fxLayer.remove(); fxLayer = null; }
-  document.body.classList.remove(...FX_BODY); document.body.style.transformOrigin = "";
-  document.documentElement.classList.remove("fx-mono");
-}
-function fxLayerOn(cls, html){
-  fxLayer = document.createElement("div"); fxLayer.className = "fx " + cls; fxLayer.setAttribute("aria-hidden", "true");
-  if(html) fxLayer.innerHTML = html;
-  document.documentElement.appendChild(fxLayer); return fxLayer;
-}
-function bodyFx(cls, ms, origin){                         // origin: "center" = middle of what's on screen, "top" = top of the screen
-  const b = document.body, y = origin === "top" ? scrollY : scrollY + innerHeight / 2;
-  b.style.transformOrigin = `50% ${Math.round(y)}px`;
-  b.classList.remove(cls); void b.offsetWidth; b.classList.add(cls);
-  later(ms, () => { b.classList.remove(cls); b.style.transformOrigin = ""; });
-}
-// Sounds are synthesized here (no recordings). Browsers only allow them after a tap, and every egg starts from one.
-let AC = null;
-function ac(){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); return AC; }catch(e){ return null; } }
-function tone(partials, {at = 0, vol = .2, decay = 3, type = "sine"} = {}){
-  const c = ac(); if(!c) return;
-  const t = c.currentTime + at, out = c.createGain();
-  out.gain.setValueAtTime(.0001, t); out.gain.exponentialRampToValueAtTime(vol, t + .01); out.gain.exponentialRampToValueAtTime(.0001, t + decay);
-  out.connect(c.destination);
-  partials.forEach(([f, a]) => { const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = f; g.gain.value = a; o.connect(g); g.connect(out); o.start(t); o.stop(t + decay + .1); });
-}
-const gong = at => tone([[98, 1], [196, .55], [233, .3], [294, .25], [392, .15], [523, .08]], {at, vol: .32, decay: 4.5});
-function noise(dur, {at = 0, vol = .3, type = "highpass", freq = 2500} = {}){
-  const c = ac(); if(!c) return;
-  const t = c.currentTime + at, n = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
-  for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
-  const src = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
-  src.buffer = buf; fl.type = type; fl.frequency.value = freq; g.gain.value = vol;
-  src.connect(fl); fl.connect(g); g.connect(c.destination); src.start(t);
-}
-const FX = {
-  lightsout(){                                            // Undertaker: lights cut, the gong, then a purple glow that fades back to normal
-    gong(0);
-    fxLayerOn("fx-lights", `<i class="black"></i><i class="glow"></i>`);
-    later(3800, fxClear);
-  },
-  shatter(){                                              // Stone Cold: cracks spread from the middle, then the glass falls away
-    const W = innerWidth, H = innerHeight, cx = W * (.42 + Math.random() * .16), cy = H * (.32 + Math.random() * .16), N = 14;
-    const edge = a => { const dx = Math.cos(a), dy = Math.sin(a), ts = [];
-      if(dx > 0) ts.push((W - cx) / dx); if(dx < 0) ts.push(-cx / dx); if(dy > 0) ts.push((H - cy) / dy); if(dy < 0) ts.push(-cy / dy);
-      const t = Math.min(...ts) * 1.15; return [cx + dx * t, cy + dy * t]; };
-    const rays = Array.from({length: N}, (_, i) => { const a = (i + Math.random() * .6) / N * Math.PI * 2, e = edge(a), r = .25 + Math.random() * .3;
-      return {e, m: [cx + (e[0] - cx) * r, cy + (e[1] - cy) * r]}; });
-    const pt = p => p.map(Math.round).join(","), polys = [], cracks = [];
-    rays.forEach((r, i) => { const n = rays[(i + 1) % N];
-      polys.push([[cx, cy], r.m, n.m]); polys.push([r.m, r.e, n.e, n.m]);
-      cracks.push(`<line x1="${Math.round(cx)}" y1="${Math.round(cy)}" x2="${Math.round(r.e[0])}" y2="${Math.round(r.e[1])}"/>`);
-      cracks.push(`<line x1="${Math.round(r.m[0])}" y1="${Math.round(r.m[1])}" x2="${Math.round(n.m[0])}" y2="${Math.round(n.m[1])}"/>`); });
-    const L = fxLayerOn("fx-glass", `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><g class="cracks">${cracks.join("")}</g>`
-      + polys.map(p => `<polygon points="${p.map(pt).join(" ")}"/>`).join("") + `</svg>`);
-    noise(.7, {vol: .35, freq: 3000}); [0, .05, .12, .2, .3, .38].forEach(a => tone([[2000 + Math.random() * 2500, 1]], {at: a, vol: .05, decay: .45, type: "triangle"}));
-    later(550, () => L.querySelectorAll("polygon").forEach(g => {
-      const dur = 0.9 + Math.random() * .6, rot = (Math.random() * 2 - 1) * 70, dx = (Math.random() * 2 - 1) * 60;
-      g.style.transition = `transform ${dur}s cubic-bezier(.5,0,.9,.6), opacity ${dur}s ease-in`;
-      g.style.transform = `translate(${dx}px, ${H * 1.1}px) rotate(${rot}deg)`; g.style.opacity = "0"; }));
-    later(2300, fxClear);
-  },
-  suplex(){ bodyFx(CALM ? "fx-fade" : "fx-suplex", 1600, "center"); noise(.25, {at: .85, vol: .5, type: "lowpass", freq: 300}); },
-  swing(){ bodyFx(CALM ? "fx-fade" : "fx-619", 1500, "center"); },
-  giant(){ bodyFx(CALM ? "fx-fade" : "fx-giant", 2800, "top"); },
-  tiny(){ bodyFx(CALM ? "fx-fade" : "fx-tiny", 2800, "top"); },
-  pose(){                                                 // Edge & Christian: everything holds still for a 5-count. Still fully playable.
-    document.documentElement.classList.add("fx-mono");
-    const L = fxLayerOn("fx-pose");
-    const tick = n => { L.innerHTML = `<b>${n}</b><span>Five-second pose</span>`; tone([[880, 1]], {vol: .06, decay: .25, type: "square"});
-      if(n > 1) later(1000, () => tick(n - 1)); else later(1000, fxClear); };
-    tick(5);
-  },
-  fiend(){ bodyFx(CALM ? "fx-fade" : "fx-glitch", 2300); fxLayerOn("fx-red"); noise(.15, {vol: .2, freq: 800, type: "bandpass"}); noise(.12, {at: .7, vol: .2, freq: 1200, type: "bandpass"}); later(2300, fxClear); },
-  pyro(){                                                 // Kane: flames burst up from the bottom of the screen
-    const flames = Array.from({length: 16}, (_, i) => `<i style="left:${(i / 16 * 108 - 6).toFixed(1)}%;--d:${(1 + Math.random() * .5).toFixed(2)}s;--w:${(.8 + Math.random() * .7).toFixed(2)};animation-delay:${(Math.random() * .35).toFixed(2)}s"></i>`).join("");
-    fxLayerOn("fx-pyro", flames);
-    noise(1.4, {vol: .45, type: "lowpass", freq: 500}); noise(1.2, {at: .5, vol: .35, type: "lowpass", freq: 700});
-    later(2600, fxClear);
-  },
-};
-function runFx(name){ fxClear(); if(FX[name]) FX[name](); }
-// Card line starting with ^: shows up after a pause, one |-separated piece at a time (Kennedy's slow second "Kennedy").
-const slowLine = s => `<p class="slow">${s.trim().split("|").map((x, i) => `<span style="animation-delay:${(1.6 + i * .75).toFixed(2)}s">${esc(x)}</span>`).join("")}</p>`;
-// beats: seconds at which each line of the card cuts in (no fade, no pop-in), for catchphrases said one hard word at a time.
-const beatAt = (beats, i) => ` class="beat" style="animation-delay:${beats[Math.min(i, beats.length - 1)]}s"`;
-let eggToken = 0;                                         // a later egg or guess cancels a card that's still waiting to show
-function showEgg({id, theme, card, lead, title, img, size, fx, beats, cardDelay}){
-  if(theme){ tempEgg = theme; applyLook(); }
-  if(fx) runFx(fx);
-  const tok = ++eggToken;
-  if(cardDelay && (card || title || img)){ foundEgg(id); setTimeout(() => { if(tok === eggToken) showEgg({card, lead, title, img, size, beats}); }, cardDelay); return; }
-  if(card || title || img){
-    let n = 0;
-    const b = $("#eggBanner");
-    b.hidden = true; void b.offsetWidth;                // restart the pop-in if it's already showing
-    const len = (card || "").length;
-    b.className = "egg-banner" + (size ? (size === "big" ? "" : " " + size) : len > 90 ? " long" : len > 18 ? " mid" : "") + (beats ? " beats" : "");
-    b.innerHTML = (img ? `<img class="egg-img" src="${esc(img.src)}" alt="${esc(img.alt)}">` + (img.credit ? `<span class="egg-credit">${img.credit}</span>` : "") : "")
-      + (title ? `<div class="egg-head">${lead ? `<span class="egg-lead">${esc(lead)}</span>` : ""}<span class="egg-title">${esc(title)}</span></div>` : "")
-      + (card || "").trim().split("\n").map(l => { l = l.trim(); if(!l) return `<i class="sp"></i>`; const at = beats ? beatAt(beats, n++) : "";
-        return l[0] === "~" ? `<p class="quiet"${at}>${esc(l.slice(1).trim())}</p>` : l[0] === "^" ? slowLine(l.slice(1)) : `<p${at}>${esc(l)}</p>`; }).join("")   // each line its own row; blank lines add space; a leading ~ makes a line small and quiet
-      + `<small${beats ? beatAt(beats, beats.length - 1) : ""}>Tap to go back</small>`;
-    const im = b.querySelector(".egg-img");               // no photo uploaded yet: drop the slot, keep the text
-    if(im) im.addEventListener("error", () => { im.remove(); const c = b.querySelector(".egg-credit"); if(c) c.remove(); });
-    b.querySelectorAll(".egg-credit a").forEach(a => a.addEventListener("click", ev => ev.stopPropagation()));   // credit links open without dismissing the card
-    b.hidden = false;
-    window.scrollTo({top: 0, behavior: "smooth"});          // phones: bring the card into view so it can't be missed
-  }
-  if(id) foundEgg(id);
-}
 function egg(raw){
   const e = EGG_BY[compact(raw || "")];
   if(!e) return false;
@@ -1600,46 +1960,9 @@ function egg(raw){
   if(e.banner) input.blur();                              // drop the phone keyboard so the card is visible
   return true;
 }
-function eggOff(){ eggToken++; tempEgg = ""; $("#eggBanner").hidden = true; applyLook(); }
 
-/* Guess eggs: real guesses that count, keyed by the wrestler's canonical name (any billing triggers it). */
-const GUESS_EGGS = {
-  "LA Knight": {id:"knight", size:"big", card:"House.\nOf.\nHoss.\nYeah!", beats:[0, .6, 1.2, 2]},   // also Eli Drake. One hard word at a time (Nov 19, Pete)
-  "Mr. Kennedy": {id:"kennedy", size:"big", card:"Kennedy\n\n^Ken|ne|dy"},     // also Mr. Anderson
-  "Kurt Angle": {id:"angle", theme:"angle", card:"You just made that guess with a broken freaking neck"},
-  // Drop a photo you have the rights to at eggs/joe-hendry.jpg (and fill in credit if the license needs one). No file = text only.
-  "Joe Hendry": {id:"hendry", card:"I believe in Joe Hendry", img:{src:"eggs/joe-hendry.jpg", alt:"Joe Hendry", credit:'Photo: <a href="https://commons.wikimedia.org/wiki/File:Joe_Hendry_RR25.jpg" target="_blank" rel="noopener">Diego Serrano</a>, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. Resized.'}},
-  "Kofi Kingston": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
-  "Big E": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
-  "Xavier Woods": {id:"newday", theme:"newday", card:"Don't you dare be sour!\nClap for the House of Hoss and feeeeeel the power!"},
-  "The Undertaker": {id:"lightsout", fx:"lightsout"},
-  "Brock Lesnar": {id:"suplex", fx:"suplex", card:"You just went to Suplex City.", cardDelay:1500},   // card lands with the page
-  "Rey Mysterio": {id:"619", fx:"swing"},
-  "André the Giant": {id:"giant", fx:"giant"},
-  "Hornswoggle": {id:"tiny", fx:"tiny"},
-  "Edge": {id:"pose", fx:"pose"},
-  "Christian Cage": {id:"pose", fx:"pose"},
-  "Bray Wyatt": {id:"fiend", fx:"fiend", placeholder:"Let me in."},
-  "Kane": {id:"pyro", fx:"pyro"},
-  "Ted DiBiase": {id:"dibiase", theme:"dibiase", card:"Everybody has a price."},     // Sr. only: Ted DiBiase Jr. is his own roster entry
-  "Road Warrior Hawk": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
-  "Road Warrior Animal": {id:"lod", theme:"lod", card:"Oooooh, WHAT A RUSH!"},
-  "Taz": {id:"taz", theme:"taz", card:"Web Design Jones over here, made the friggin' color scheme change"},
-  "Luke Harper": {id:"brodie", card:"It's House of Hoss and you know what that means"},          // also Mr. Brodie Lee
-  '"Stone Cold" Steve Austin': {id:"austin", fx:"shatter", size:"big", card:"WHAT?", placeholder:"What?"},
-  "Scott Steiner": {id:"steiner", lead:"You know they say that", title:"all men are created equal,", card:`but you look at me and you look at Samoa Joe and you can see that statement is not true. See, normally if you go one on one with another wrestler, you got a 50/50 chance of winning. But I'm a genetic freak and I'm not normal! So you got a 25%, AT BEST, at beat me. Then you add Kurt Angle to the mix, your chances of winning drastic go down. See the 3 way at Sacrifice, you got a 33 1/3 chance of winning, but I, I got a 66 and 2/3 chance of winning, because Kurt Angle KNOWS he can't beat me and he's not even gonna try!
-
-So Samoa Joe, you take your 33 1/3 chance, minus my 25% chance and you got an 8 1/3 chance of winning at Sacrifice. But then you take my 75% chance of winning, if we was to go one on one, and then add 66 2/3 per cents, I got 141 2/3 chance of winning at Sacrifice. See Joe, the numbers don't lie, and they spell disaster for you at Sacrifice.
-
-See, but I'm gonna break it down for all you ladies. Would you rather be with me? Or would you rather be with Joe?`},
-};
-function guessEgg(name){
-  const e = GUESS_EGGS[canon(name)];
-  if(!e) return false;
-  if(e.placeholder) input.placeholder = e.placeholder;   // sticks until the page reloads
-  showEgg(e);
-  return !!(e.card || e.title || e.img);
-}
+/* Guess eggs and stables live in site/eggs.js (shared with Roydle), keyed by canonical name (any billing triggers it). */
+function guessEgg(name){ return HOH_EGGS.guessEgg(canon(name), input); }
 
 function submit(raw){
   if(done()) return;
@@ -1713,6 +2036,7 @@ $("#statsBtn").addEventListener("click", () => $("#statsPanel").hidden ? openPan
 setInterval(updateNext, 30000);
 
 function boot(data){
+  MODES.forEach(([k]) => rebuildStats(k));
   if(!HOSS.achFound("tr").hoss && MODES.some(([k]) => getStats(k).wins > 0)){ const f = HOSS.achFound("tr"); f.hoss = Date.now(); store.set("tr-ach", f); }   // wins from before achievements existed
   applyLook();
   if(data && data.gm && modeOpen(data.gm)) gm = data.gm;
